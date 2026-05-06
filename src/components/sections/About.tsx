@@ -13,9 +13,9 @@ if (typeof window !== "undefined") {
 }
 
 const BIO_LINES = [
-  "Two tracks: AI-native products and Microsoft Business Central / NAV.",
+  "AI-native products on one rail — agents, pipelines, end-to-end systems.",
+  "Microsoft Business Central / NAV migrations on the other — boring infra, real money.",
   "Studied software engineering at Epoka University, Tirana.",
-  "Languages: Albanian, English, German.",
   "I like systems small enough to hold in my head, end-to-end.",
 ];
 
@@ -84,7 +84,7 @@ export function About() {
           }}
         >
           <SplitText
-            text="Jurgen Halili."
+            text="Two tracks."
             dataAttr="data-about-char"
             className="block overflow-hidden"
           />
@@ -95,7 +95,9 @@ export function About() {
           className="mt-5 max-w-2xl font-sans text-lg leading-relaxed md:text-xl"
           style={{ color: "var(--scene-ink-muted)", fontWeight: 300 }}
         >
-          22, full-stack engineer, Tirana to Kiel, freelance since April 2024.
+          22, full-stack engineer. AI-native products and Microsoft Business
+          Central / NAV migrations — end to end. Tirana → Kiel, freelance since
+          April 2024.
         </p>
 
         <div className="mt-16 grid flex-1 grid-cols-1 items-center gap-12 md:grid-cols-[400px_1fr] md:gap-20">

@@ -8,6 +8,24 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
+const SHIPPED = [
+  "KeepItUp",
+  "GymApp",
+  "Pilates Studio",
+  "CleanSlate",
+  "Ëndërrat e Mia",
+  "Social Command Center",
+  "jiang-clips",
+  "Kërçishta Garage",
+];
+
+const STATS = [
+  { value: "8", label: "shipped" },
+  { value: "2", label: "tracks" },
+  { value: "1", label: "person" },
+  { value: "100%", label: "solo" },
+];
+
 export function WorkOutro() {
   const wrapRef = useRef<HTMLDivElement>(null);
 
@@ -17,58 +35,150 @@ export function WorkOutro() {
     const ctx = gsap.context(() => {
       gsap.from("[data-outro-line]", {
         opacity: 0,
-        y: 24,
-        stagger: 0.1,
-        duration: 0.9,
+        y: 22,
+        stagger: 0.09,
+        duration: 0.95,
         ease: "power3.out",
         scrollTrigger: { trigger: root, start: "top 75%", once: true },
+      });
+      gsap.from("[data-outro-stat]", {
+        opacity: 0,
+        y: 16,
+        stagger: 0.08,
+        duration: 0.7,
+        ease: "power3.out",
+        scrollTrigger: { trigger: root, start: "top 70%", once: true },
       });
     }, root);
     return () => ctx.revert();
   }, []);
 
+  // Duplicate the marquee items so the loop appears seamless.
+  const marquee = [...SHIPPED, ...SHIPPED];
+
   return (
     <section
       ref={wrapRef}
-      className="relative flex min-h-[60svh] w-full items-center justify-center overflow-hidden bg-[#070612] px-6 py-24 md:px-10 lg:px-16"
+      className="relative flex min-h-[70svh] w-full flex-col justify-center overflow-hidden bg-[#070612] px-6 py-24 md:px-10 lg:px-16"
     >
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(60% 60% at 50% 60%, rgba(160, 110, 255, 0.10), transparent 70%)",
+            "radial-gradient(70% 60% at 50% 50%, rgba(170, 130, 255, 0.12), transparent 70%)",
         }}
       />
-      <div className="relative z-10 mx-auto max-w-3xl text-center">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-px"
+        style={{
+          background:
+            "linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent)",
+        }}
+      />
+
+      <div className="relative z-10 mx-auto w-full max-w-5xl text-center">
         <p
           data-outro-line
           className="font-mono text-[11px] uppercase tracking-[0.32em]"
           style={{ color: "rgba(255,255,255,0.55)" }}
         >
-          Two years · solo
+          2024 → 2026 · solo
         </p>
-        <p
+        <h2
           data-outro-line
-          className="mt-6 font-sans text-white"
+          className="mt-7 font-sans text-white"
           style={{
             fontFamily: "var(--font-sans)",
-            fontSize: "clamp(1.75rem, 4.4vw, 3.2rem)",
+            fontSize: "clamp(2rem, 5vw, 3.6rem)",
             fontWeight: 500,
-            letterSpacing: "-0.025em",
-            lineHeight: 1.1,
+            letterSpacing: "-0.030em",
+            lineHeight: 1.05,
           }}
         >
-          2024 → 2026 · eight shipped · still going.
-        </p>
+          Eight shipped. Still going.
+        </h2>
         <p
           data-outro-line
           className="mx-auto mt-6 max-w-xl font-sans text-base leading-relaxed md:text-lg"
           style={{ color: "rgba(255,255,255,0.62)", fontWeight: 300 }}
         >
-          Freelance from Tirana, then Kiel. Studied software engineering at Epoka. Now full-stack
-          + AI-native, end to end.
+          Freelance from Tirana, then Kiel. Studied software engineering at Epoka.
+          Two tracks: AI-native products and Microsoft Business Central / NAV — end to end.
         </p>
+
+        {/* Stat strip */}
+        <dl
+          className="mx-auto mt-14 grid max-w-2xl grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-4"
+          style={{
+            borderTop: "1px solid rgba(255,255,255,0.12)",
+            borderBottom: "1px solid rgba(255,255,255,0.12)",
+            padding: "1.75rem 0",
+          }}
+        >
+          {STATS.map((s) => (
+            <div key={s.label} data-outro-stat className="text-center">
+              <dt
+                className="font-mono text-[10px] uppercase tracking-[0.24em]"
+                style={{ color: "rgba(255,255,255,0.50)" }}
+              >
+                {s.label}
+              </dt>
+              <dd
+                className="mt-2 font-sans text-white"
+                style={{
+                  fontFamily: "var(--font-sans)",
+                  fontSize: "clamp(1.6rem, 3.2vw, 2.2rem)",
+                  fontWeight: 500,
+                  letterSpacing: "-0.025em",
+                  lineHeight: 1,
+                }}
+              >
+                {s.value}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+
+      {/* Project-name marquee — full-bleed, slow drift */}
+      <div
+        aria-hidden
+        className="pointer-events-none relative z-10 mt-14 overflow-hidden"
+        style={{
+          maskImage:
+            "linear-gradient(to right, transparent, black 12%, black 88%, transparent)",
+          WebkitMaskImage:
+            "linear-gradient(to right, transparent, black 12%, black 88%, transparent)",
+        }}
+      >
+        <div
+          className="flex whitespace-nowrap"
+          style={{ animation: "marquee 60s linear infinite" }}
+        >
+          {marquee.map((name, i) => (
+            <span
+              key={`${name}-${i}`}
+              className="mx-10 font-sans"
+              style={{
+                color: "rgba(255,255,255,0.18)",
+                fontFamily: "var(--font-sans)",
+                fontSize: "clamp(2.2rem, 5vw, 3.6rem)",
+                fontWeight: 500,
+                letterSpacing: "-0.025em",
+              }}
+            >
+              {name}
+              <span
+                aria-hidden
+                style={{ color: "rgba(160, 130, 255, 0.50)", marginLeft: "2.5rem" }}
+              >
+                ·
+              </span>
+            </span>
+          ))}
+        </div>
       </div>
     </section>
   );

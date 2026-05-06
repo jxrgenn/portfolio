@@ -40,6 +40,16 @@ export function Hero() {
           scrub: 0.6,
         },
       });
+      gsap.to("[data-hero-scroll-cue]", {
+        opacity: 0,
+        ease: "none",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top top",
+          end: "20% top",
+          scrub: 0.4,
+        },
+      });
     }, sectionRef);
     return () => ctx.revert();
   }, []);
@@ -49,6 +59,23 @@ export function Hero() {
       ref={sectionRef}
       className="relative flex min-h-svh items-end overflow-hidden px-6 pt-32 pb-16 md:px-10 lg:px-16"
     >
+      {/* Scroll cue — bottom-right, fades out as soon as the user scrolls */}
+      <div
+        data-hero-scroll-cue
+        aria-hidden
+        className="pointer-events-none absolute bottom-10 right-10 z-10 hidden flex-col items-center gap-2 md:flex"
+        style={{ color: "var(--color-fg-muted)" }}
+      >
+        <span className="font-mono text-[10px] uppercase tracking-[0.32em]">scroll</span>
+        <span
+          className="block h-10 w-px"
+          style={{
+            background:
+              "linear-gradient(to bottom, var(--color-fg-muted), transparent)",
+            animation: "float-y 3s ease-in-out infinite",
+          }}
+        />
+      </div>
       <div className="relative z-10 mx-auto w-full max-w-7xl">
         <p
           data-hero-eyebrow

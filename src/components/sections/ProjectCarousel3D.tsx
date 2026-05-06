@@ -57,6 +57,7 @@ export function ProjectCarousel3D() {
 
 function Carousel() {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const canvasWrapRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const [active, setActive] = useState(false);
@@ -78,8 +79,22 @@ function Carousel() {
       },
       onToggle: (self) => setActive(self.isActive),
     });
+
+    // Fade canvas in once section is in view (smooth entry, no pop).
+    const fadeTrigger = ScrollTrigger.create({
+      trigger: sectionRef.current,
+      start: "top bottom",
+      end: "top 50%",
+      scrub: 0.4,
+      onUpdate: (self) => {
+        if (canvasWrapRef.current) {
+          canvasWrapRef.current.style.opacity = String(self.progress);
+        }
+      },
+    });
     return () => {
       trigger.kill();
+      fadeTrigger.kill();
     };
   }, []);
 
@@ -116,15 +131,21 @@ function Carousel() {
               "linear-gradient(to right, rgba(7,6,18,0.86) 0%, rgba(7,6,18,0.62) 38%, rgba(7,6,18,0.18) 78%, transparent 100%)",
           }}
         />
-        <Canvas
-          gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
-          dpr={[1, 1.5]}
-          frameloop={active ? "always" : "never"}
-          camera={{ position: [0, 0, 5.2], fov: 32 }}
-          style={{ position: "absolute", inset: 0 }}
+        <div
+          ref={canvasWrapRef}
+          className="absolute inset-0"
+          style={{ opacity: 0, willChange: "opacity" }}
         >
-          <CarouselScene progressRef={progressRef} />
-        </Canvas>
+          <Canvas
+            gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
+            dpr={[1, 1.5]}
+            frameloop={active ? "always" : "never"}
+            camera={{ position: [0, 0, 5.2], fov: 32 }}
+            style={{ position: "absolute", inset: 0 }}
+          >
+            <CarouselScene progressRef={progressRef} />
+          </Canvas>
+        </div>
 
         {/* Top eyebrow + scrub indicator */}
         <div className="pointer-events-none absolute left-0 right-0 top-0 z-10 flex items-start justify-between px-6 pt-10 md:px-12 md:pt-14 lg:px-20">
@@ -202,15 +223,16 @@ function Carousel() {
                 <Link
                   href={`/projects/${active_.slug}`}
                   data-cursor-text="Open"
-                  className="mt-7 inline-flex items-center gap-2 font-sans text-sm text-white"
+                  className="group mt-7 inline-flex items-center gap-2 font-sans text-sm text-white"
                   style={{
                     paddingBottom: 4,
                     borderBottom: "1px solid rgba(255,255,255,0.50)",
                   }}
                 >
-                  Read case study
+                  See the build
                   <span
                     aria-hidden
+                    className="transition-transform duration-300 ease-out group-hover:translate-x-1"
                     style={{ color: "var(--project-accent, #fff)" }}
                   >
                     →

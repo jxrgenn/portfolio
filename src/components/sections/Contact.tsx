@@ -71,7 +71,7 @@ export function Contact() {
           className="font-mono text-[11px] uppercase tracking-[0.24em]"
           style={{ color: "var(--scene-ink-muted)" }}
         >
-          <span style={{ color: "var(--scene-ink)" }}>04</span>
+          <span style={{ color: "var(--scene-ink)" }}>03</span>
           &nbsp; / &nbsp;Contact
         </p>
 
