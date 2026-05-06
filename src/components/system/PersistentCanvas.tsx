@@ -5,7 +5,6 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
   Float,
   Lightformer,
-  ContactShadows,
   Environment,
   PerspectiveCamera,
 } from "@react-three/drei";
@@ -176,75 +175,115 @@ function FluidBackground({
   );
 }
 
-// ---------------- Iridescent sculpture ----------------
+// ---------------- Two Tracks — DNA-like helices ----------------
+// Two intertwined parametric ribbons orbiting a shared axis. Visualizes the
+// "two tracks" thesis (AI-native products + Microsoft Business Central / NAV).
+// Track 1 shimmers cool (short iridescence wavelengths → blue/green/violet);
+// Track 2 shimmers warm (long wavelengths → peach/gold/rust). They never
+// touch — always orbiting, always parallel.
 
-function Sculpture({
+function buildHelix(phaseOffset: number, opts: {
+  turns: number;
+  radius: number;
+  height: number;
+  segments: number;
+}) {
+  const points: THREE.Vector3[] = [];
+  const { turns, radius, height, segments } = opts;
+  for (let i = 0; i <= segments; i++) {
+    const t = i / segments;
+    const angle = t * turns * Math.PI * 2 + phaseOffset;
+    // Gentle bulge in the middle so the form has a "waist"
+    const r = radius * (1 + 0.10 * Math.sin(t * Math.PI));
+    points.push(
+      new THREE.Vector3(
+        Math.cos(angle) * r,
+        (t - 0.5) * height,
+        Math.sin(angle) * r,
+      ),
+    );
+  }
+  return new THREE.CatmullRomCurve3(points, false, "catmullrom", 0.5);
+}
+
+function TwoTracks({
   scrollRef,
 }: {
   scrollRef: React.MutableRefObject<number>;
 }) {
-  const ref = useRef<THREE.Mesh>(null);
-  // smoothed pose values
-  const pose = useRef({ x: 0, y: 0, scale: 1.4, rot: 0 });
+  const groupRef = useRef<THREE.Group>(null);
+
+  const { curve1, curve2 } = useMemo(() => {
+    const opts = { turns: 2.1, radius: 0.95, height: 4.0, segments: 280 };
+    return {
+      curve1: buildHelix(0, opts),
+      curve2: buildHelix(Math.PI, opts),
+    };
+  }, []);
 
   useFrame((state, delta) => {
-    if (!ref.current) return;
+    const g = groupRef.current;
+    if (!g) return;
+    const t = state.clock.elapsedTime;
+    const s = scrollRef.current;
 
-    const s = scrollRef.current; // 0..1
+    // Continuous slow Y-axis spin so the braiding reads as motion
+    g.rotation.y += delta * 0.22;
 
-    // Per-section pose targets — torus drifts right and shrinks as you go down,
-    // then re-centers and grows again at the contact climax.
-    const targetX =
-      s < 0.1
-        ? 0
-        : s < 0.5
-          ? THREE.MathUtils.lerp(0, 1.6, (s - 0.1) / 0.4)
-          : s < 0.85
-            ? THREE.MathUtils.lerp(1.6, 0.9, (s - 0.5) / 0.35)
-            : THREE.MathUtils.lerp(0.9, 0, (s - 0.85) / 0.15);
+    // Cursor parallax tilt (X tilt from vertical pointer, Z tilt from horizontal)
+    const targetTiltX = -state.pointer.y * 0.20;
+    const targetTiltZ = state.pointer.x * 0.10;
+    g.rotation.x = THREE.MathUtils.lerp(g.rotation.x, targetTiltX, 0.04);
+    g.rotation.z = THREE.MathUtils.lerp(g.rotation.z, targetTiltZ, 0.04);
 
-    const targetY =
-      s < 0.5
-        ? THREE.MathUtils.lerp(0, -0.6, s / 0.5)
-        : THREE.MathUtils.lerp(-0.6, 0.2, (s - 0.5) / 0.5);
+    // Subtle scroll-driven Y drift (helices descend slightly as you scroll)
+    const targetY = -s * 0.55;
+    g.position.y = THREE.MathUtils.lerp(g.position.y, targetY, 0.05);
 
-    const targetScale =
-      s < 0.85
-        ? THREE.MathUtils.lerp(1.45, 0.85, s / 0.85)
-        : THREE.MathUtils.lerp(0.85, 1.65, (s - 0.85) / 0.15);
+    // Anchored right of center, cursor parallax around that anchor
+    const baseX = 1.45;
+    const targetX = baseX + state.pointer.x * 0.22;
+    g.position.x = THREE.MathUtils.lerp(g.position.x, targetX, 0.04);
 
-    pose.current.x += (targetX - pose.current.x) * 0.05;
-    pose.current.y += (targetY - pose.current.y) * 0.05;
-    pose.current.scale += (targetScale - pose.current.scale) * 0.05;
-
-    // cursor parallax on top
-    const px = state.pointer.x * 0.35 + pose.current.x;
-    const py = -state.pointer.y * 0.18 + pose.current.y;
-    ref.current.position.x += (px - ref.current.position.x) * 0.06;
-    ref.current.position.y += (py - ref.current.position.y) * 0.06;
-    ref.current.scale.setScalar(pose.current.scale);
-
-    // continuous rotation
-    ref.current.rotation.y += delta * 0.18;
-    ref.current.rotation.x += delta * 0.06;
+    // Soft breathing scale
+    const breathe = 1.0 + Math.sin(t * 0.45) * 0.018;
+    g.scale.setScalar(breathe);
   });
 
   return (
-    <Float speed={0.8} rotationIntensity={0.2} floatIntensity={0.5}>
-      <mesh ref={ref} scale={1.4}>
-        <torusKnotGeometry args={[1, 0.34, 256, 32, 2, 3]} />
-        <meshPhysicalMaterial
-          color="#0a0814"
-          metalness={0.85}
-          roughness={0.14}
-          iridescence={1}
-          iridescenceIOR={1.45}
-          iridescenceThicknessRange={[100, 480]}
-          clearcoat={1}
-          clearcoatRoughness={0.06}
-          envMapIntensity={1.6}
-        />
-      </mesh>
+    <Float speed={0.55} rotationIntensity={0.08} floatIntensity={0.18}>
+      <group ref={groupRef}>
+        {/* Track 1 — cool shimmer (AI rail) */}
+        <mesh>
+          <tubeGeometry args={[curve1, 280, 0.058, 24, false]} />
+          <meshPhysicalMaterial
+            color="#0b0a1f"
+            metalness={0.88}
+            roughness={0.13}
+            iridescence={1}
+            iridescenceIOR={1.45}
+            iridescenceThicknessRange={[100, 380]}
+            clearcoat={1}
+            clearcoatRoughness={0.06}
+            envMapIntensity={1.7}
+          />
+        </mesh>
+        {/* Track 2 — warm shimmer (BC/NAV rail) */}
+        <mesh>
+          <tubeGeometry args={[curve2, 280, 0.058, 24, false]} />
+          <meshPhysicalMaterial
+            color="#1a0d08"
+            metalness={0.88}
+            roughness={0.13}
+            iridescence={1}
+            iridescenceIOR={1.42}
+            iridescenceThicknessRange={[320, 680]}
+            clearcoat={1}
+            clearcoatRoughness={0.06}
+            envMapIntensity={1.7}
+          />
+        </mesh>
+      </group>
     </Float>
   );
 }
@@ -292,15 +331,7 @@ function Scene({
       </Environment>
 
       <ambientLight intensity={0.18} />
-      <Sculpture scrollRef={scrollRef} />
-
-      <ContactShadows
-        position={[0, -2.4, 0]}
-        scale={10}
-        blur={3}
-        far={4}
-        opacity={0.4}
-      />
+      <TwoTracks scrollRef={scrollRef} />
 
       <EffectComposer>
         <Bloom
