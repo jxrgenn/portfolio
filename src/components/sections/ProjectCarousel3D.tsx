@@ -121,6 +121,20 @@ function Carousel() {
       ))}
 
       <div className="sticky top-0 h-svh w-full overflow-hidden">
+        {/* Project-accent halo — radial glow that picks up the active project's
+         * accent color, sitting behind the focal panel zone (right-of-center).
+         * Cross-fades with section data-accent variable. */}
+        <div
+          aria-hidden
+          key={active_.slug}
+          className="pointer-events-none absolute inset-0 z-[1] animate-[fadeInHalo_900ms_ease-out]"
+          style={{
+            background:
+              "radial-gradient(40% 55% at 68% 52%, var(--project-accent), transparent 65%)",
+            opacity: 0.32,
+            mixBlendMode: "screen",
+          }}
+        />
         {/* Left scrim — keeps text overlay legible against bleeding flank panels */}
         <div
           aria-hidden
@@ -196,6 +210,39 @@ function Carousel() {
                 >
                   {active_.title}.
                 </h2>
+
+                <p className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[10px] uppercase tracking-[0.22em]">
+                  <span style={{ color: "rgba(255,255,255,0.85)" }}>
+                    {active_.year}
+                  </span>
+                  <span aria-hidden style={{ color: "var(--project-accent, #fff)" }}>
+                    ·
+                  </span>
+                  <span
+                    className="inline-flex items-center gap-1.5"
+                    style={{ color: "rgba(255,255,255,0.70)" }}
+                  >
+                    <span
+                      aria-hidden
+                      className="block h-1.5 w-1.5 rounded-full"
+                      style={{
+                        background:
+                          active_.status === "shipped"
+                            ? "#67d99b"
+                            : active_.status === "in-progress"
+                            ? "#facc54"
+                            : "#a9a4ff",
+                        boxShadow:
+                          active_.status === "shipped"
+                            ? "0 0 8px rgba(103,217,155,0.5)"
+                            : active_.status === "in-progress"
+                            ? "0 0 8px rgba(250,204,84,0.5)"
+                            : "0 0 8px rgba(169,164,255,0.5)",
+                      }}
+                    />
+                    {active_.status.replace("-", " ")}
+                  </span>
+                </p>
 
                 <p
                   className="mt-5 font-sans text-base leading-relaxed md:text-lg"

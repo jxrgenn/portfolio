@@ -126,15 +126,34 @@ export function Hero() {
         </h1>
 
         <div className="mt-12 grid grid-cols-1 items-end gap-8 md:grid-cols-[1fr_auto] md:gap-16">
-          <p
-            ref={subRef}
-            className="max-w-xl font-sans text-base leading-relaxed md:text-lg"
-            style={{ color: "var(--color-fg)", fontWeight: 300, opacity: 0.85 }}
-          >
-            Solo full-stack engineer. AI-native products + Microsoft Business
-            Central / NAV migrations, end-to-end — from agent runtime to React
-            frontend to Postgres to deploy. Originally Tirana, currently Kiel.
-          </p>
+          <div ref={subRef}>
+            <p
+              className="max-w-xl font-sans text-base leading-relaxed md:text-lg"
+              style={{ color: "var(--color-fg)", fontWeight: 300, opacity: 0.85 }}
+            >
+              Solo full-stack engineer. AI-native products + Microsoft Business
+              Central / NAV migrations, end-to-end — from agent runtime to React
+              frontend to Postgres to deploy. Originally Tirana, currently Kiel.
+            </p>
+            <ul
+              className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-[10px] uppercase tracking-[0.22em]"
+              style={{ color: "var(--color-fg-muted)" }}
+            >
+              <li>
+                <span style={{ color: "var(--color-fg)" }}>8</span> shipped
+              </li>
+              <li aria-hidden style={{ color: "var(--color-accent)" }}>·</li>
+              <li>
+                <span style={{ color: "var(--color-fg)" }}>2</span> tracks
+              </li>
+              <li aria-hidden style={{ color: "var(--color-accent)" }}>·</li>
+              <li>
+                <span style={{ color: "var(--color-fg)" }}>2024 → 2026</span>
+              </li>
+              <li aria-hidden style={{ color: "var(--color-accent)" }}>·</li>
+              <li>solo</li>
+            </ul>
+          </div>
 
           <div ref={ctaRef} className="flex items-center gap-6">
             <MagneticCTA href="#work">Selected work</MagneticCTA>

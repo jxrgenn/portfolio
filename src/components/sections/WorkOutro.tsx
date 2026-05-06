@@ -8,6 +8,36 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
+function StatValue({ value }: { value: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const match = value.match(/^(\d+)(.*)$/);
+    if (!match) {
+      el.textContent = value;
+      return;
+    }
+    const target = parseInt(match[1], 10);
+    const suffix = match[2];
+    el.textContent = `0${suffix}`;
+    const obj = { v: 0 };
+    const tween = gsap.to(obj, {
+      v: target,
+      duration: 1.6,
+      ease: "power2.out",
+      scrollTrigger: { trigger: el, start: "top 88%", once: true },
+      onUpdate: () => {
+        el.textContent = `${Math.round(obj.v)}${suffix}`;
+      },
+    });
+    return () => {
+      tween.kill();
+    };
+  }, [value]);
+  return <span ref={ref}>{value}</span>;
+}
+
 const SHIPPED = [
   "KeepItUp",
   "GymApp",
@@ -126,7 +156,7 @@ export function WorkOutro() {
                 {s.label}
               </dt>
               <dd
-                className="mt-2 font-sans text-white"
+                className="mt-2 font-sans tabular-nums text-white"
                 style={{
                   fontFamily: "var(--font-sans)",
                   fontSize: "clamp(1.6rem, 3.2vw, 2.2rem)",
@@ -135,7 +165,7 @@ export function WorkOutro() {
                   lineHeight: 1,
                 }}
               >
-                {s.value}
+                <StatValue value={s.value} />
               </dd>
             </div>
           ))}

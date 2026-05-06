@@ -107,8 +107,38 @@ export function Contact() {
         </p>
 
         <div
+          data-contact-body
+          className="mt-8 flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-[11px] uppercase tracking-[0.22em]"
+          style={{ color: "var(--scene-ink-muted)" }}
+        >
+          <span className="relative inline-flex h-2 w-2 items-center justify-center">
+            <span
+              aria-hidden
+              className="absolute inset-0 rounded-full"
+              style={{
+                background: "rgba(50, 180, 100, 0.55)",
+                animation: "status-pulse 2s ease-in-out infinite",
+              }}
+            />
+            <span
+              aria-hidden
+              className="relative block h-2 w-2 rounded-full"
+              style={{
+                background: "#2fa765",
+                boxShadow: "0 0 10px rgba(50, 180, 100, 0.55)",
+              }}
+            />
+          </span>
+          <span style={{ color: "var(--scene-ink)" }}>Currently shipping</span>
+          <span aria-hidden style={{ color: "var(--scene-ink-subtle)" }}>·</span>
+          <span>Ëndërrat e Mia</span>
+          <span aria-hidden style={{ color: "var(--scene-ink-subtle)" }}>·</span>
+          <span>Open to AI roles, 2026</span>
+        </div>
+
+        <div
           data-contact-cta
-          className="mt-10 flex flex-wrap items-center gap-4"
+          className="mt-8 flex flex-wrap items-center gap-4"
         >
           <GlassCapsule href={`mailto:${EMAIL}`}>
             <span
