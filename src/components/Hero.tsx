@@ -14,8 +14,12 @@ export function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   const subRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
+  const headlineRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
+    let bindTimer: number | null = null;
+    let onPointerMove: ((e: PointerEvent) => void) | null = null;
+
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
       tl.from("[data-hero-eyebrow]", { opacity: 0, y: 14, duration: 0.7 })
@@ -28,6 +32,41 @@ export function Hero() {
         }, "<0.1")
         .from(subRef.current, { opacity: 0, y: 16, duration: 0.9 }, "<0.5")
         .from(ctaRef.current, { opacity: 0, y: 16, duration: 0.9 }, "<0.1");
+
+      const axes = { soft: 100, wonk: 1 };
+      const applyAxes = () => {
+        if (headlineRef.current) {
+          headlineRef.current.style.fontVariationSettings = `"opsz" 144, "SOFT" ${axes.soft.toFixed(2)}, "WONK" ${axes.wonk.toFixed(3)}`;
+        }
+      };
+      applyAxes();
+      gsap.to(axes, {
+        soft: 0,
+        wonk: 0,
+        duration: 1.8,
+        delay: 0.3,
+        ease: "power3.out",
+        onUpdate: applyAxes,
+      });
+
+      onPointerMove = (e: PointerEvent) => {
+        if (!headlineRef.current) return;
+        const rect = headlineRef.current.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const dx = (e.clientX - cx) / rect.width;
+        const dy = (e.clientY - cy) / rect.height;
+        const d = Math.min(1, Math.hypot(dx, dy));
+        const proximity = 1 - d;
+        const soft = Math.max(0, proximity * 28);
+        const wonk = Math.max(0, proximity * 0.18);
+        headlineRef.current.style.fontVariationSettings = `"opsz" 144, "SOFT" ${soft.toFixed(2)}, "WONK" ${wonk.toFixed(3)}`;
+      };
+      bindTimer = window.setTimeout(() => {
+        if (onPointerMove) {
+          window.addEventListener("pointermove", onPointerMove, { passive: true });
+        }
+      }, 2200);
 
       gsap.to("[data-hero-headline]", {
         yPercent: -22,
@@ -51,7 +90,12 @@ export function Hero() {
         },
       });
     }, sectionRef);
-    return () => ctx.revert();
+
+    return () => {
+      if (bindTimer !== null) window.clearTimeout(bindTimer);
+      if (onPointerMove) window.removeEventListener("pointermove", onPointerMove);
+      ctx.revert();
+    };
   }, []);
 
   return (
@@ -94,6 +138,7 @@ export function Hero() {
         </p>
 
         <h1
+          ref={headlineRef}
           data-hero-headline
           className="mt-8 font-serif"
           style={{
@@ -103,6 +148,7 @@ export function Hero() {
             lineHeight: 0.86,
             letterSpacing: "-0.05em",
             fontWeight: 400,
+            fontVariationSettings: '"opsz" 144, "SOFT" 100, "WONK" 1',
             textShadow: "0 2px 40px rgba(0,0,0,0.4)",
           }}
         >

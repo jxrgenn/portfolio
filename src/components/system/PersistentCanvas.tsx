@@ -369,31 +369,60 @@ export function PersistentCanvas() {
   }, []);
 
   useEffect(() => {
-    const onScroll = () => {
-      const max = document.body.scrollHeight - window.innerHeight;
-      scrollRef.current = max > 0 ? window.scrollY / max : 0;
-
-      // Hero-only: fade canvas out as user scrolls past first viewport.
-      if (wrapperRef.current) {
-        const vh = window.innerHeight;
-        const fadeStart = vh * 0.6;
-        const fadeEnd = vh * 1.0;
-        const y = window.scrollY;
-        const t = Math.max(0, Math.min(1, (y - fadeStart) / (fadeEnd - fadeStart)));
-        const fadeOpacity = 1 - t;
-        const finalOpacity = mounted ? fadeOpacity : 0;
-        wrapperRef.current.style.opacity = String(finalOpacity);
-        wrapperRef.current.style.visibility = t >= 1 ? "hidden" : "visible";
-
-        // Suspend / resume the render loop based on hero visibility.
-        // 100px rootMargin so resume happens just before user sees it.
-        const shouldRun = y < fadeEnd + 100;
-        setActive((prev) => (prev !== shouldRun ? shouldRun : prev));
-      }
+    let maxScroll = Math.max(1, document.body.scrollHeight - window.innerHeight);
+    const recomputeBounds = () => {
+      maxScroll = Math.max(1, document.body.scrollHeight - window.innerHeight);
     };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+
+    const apply = (y: number) => {
+      scrollRef.current = y / maxScroll;
+      if (!wrapperRef.current) return;
+      const vh = window.innerHeight;
+      const fadeStart = vh * 0.6;
+      const fadeEnd = vh * 1.0;
+      const t = Math.max(0, Math.min(1, (y - fadeStart) / (fadeEnd - fadeStart)));
+      const fadeOpacity = 1 - t;
+      wrapperRef.current.style.opacity = String(mounted ? fadeOpacity : 0);
+      wrapperRef.current.style.visibility = t >= 1 ? "hidden" : "visible";
+      const shouldRun = y < fadeEnd + 100;
+      setActive((prev) => (prev !== shouldRun ? shouldRun : prev));
+    };
+
+    apply(window.scrollY);
+
+    const lenisCb = ({ scroll }: { scroll: number }) => apply(scroll);
+    const nativeCb = () => apply(window.scrollY);
+
+    let cleanupLenis: (() => void) | null = null;
+    let unsub: number | null = null;
+
+    const tryAttach = () => {
+      const lenis = window.__lenis;
+      if (lenis) {
+        lenis.on("scroll", lenisCb);
+        cleanupLenis = () => lenis.off("scroll", lenisCb);
+        return true;
+      }
+      return false;
+    };
+
+    if (!tryAttach()) {
+      unsub = window.setInterval(() => {
+        if (tryAttach() && unsub !== null) {
+          window.clearInterval(unsub);
+          unsub = null;
+        }
+      }, 50);
+      window.addEventListener("scroll", nativeCb, { passive: true });
+    }
+
+    window.addEventListener("resize", recomputeBounds);
+    return () => {
+      cleanupLenis?.();
+      if (unsub !== null) window.clearInterval(unsub);
+      window.removeEventListener("scroll", nativeCb);
+      window.removeEventListener("resize", recomputeBounds);
+    };
   }, [mounted]);
 
   return (

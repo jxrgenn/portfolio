@@ -9,19 +9,22 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-/**
- * Lenis smooth-scroll wired to GSAP ticker.
- * Tuned tight: ~0.8s duration with snappy easeOutQuint — crisp, not laggy.
- */
+declare global {
+  interface Window {
+    __lenis?: Lenis;
+  }
+}
+
 export function SmoothScroll() {
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 0.85,
-      easing: (t) => 1 - Math.pow(1 - t, 5),
+      lerp: 0.085,
       smoothWheel: true,
       wheelMultiplier: 1.0,
-      touchMultiplier: 1.4,
+      touchMultiplier: 1.5,
     });
+
+    window.__lenis = lenis;
 
     lenis.on("scroll", ScrollTrigger.update);
 
@@ -34,6 +37,7 @@ export function SmoothScroll() {
     return () => {
       gsap.ticker.remove(tickerCallback);
       lenis.destroy();
+      delete window.__lenis;
     };
   }, []);
 

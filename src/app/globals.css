@@ -98,12 +98,27 @@
   min-height: 100svh;
   isolation: isolate;
   overflow: hidden;
-  /* Skip layout/paint when offscreen — major perf win for sections below fold. */
-  content-visibility: auto;
-  contain-intrinsic-size: auto 100svh;
   --scene-ink: oklch(0.96 0.006 75);
   --scene-ink-muted: oklch(0.66 0.006 75);
   --scene-ink-subtle: oklch(0.42 0.006 75);
+}
+
+/* Bleed-from-above: a vertical gradient at the top of the section that fades
+ * from the prior section's color into transparent. Used at the WorkOutro→About
+ * boundary so the warm scene doesn't hard-cut from black. */
+.scene-bleed-top::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 28vh;
+  background: linear-gradient(
+    to bottom,
+    rgba(7, 6, 18, 1) 0%,
+    rgba(7, 6, 18, 0.6) 35%,
+    rgba(7, 6, 18, 0) 100%
+  );
+  pointer-events: none;
+  z-index: 5;
 }
 
 [data-scene-tone="warm"] {
@@ -374,6 +389,11 @@
 @keyframes status-pulse {
   0%, 100% { transform: scale(1); opacity: 0.7; }
   50% { transform: scale(1.4); opacity: 0; }
+}
+
+@keyframes path-dot-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.55; }
+  50% { transform: scale(2.4); opacity: 0; }
 }
 
 html,

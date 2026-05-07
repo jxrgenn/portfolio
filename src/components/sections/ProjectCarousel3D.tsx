@@ -68,7 +68,7 @@ function Carousel() {
       trigger: sectionRef.current,
       start: "top top",
       end: "bottom bottom",
-      scrub: 0.5,
+      scrub: 0.25,
       onUpdate: (self) => {
         progressRef.current = self.progress;
         const idx = Math.min(
@@ -107,7 +107,7 @@ function Carousel() {
       id="work"
       data-accent={active_.slug}
       className="relative bg-[#070612]"
-      style={{ height: "700vh" }}
+      style={{ height: "540vh" }}
     >
       {/* Backwards-compat anchors so /#work-keepitup etc. still work */}
       {FEATURED.map((p) => (

@@ -10,13 +10,13 @@ import { CarouselPanel } from "./CarouselPanel";
 const SPACING = 2.5;
 const FOCAL_OFFSET = 1.25;
 
-const PANELS: readonly { src: string }[] = [
-  { src: "/scenes/work/keepitup.jpg" },
-  { src: "/scenes/work/gymapp.jpg" },
-  { src: "/scenes/work/pilates.jpg" },
-  { src: "/scenes/work/cleanslate.jpg" },
-  { src: "/scenes/work/enderrat.jpg" },
-  { src: "/scenes/work/socialcommand.jpg" },
+const PANELS: readonly { src: string; codename: string; year: string }[] = [
+  { src: "/scenes/work/keepitup.jpg",     codename: "KEEPITUP",        year: "2024" },
+  { src: "/scenes/work/gymapp.jpg",       codename: "GYM-APP",         year: "2024" },
+  { src: "/scenes/work/pilates.jpg",      codename: "PILATES-STUDIO",  year: "2025" },
+  { src: "/scenes/work/cleanslate.jpg",   codename: "CLEANSLATE",      year: "2025" },
+  { src: "/scenes/work/enderrat.jpg",     codename: "ENDERRAT-E-MIA",  year: "2026" },
+  { src: "/scenes/work/socialcommand.jpg",codename: "SOCIAL-CMD",      year: "2025" },
 ] as const;
 
 const backdropFragment = /* glsl */ `
@@ -154,6 +154,8 @@ function PanelTrack({ progressRef }: { progressRef: React.MutableRefObject<numbe
         <CarouselPanel
           key={p.src}
           src={p.src}
+          codename={p.codename}
+          year={p.year}
           index={i}
           spacing={SPACING}
           progressRef={progressRef}

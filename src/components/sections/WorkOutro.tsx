@@ -8,206 +8,365 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-function StatValue({ value }: { value: string }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const match = value.match(/^(\d+)(.*)$/);
-    if (!match) {
-      el.textContent = value;
-      return;
-    }
-    const target = parseInt(match[1], 10);
-    const suffix = match[2];
-    el.textContent = `0${suffix}`;
-    const obj = { v: 0 };
-    const tween = gsap.to(obj, {
-      v: target,
-      duration: 1.6,
-      ease: "power2.out",
-      scrollTrigger: { trigger: el, start: "top 88%", once: true },
-      onUpdate: () => {
-        el.textContent = `${Math.round(obj.v)}${suffix}`;
-      },
-    });
-    return () => {
-      tween.kill();
-    };
-  }, [value]);
-  return <span ref={ref}>{value}</span>;
-}
+type Milestone = {
+  year: string;
+  label: string;
+  meta: readonly string[];
+  accent: string;
+  current?: boolean;
+};
 
-const SHIPPED = [
-  "KeepItUp",
-  "GymApp",
-  "Pilates Studio",
-  "CleanSlate",
-  "Ëndërrat e Mia",
-  "Social Command Center",
-  "jiang-clips",
-  "Kërçishta Garage",
-];
-
-const STATS = [
-  { value: "8", label: "shipped" },
-  { value: "2", label: "tracks" },
-  { value: "1", label: "person" },
-  { value: "100%", label: "solo" },
+const MILESTONES: readonly Milestone[] = [
+  {
+    year: "2021",
+    label: "Bachelor.",
+    meta: ["Software Engineering", "Epoka, Tirana"],
+    accent: "#8a85ff",
+  },
+  {
+    year: "2023",
+    label: "Interning.",
+    meta: ["Spring Boot · Flask", "Intesa · BALFIN"],
+    accent: "#7fcfff",
+  },
+  {
+    year: "2024",
+    label: "Solo.",
+    meta: ["BSc · freelance", "MERN + BC/NAV"],
+    accent: "#ffd178",
+  },
+  {
+    year: "2025",
+    label: "Experience.",
+    meta: ["NextGen AI", "AI engineering · Tirana"],
+    accent: "#ff9272",
+  },
+  {
+    year: "2026",
+    label: "AI Developer.",
+    meta: ["two tracks running", "end to end"],
+    accent: "#c099ff",
+    current: true,
+  },
 ];
 
 export function WorkOutro() {
   const wrapRef = useRef<HTMLDivElement>(null);
+  const linePathRef = useRef<SVGPathElement>(null);
 
   useEffect(() => {
-    const root = wrapRef.current;
-    if (!root) return;
+    const wrap = wrapRef.current;
+    const line = linePathRef.current;
+    if (!wrap || !line) return;
+
+    const lineLen = line.getTotalLength();
+    line.style.strokeDasharray = String(lineLen);
+    line.style.strokeDashoffset = String(lineLen);
+
     const ctx = gsap.context(() => {
-      gsap.from("[data-outro-line]", {
+      gsap.from("[data-path-eyebrow]", {
+        opacity: 0,
+        y: 10,
+        duration: 0.6,
+        ease: "power3.out",
+        scrollTrigger: { trigger: wrap, start: "top 78%", once: true },
+      });
+      gsap.from("[data-path-title]", {
         opacity: 0,
         y: 22,
-        stagger: 0.09,
-        duration: 0.95,
+        duration: 1.0,
         ease: "power3.out",
-        scrollTrigger: { trigger: root, start: "top 75%", once: true },
+        scrollTrigger: { trigger: wrap, start: "top 75%", once: true },
       });
-      gsap.from("[data-outro-stat]", {
+      gsap.from("[data-path-lede]", {
         opacity: 0,
         y: 16,
-        stagger: 0.08,
-        duration: 0.7,
+        duration: 0.85,
+        delay: 0.15,
         ease: "power3.out",
-        scrollTrigger: { trigger: root, start: "top 70%", once: true },
+        scrollTrigger: { trigger: wrap, start: "top 72%", once: true },
       });
-    }, root);
+      gsap.from("[data-path-year]", {
+        opacity: 0,
+        y: 18,
+        stagger: 0.1,
+        duration: 0.85,
+        delay: 0.2,
+        ease: "power3.out",
+        scrollTrigger: { trigger: wrap, start: "top 68%", once: true },
+      });
+      gsap.to(line, {
+        strokeDashoffset: 0,
+        duration: 1.9,
+        delay: 0.35,
+        ease: "power2.inOut",
+        scrollTrigger: { trigger: wrap, start: "top 68%", once: true },
+      });
+      gsap.from("[data-path-dot]", {
+        scale: 0,
+        opacity: 0,
+        transformOrigin: "center center",
+        stagger: 0.16,
+        duration: 0.55,
+        delay: 0.45,
+        ease: "back.out(1.8)",
+        scrollTrigger: { trigger: wrap, start: "top 68%", once: true },
+      });
+      gsap.from("[data-path-caption]", {
+        opacity: 0,
+        y: 10,
+        stagger: 0.08,
+        duration: 0.65,
+        delay: 0.7,
+        ease: "power3.out",
+        scrollTrigger: { trigger: wrap, start: "top 68%", once: true },
+      });
+    }, wrap);
+
     return () => ctx.revert();
   }, []);
 
-  // Duplicate the marquee items so the loop appears seamless.
-  const marquee = [...SHIPPED, ...SHIPPED];
+  // Dot positions in viewBox space (5 dots at 10/30/50/70/90% of 1000-wide line).
+  const dotXs = [100, 300, 500, 700, 900];
 
   return (
     <section
       ref={wrapRef}
-      className="relative flex min-h-[70svh] w-full flex-col justify-center overflow-hidden bg-[#070612] px-6 py-24 md:px-10 lg:px-16"
+      id="path"
+      className="relative bg-[#070612] px-6 py-32 md:px-10 md:py-36 lg:px-16"
     >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(70% 60% at 50% 50%, rgba(170, 130, 255, 0.12), transparent 70%)",
-        }}
-      />
+      {/* Top hairline */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 h-px"
         style={{
           background:
-            "linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent)",
+            "linear-gradient(90deg, transparent, rgba(255,255,255,0.16), transparent)",
         }}
       />
 
-      <div className="relative z-10 mx-auto w-full max-w-5xl text-center">
+      <div className="relative mx-auto w-full max-w-6xl">
         <p
-          data-outro-line
-          className="font-mono text-[11px] uppercase tracking-[0.32em]"
-          style={{ color: "rgba(255,255,255,0.55)" }}
+          data-path-eyebrow
+          className="font-serif italic"
+          style={{
+            color: "rgba(255,255,255,0.40)",
+            fontFamily: "var(--font-fraunces), Georgia, serif",
+            fontSize: 13,
+            letterSpacing: "0.02em",
+          }}
         >
-          2024 → 2026 · solo
+          « path »
         </p>
+
         <h2
-          data-outro-line
-          className="mt-7 font-sans text-white"
+          data-path-title
+          className="mt-6 font-serif text-white"
           style={{
-            fontFamily: "var(--font-sans)",
-            fontSize: "clamp(2rem, 5vw, 3.6rem)",
-            fontWeight: 500,
-            letterSpacing: "-0.030em",
-            lineHeight: 1.05,
+            fontFamily: "var(--font-fraunces), Georgia, serif",
+            fontSize: "clamp(3rem, 8vw, 6.4rem)",
+            fontWeight: 400,
+            letterSpacing: "-0.04em",
+            lineHeight: 0.92,
+            fontVariationSettings: '"opsz" 144, "SOFT" 0, "WONK" 0',
           }}
         >
-          Eight shipped. Still going.
+          Five years.{" "}
+          <span style={{ fontStyle: "italic", opacity: 0.55, fontWeight: 300 }}>
+            And counting.
+          </span>
         </h2>
+
         <p
-          data-outro-line
-          className="mx-auto mt-6 max-w-xl font-sans text-base leading-relaxed md:text-lg"
-          style={{ color: "rgba(255,255,255,0.62)", fontWeight: 300 }}
+          data-path-lede
+          className="mt-7 max-w-xl font-sans leading-relaxed"
+          style={{
+            color: "rgba(255,255,255,0.62)",
+            fontWeight: 300,
+            fontSize: "clamp(1rem, 1.25vw, 1.15rem)",
+          }}
         >
-          Freelance from Tirana, then Kiel. Studied software engineering at Epoka.
-          Two tracks: AI-native products and Microsoft Business Central / NAV — end to end.
+          Bachelor in Tirana. Two short internships. Freelance since 2024 — full-stack
+          AI on one side, Microsoft Business Central on the other. Personal projects
+          fill in between.
         </p>
 
-        {/* Stat strip */}
-        <dl
-          className="mx-auto mt-14 grid max-w-2xl grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-4"
-          style={{
-            borderTop: "1px solid rgba(255,255,255,0.12)",
-            borderBottom: "1px solid rgba(255,255,255,0.12)",
-            padding: "1.75rem 0",
-          }}
-        >
-          {STATS.map((s) => (
-            <div key={s.label} data-outro-stat className="text-center">
-              <dt
-                className="font-mono text-[10px] uppercase tracking-[0.24em]"
-                style={{ color: "rgba(255,255,255,0.50)" }}
-              >
-                {s.label}
-              </dt>
-              <dd
-                className="mt-2 font-sans tabular-nums text-white"
-                style={{
-                  fontFamily: "var(--font-sans)",
-                  fontSize: "clamp(1.6rem, 3.2vw, 2.2rem)",
-                  fontWeight: 500,
-                  letterSpacing: "-0.025em",
-                  lineHeight: 1,
-                }}
-              >
-                <StatValue value={s.value} />
-              </dd>
-            </div>
-          ))}
-        </dl>
-      </div>
+        {/* === Timeline === */}
+        <div className="mt-24">
+          {/* Year row — desktop only */}
+          <div className="hidden md:grid md:grid-cols-5">
+            {MILESTONES.map((m) => (
+              <div key={`y-${m.year}`} className="text-center">
+                <span
+                  data-path-year
+                  className="inline-block font-serif"
+                  style={{
+                    fontFamily: "var(--font-fraunces), Georgia, serif",
+                    color: m.current
+                      ? "var(--color-fg)"
+                      : "rgba(255,255,255,0.95)",
+                    fontSize: "clamp(2.4rem, 4vw, 3.4rem)",
+                    fontWeight: 400,
+                    letterSpacing: "-0.04em",
+                    lineHeight: 1,
+                    fontStyle: m.current ? "italic" : "normal",
+                    fontVariationSettings: m.current
+                      ? '"opsz" 144, "SOFT" 30, "WONK" 0.4'
+                      : '"opsz" 144, "SOFT" 0, "WONK" 0',
+                  }}
+                >
+                  {m.year}
+                </span>
+              </div>
+            ))}
+          </div>
 
-      {/* Project-name marquee — full-bleed, slow drift */}
-      <div
-        aria-hidden
-        className="pointer-events-none relative z-10 mt-14 overflow-hidden"
-        style={{
-          maskImage:
-            "linear-gradient(to right, transparent, black 12%, black 88%, transparent)",
-          WebkitMaskImage:
-            "linear-gradient(to right, transparent, black 12%, black 88%, transparent)",
-        }}
-      >
-        <div
-          className="flex whitespace-nowrap"
-          style={{ animation: "marquee 60s linear infinite" }}
-        >
-          {marquee.map((name, i) => (
-            <span
-              key={`${name}-${i}`}
-              className="mx-10 font-sans"
-              style={{
-                color: "rgba(255,255,255,0.18)",
-                fontFamily: "var(--font-sans)",
-                fontSize: "clamp(2.2rem, 5vw, 3.6rem)",
-                fontWeight: 500,
-                letterSpacing: "-0.025em",
-              }}
+          {/* Spine + dots — desktop only */}
+          <div
+            className="relative mt-8 hidden h-3 w-full md:block"
+            aria-hidden
+          >
+            <svg
+              viewBox="0 0 1000 12"
+              preserveAspectRatio="none"
+              className="absolute inset-0 h-full w-full"
             >
-              {name}
-              <span
-                aria-hidden
-                style={{ color: "rgba(160, 130, 255, 0.50)", marginLeft: "2.5rem" }}
+              <defs>
+                <linearGradient id="path-spine" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#8a85ff" stopOpacity="0.85" />
+                  <stop offset="25%" stopColor="#7fcfff" stopOpacity="0.85" />
+                  <stop offset="50%" stopColor="#ffd178" stopOpacity="0.85" />
+                  <stop offset="75%" stopColor="#ff9272" stopOpacity="0.85" />
+                  <stop offset="100%" stopColor="#c099ff" stopOpacity="0.85" />
+                </linearGradient>
+              </defs>
+              <path
+                ref={linePathRef}
+                d={`M ${dotXs[0]} 6 L ${dotXs[dotXs.length - 1]} 6`}
+                stroke="url(#path-spine)"
+                strokeWidth="1.4"
+                fill="none"
+                strokeLinecap="round"
+              />
+              {MILESTONES.map((m, i) => (
+                <g key={`dot-${m.year}`}>
+                  <circle
+                    data-path-dot
+                    cx={dotXs[i]}
+                    cy={6}
+                    r="3.6"
+                    fill={m.accent}
+                    style={{
+                      filter: `drop-shadow(0 0 6px ${m.accent})`,
+                    }}
+                  />
+                  {m.current && (
+                    <circle
+                      cx={dotXs[i]}
+                      cy={6}
+                      r="3.6"
+                      fill="none"
+                      stroke={m.accent}
+                      strokeWidth="0.8"
+                      opacity="0.55"
+                      style={{
+                        transformOrigin: `${dotXs[i]}px 6px`,
+                        animation: "path-dot-pulse 2.2s ease-in-out infinite",
+                      }}
+                    />
+                  )}
+                </g>
+              ))}
+            </svg>
+          </div>
+
+          {/* Caption row — desktop only */}
+          <div className="mt-8 hidden md:grid md:grid-cols-5 md:gap-x-4">
+            {MILESTONES.map((m) => (
+              <div
+                key={`c-${m.year}`}
+                data-path-caption
+                className="text-center"
               >
-                ·
-              </span>
-            </span>
-          ))}
+                <p
+                  className="font-serif"
+                  style={{
+                    fontFamily: "var(--font-fraunces), Georgia, serif",
+                    fontStyle: "italic",
+                    fontSize: "clamp(1.1rem, 1.4vw, 1.25rem)",
+                    color: "rgba(255,255,255,0.94)",
+                    fontWeight: 400,
+                    letterSpacing: "-0.01em",
+                    lineHeight: 1.1,
+                  }}
+                >
+                  {m.label}
+                </p>
+                <ul
+                  className="mt-3 flex flex-col gap-1 font-mono text-[10px] uppercase tracking-[0.20em]"
+                  style={{ color: "rgba(255,255,255,0.55)" }}
+                >
+                  {m.meta.map((line) => (
+                    <li key={line}>{line}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          {/* Mobile fallback — vertical, year + caption together */}
+          <ol className="flex flex-col gap-9 md:hidden">
+            {MILESTONES.map((m) => (
+              <li
+                key={`m-${m.year}`}
+                className="grid grid-cols-[auto_1fr] items-start gap-x-5"
+              >
+                <span
+                  aria-hidden
+                  className="mt-3 block h-2.5 w-2.5 shrink-0 rounded-full"
+                  style={{
+                    background: m.accent,
+                    boxShadow: `0 0 12px ${m.accent}`,
+                  }}
+                />
+                <div className="flex flex-col gap-1.5">
+                  <span
+                    className="font-serif"
+                    style={{
+                      fontFamily: "var(--font-fraunces), Georgia, serif",
+                      color: "rgba(255,255,255,0.95)",
+                      fontSize: "2rem",
+                      fontWeight: 400,
+                      letterSpacing: "-0.03em",
+                      lineHeight: 1,
+                      fontStyle: m.current ? "italic" : "normal",
+                    }}
+                  >
+                    {m.year}
+                  </span>
+                  <p
+                    className="mt-1 font-serif"
+                    style={{
+                      fontFamily: "var(--font-fraunces), Georgia, serif",
+                      fontStyle: "italic",
+                      fontSize: "1.1rem",
+                      color: "rgba(255,255,255,0.92)",
+                    }}
+                  >
+                    {m.label}
+                  </p>
+                  <ul
+                    className="font-mono text-[10px] uppercase tracking-[0.20em]"
+                    style={{ color: "rgba(255,255,255,0.55)" }}
+                  >
+                    {m.meta.map((line) => (
+                      <li key={line}>{line}</li>
+                    ))}
+                  </ul>
+                </div>
+              </li>
+            ))}
+          </ol>
         </div>
       </div>
     </section>

@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProjectAccentSection } from "@/components/ProjectAccentSection";
+import { ProjectHeroCard } from "@/components/ProjectHeroCard";
 import { Stamp } from "@/components/editorial/Stamp";
 import { SectionMast } from "@/components/editorial/SectionMast";
 import { getAllSlugs, getProject, projects } from "@/lib/projects";
@@ -123,25 +124,11 @@ export default async function ProjectPage({
 
       {/* === HERO IMAGE === */}
       <section className="px-6 pb-20 md:px-10 lg:px-16">
-        <div
-          className="relative overflow-hidden"
-          style={{
-            border: "2px solid var(--color-fg)",
-            background: "var(--color-bg-overlay)",
-            boxShadow: "12px 12px 0 0 var(--project-accent)",
-          }}
-        >
-          <div className="relative aspect-[16/10] w-full">
-            <Image
-              src={project.hero}
-              alt={project.heroAlt}
-              fill
-              sizes="(min-width: 1280px) 1200px, 100vw"
-              className={heroObjectClass}
-              priority
-            />
-          </div>
-        </div>
+        <ProjectHeroCard
+          src={project.hero}
+          alt={project.heroAlt}
+          objectClass={heroObjectClass}
+        />
         <p
           className="mt-3 font-serif italic"
           style={{ color: "var(--color-fg-muted)", fontSize: 13 }}

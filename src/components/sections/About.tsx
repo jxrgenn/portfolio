@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SceneSection } from "@/components/scene/SceneSection";
 import { GlassPane } from "@/components/scene/GlassPane";
 import { SplitText } from "@/components/scene/SplitText";
+import { TwoTracks } from "@/components/scene/TwoTracks";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -60,7 +61,12 @@ export function About() {
   }, []);
 
   return (
-    <SceneSection id="about" backdrop="/scenes/backdrops/about.jpg" tone="warm">
+    <SceneSection
+      id="about"
+      backdrop="/scenes/backdrops/about.jpg"
+      tone="warm"
+      className="scene-bleed-top"
+    >
       <div ref={wrapRef} className="contents">
         <p
           data-about-eyebrow
@@ -95,12 +101,16 @@ export function About() {
           className="mt-5 max-w-2xl font-sans text-lg leading-relaxed md:text-xl"
           style={{ color: "var(--scene-ink-muted)", fontWeight: 300 }}
         >
-          22, full-stack engineer. AI-native products and Microsoft Business
+          23, full-stack engineer. AI-native products and Microsoft Business
           Central / NAV migrations — end to end. Tirana → Kiel, freelance since
           April 2024.
         </p>
 
-        <div className="mt-16 grid flex-1 grid-cols-1 items-center gap-12 md:grid-cols-[400px_1fr] md:gap-20">
+        <div data-about-tracks className="mt-12 mb-4 max-w-5xl">
+          <TwoTracks />
+        </div>
+
+        <div className="mt-12 grid flex-1 grid-cols-1 items-center gap-12 md:grid-cols-[400px_1fr] md:gap-20">
           <div data-about-portrait>
             <div
               className="relative w-full overflow-hidden"
