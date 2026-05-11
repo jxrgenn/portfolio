@@ -1097,7 +1097,7 @@ export const projects = [
     order: 10,
     title: "advance.al",
     tagline:
-      "Albania's job marketplace — embedding-ranked matching, three-sided platform.",
+      "Albania's job marketplace — AI CV generation, AI profile-fill, embedding-ranked matching, auto-notify on match.",
     year: 2026,
     status: "shipped",
     hero: "/captures/advance_al/home.png",
@@ -1105,9 +1105,9 @@ export const projects = [
       "advance.al home page — Albania's job marketplace, search bar over a hero",
     stack: ["React 18 + Vite", "Express + MongoDB", "OpenAI embeddings"],
     pitch:
-      "advance.al is Albania's job marketplace — three sides (jobseekers, employers, admins) on one platform. Matching isn't just keyword filters: jobs and candidates are embedded with text-embedding-3-small, then ranked by cosine similarity with a hard category-match boost so old internships don't drown out current skills. Bilingual SQ/EN, GDPR-aware, 288 backend tests + Playwright walker reports across every role.",
+      "advance.al is Albania's job marketplace, with the AI layer doing real work end-to-end: jobseekers upload any CV (PDF or DOCX) and OpenAI structured-extraction auto-fills their profile; the platform also generates a branded Word-document CV in Albanian or English from that structured data. Every job and every candidate gets vector-embedded with text-embedding-3-small, then ranked with cosine similarity + a 7-dimension match score (title, skills, experience, location, education, salary, availability) + a bilingual category boost so old internships don't crowd current skills. Every new posting fans out automatic bilingual notifications via Resend to every matched user, with UTM tracking and one-click unsubscribe.",
     essay:
-      "advance.al is Albania's job marketplace and the only project here built with paying users from day one — three sides on a single platform: jobseekers, employers, and admins, each with their own dashboard. The piece I'm proudest of is the matching layer: every job description and every candidate profile gets embedded with `text-embedding-3-small` (1536 dims) and ranked by cosine similarity, but pure semantic similarity ranks an AI Engineer's old banking internship too high, so I added a language-agnostic domain inferrer that recognises both English and Albanian skill tokens (zhvillues, programues, financë) and applies a hard category-match boost on top — without it, banking jobs flooded the top of every senior dev's list. The backend is Express 5 + MongoDB 8 with a Redis rate-limited OpenAI client, embedding-worker queues, an alert system that emails me when embedding drift exceeds a threshold, and 288 Jest tests under a strict philosophy that bans permissive matchers and tautological assertions. The frontend is React 18 + Vite + Mantine + shadcn/ui with bilingual SQ/EN copy, four-step employer onboarding wizards, and Playwright \"walker\" tests that screenshot every page across desktop + iPhone 12 + Pixel 5 for every release. The admin side is a real ops console — business control panel, bulk notifications, configuration audit log, GDPR data retention crons that auto-purge soft-deleted accounts after 30 days — because the platform handles real CVs, real applications, and real money. I love that this one is messy, multi-tenant, and live: I learned how a marketplace actually works by running one.",
+      "advance.al is Albania's job marketplace and the only project here with paying users from day one — three sides on one platform (jobseekers, employers, admins), each with their own dashboard. The AI layer does real work end-to-end: a jobseeker uploads any CV (PDF or DOCX), `pdfjs-dist` + `mammoth` extract the text, and OpenAI structured-extraction auto-fills the entire profile — skills, work history, education, contact, summary — so they're match-ready without typing a thing. The platform also generates a branded Word-document CV in Albanian or English from that same structured data using the `docx` library, with consistent colors and typography across the export. Matching combines two signals: every job and every profile gets vector-embedded with `text-embedding-3-small` (1536 dims) for semantic ranking, and on top of cosine similarity sits a 7-dimension explainable score (title, skills, experience, location, education, salary, availability) — so the employer dashboard can show *why* a candidate scored 78 and not just the number. The third AI hook is the automatic notification fanout: every time an employer publishes a new job, an embedding worker recomputes matches and Resend sends a bilingual job-alert email to every qualified user with UTM tracking and a one-click unsubscribe token. The whole backend is Express 5 + MongoDB 8 with a Redis rate-limited OpenAI client, an embedding queue worker on its own heartbeat process, an alert system that emails me when drift crosses a threshold, GDPR retention crons that purge soft-deleted accounts after 30 days, and 288 Jest tests under a strict philosophy that bans permissive matchers and tautological assertions. The frontend is React 18 + Vite + Mantine + shadcn/ui, fully bilingual SQ/EN, with Playwright \"walker\" tests that screenshot every public + jobseeker + employer + admin route across desktop + iPhone 12 + Pixel 5 for every release. I learned how a marketplace actually works by running one.",
     shots: [
       {
         src: "/captures/advance_al/jobs_listing.png",
@@ -1198,9 +1198,11 @@ export const projects = [
       ],
       AI: [
         "OpenAI text-embedding-3-small (1536d)",
-        "Cosine similarity + category-match boost",
-        "Domain inference (SQ + EN tokens)",
-        "OpenAI structured extraction for CV parsing",
+        "Cosine similarity + 7-dim explainable match score",
+        "OpenAI structured extraction for CV → profile auto-fill",
+        "docx library — branded CV generation (SQ + EN)",
+        "Bilingual domain inference (SQ + EN tokens)",
+        "Embedding worker process + match-and-notify fanout",
       ],
       Infra: [
         "Cloudinary",
@@ -1212,36 +1214,36 @@ export const projects = [
     },
     underHood: [
       {
-        path: "backend/src/services/userEmbeddingService.js",
-        title: "language-agnostic domain boost",
-        body: "Pure cosine similarity ranked old banking internships too high for AI engineers. Solution: a domain inferrer that recognises both English (developer, finance, sales) and Albanian (zhvillues, programues, financë, shitje) skill tokens and applies a hard category-match boost on top. Bilingual products need bilingual heuristics — embeddings alone aren't enough.",
+        path: "backend/src/services/cvParsingService.js + cvDocumentService.js",
+        title: "AI profile-fill in, branded CV out",
+        body: "Upload any CV (PDF or DOCX) → pdfjs-dist + mammoth extract the text → OpenAI structured-extraction auto-fills the whole profile (skills, work, education, summary). Same structured data drives a docx-generated branded Word CV in Albanian or English, with consistent colors and typography. CV in, profile populated; profile in, polished CV out — the AI does the boring part both directions.",
       },
       {
-        path: "backend/src/services/alertService.js",
-        title: "embedding-drift email alerts",
-        body: "The matching layer is load-bearing, so when the embedding queue stalls or drift crosses a threshold the system emails me directly. Failure modes in semantic search are silent by default — I refused to let a stale embedding pipeline ship bad matches without making noise.",
+        path: "backend/src/services/userEmbeddingService.js + candidateMatching.js",
+        title: "embeddings + 7-dim explainable match score",
+        body: "Pure cosine similarity ranked old banking internships too high for senior devs. So matching combines two signals: text-embedding-3-small for semantic ranking, plus a hand-built 7-dimension breakdown (title, skills, experience, location, education, salary, availability) that scores 0-100 with each component shown to the employer. A bilingual domain inferrer recognises both English (developer, finance) and Albanian (zhvillues, programues, financë) skill tokens to apply a hard category-match boost — bilingual products need bilingual heuristics.",
       },
       {
-        path: "frontend/walker-screenshots/",
-        title: "Playwright walker — every page × three viewports",
-        body: "A walker test suite steps through every public + jobseeker + employer + admin route on desktop Chromium, iPhone 12, and Pixel 5, dropping numbered screenshots into a report directory. Catches visual regressions across the whole surface in one CI run — and doubles as the screenshot pipeline for marketing.",
+        path: "backend/src/workers/embeddingWorker.js + lib/notificationService.js",
+        title: "automatic match-and-notify fanout",
+        body: "When an employer publishes a job, a dedicated worker process recomputes match scores and fans out a bilingual job-alert email via Resend to every qualified user — with UTM tracking, escapeHtml on every user-supplied field, and a one-click unsubscribe token. An alertService emails me directly when the embedding queue stalls or drift crosses a threshold, because semantic search fails silently by default.",
       },
     ],
     metrics: [
       { value: "288", label: "backend Jest tests across 18 route modules" },
       { value: "20", label: "Mongoose models (Application, Job, User, BusinessCampaign, etc.)" },
       { value: "108", label: ".tsx files in the frontend" },
-      { value: "18", label: "REST route modules in backend/src/routes/" },
+      { value: "18", label: "REST route modules (incl. dedicated /cv and /matching)" },
       { value: "1536", label: "OpenAI embedding dims (text-embedding-3-small)" },
-      { value: "3 × 6", label: "Playwright walker reports — 3 viewports × 6 flows" },
-      { value: "SQ + EN", label: "fully bilingual UI and emails" },
+      { value: "7", label: "match-score dimensions (title, skills, experience, location, education, salary, availability)" },
+      { value: "SQ + EN", label: "fully bilingual — UI, emails, generated CVs" },
     ],
     timeline:
       "Took over and rebuilt through 2026 H1; live on advance.al with paying employers and a steady jobseeker feed. Currently shipping continuously.",
     role:
       "Solo across backend, frontend, embedding pipeline, admin tooling, deploy.",
     liftQuote:
-      "\"Bilingual products need bilingual heuristics — pure embeddings ranked banking internships too high until the domain boost landed.\"",
+      "\"CV in, profile populated; profile in, polished CV out — the AI does the boring part both directions, and every new job fans out matched bilingual alerts automatically.\"",
     links: [
       { label: "Live site", href: "https://advance.al" },
       { label: "Code", href: "private — available on request" },
