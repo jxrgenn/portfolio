@@ -96,16 +96,23 @@ function ProjectScene({
         scrollTrigger: { trigger: root, start: "top 60%", once: true },
       });
 
-      gsap.to("[data-scene-composite]", {
-        yPercent: -12,
-        ease: "none",
-        scrollTrigger: { trigger: root, start: "top bottom", end: "bottom top", scrub: 0.6 },
-      });
-      gsap.to("[data-scene-headline]", {
-        yPercent: -18,
-        ease: "none",
-        scrollTrigger: { trigger: root, start: "top bottom", end: "bottom top", scrub: 0.6 },
-      });
+      // Parallax scrub disabled on touch — Lenis + scrub-driven yPercent
+      // double-smooths and feels jittery. Desktop with a real pointer keeps it.
+      const supportsHover =
+        typeof window !== "undefined" &&
+        window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+      if (supportsHover) {
+        gsap.to("[data-scene-composite]", {
+          yPercent: -12,
+          ease: "none",
+          scrollTrigger: { trigger: root, start: "top bottom", end: "bottom top", scrub: 0.6 },
+        });
+        gsap.to("[data-scene-headline]", {
+          yPercent: -18,
+          ease: "none",
+          scrollTrigger: { trigger: root, start: "top bottom", end: "bottom top", scrub: 0.6 },
+        });
+      }
     }, root);
     return () => ctx.revert();
   }, []);
@@ -121,6 +128,7 @@ function ProjectScene({
       tone={scene.tone}
       accent={scene.slug}
       priority={index === 1}
+      compact
       style={{ ["--scene-glow-color" as string]: scene.glow }}
     >
       <div

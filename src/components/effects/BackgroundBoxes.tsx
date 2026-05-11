@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
 
 const COLORS = [
   "rgba(34, 211, 238, 0.14)",
@@ -12,6 +12,8 @@ const COLORS = [
   "rgba(251, 113, 133, 0.14)",
 ];
 
+type Box = { row: number; col: number; color: string; delay: number };
+
 export function BackgroundBoxes({
   rows = 12,
   cols = 18,
@@ -21,11 +23,13 @@ export function BackgroundBoxes({
   cols?: number;
   className?: string;
 }) {
-  const boxes = useMemo(() => {
-    const arr: { row: number; col: number; color: string; delay: number }[] = [];
+  // Generate randomized boxes after mount so SSR + client hydration agree.
+  const [boxes, setBoxes] = useState<Box[]>([]);
+  useEffect(() => {
+    const arr: Box[] = [];
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
-        if (Math.random() > 0.18) continue; // sparse
+        if (Math.random() > 0.18) continue;
         arr.push({
           row: r,
           col: c,
@@ -34,7 +38,7 @@ export function BackgroundBoxes({
         });
       }
     }
-    return arr;
+    setBoxes(arr);
   }, [rows, cols]);
 
   return (

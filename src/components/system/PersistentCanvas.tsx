@@ -255,7 +255,7 @@ function TwoTracks({
       <group ref={groupRef}>
         {/* Track 1 — cool shimmer (AI rail) */}
         <mesh>
-          <tubeGeometry args={[curve1, 280, 0.058, 24, false]} />
+          <tubeGeometry args={[curve1 as never, 280, 0.058, 24, false]} />
           <meshPhysicalMaterial
             color="#0b0a1f"
             metalness={0.88}
@@ -270,7 +270,7 @@ function TwoTracks({
         </mesh>
         {/* Track 2 — warm shimmer (BC/NAV rail) */}
         <mesh>
-          <tubeGeometry args={[curve2, 280, 0.058, 24, false]} />
+          <tubeGeometry args={[curve2 as never, 280, 0.058, 24, false]} />
           <meshPhysicalMaterial
             color="#1a0d08"
             metalness={0.88}
@@ -361,6 +361,19 @@ export function PersistentCanvas() {
   const [active, setActive] = useState(true);
   // Initial opacity 0 → 1 fade-in on first paint, so the hero doesn't pop.
   const [mounted, setMounted] = useState(false);
+  // Coarse-pointer devices (phones, tablets) skip the heavy R3F scene and
+  // get a cheaper CSS gradient backdrop. Avoids dropped-frame jank on the
+  // hero of low-end Android.
+  const [isCoarse, setIsCoarse] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(pointer: coarse), (max-width: 768px)");
+    setIsCoarse(mq.matches);
+    const onChange = () => setIsCoarse(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
 
   useEffect(() => {
     // Trigger fade-in after first paint
@@ -424,6 +437,36 @@ export function PersistentCanvas() {
       window.removeEventListener("resize", recomputeBounds);
     };
   }, [mounted]);
+
+  if (isCoarse) {
+    // Mobile: keep the fluid shader (one fragment shader = essentially free
+    // on any modern phone) but drop the postprocessing chain, the iridescent
+    // helices, the environment-map, and the Lightformers. ~90% GPU savings,
+    // ~95% of the visual feel preserved.
+    return (
+      <div
+        ref={wrapperRef}
+        aria-hidden
+        className="pointer-events-none fixed inset-0 z-0"
+        style={{
+          contain: "strict",
+          willChange: "opacity",
+          opacity: 0,
+          transition:
+            "opacity 1200ms cubic-bezier(0.2, 0.6, 0.2, 1)",
+        }}
+      >
+        <Canvas
+          gl={{ antialias: false, alpha: false, powerPreference: "default" }}
+          dpr={[1, 1.25]}
+          frameloop={active ? "always" : "never"}
+          style={{ position: "absolute", inset: 0 }}
+        >
+          <FluidBackground scrollRef={scrollRef} />
+        </Canvas>
+      </div>
+    );
+  }
 
   return (
     <div

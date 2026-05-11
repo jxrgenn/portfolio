@@ -37,15 +37,59 @@ const FEATURED = SLUGS.map((slug) => {
 const TOTAL = FEATURED.length;
 const TX = String(TOTAL).padStart(2, "0");
 
+// Direction-aware metadata variants. dir = 1 forward, -1 backward.
+// Forward: new enters from below, old exits up. Backward: flipped.
+const CAROUSEL_META_VARIANTS = {
+  enter: (dir: number) => ({
+    opacity: 0,
+    y: dir > 0 ? 14 : -14,
+  }),
+  center: { opacity: 1, y: 0 },
+  exit: (dir: number) => ({
+    opacity: 0,
+    y: dir > 0 ? -10 : 10,
+  }),
+};
+
 export function ProjectCarousel3D() {
-  const [mode, setMode] = useState<"loading" | "carousel" | "fallback">("loading");
+  const [mode, setMode] = useState<"loading" | "carousel" | "fallback">(
+    "loading",
+  );
 
   useEffect(() => {
-    const reduce =
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const small = typeof window !== "undefined" && window.innerWidth < 768;
-    setMode(reduce || small ? "fallback" : "carousel");
+    if (typeof window === "undefined") return;
+
+    const reduceQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    const detect = () => {
+      const reduce = reduceQuery.matches;
+      const small = window.innerWidth < 768;
+      setMode((prev) => {
+        const next = reduce || small ? "fallback" : "carousel";
+        return prev === next ? prev : next;
+      });
+    };
+
+    detect();
+
+    // Re-detect on viewport / motion-preference change. resize is throttled
+    // to one rAF so dragging the window doesn't fire detect() per pixel.
+    let raf: number | null = null;
+    const onResize = () => {
+      if (raf !== null) return;
+      raf = window.requestAnimationFrame(() => {
+        detect();
+        raf = null;
+      });
+    };
+    reduceQuery.addEventListener("change", detect);
+    window.addEventListener("resize", onResize);
+
+    return () => {
+      if (raf !== null) window.cancelAnimationFrame(raf);
+      reduceQuery.removeEventListener("change", detect);
+      window.removeEventListener("resize", onResize);
+    };
   }, []);
 
   if (mode === "fallback") return <SelectedWorkFallback />;
@@ -59,7 +103,17 @@ function Carousel() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const canvasWrapRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef(0);
-  const [activeIndex, setActiveIndex] = useState(0);
+  // Latest scroll direction (1 forward, -1 backward) — kept in a ref so
+  // ScrollTrigger.onUpdate can write it every frame without re-rendering.
+  const dirRef = useRef<1 | -1>(1);
+  // Single state captured ATOMICALLY at the moment activeIndex changes — so
+  // AnimatePresence sees `dir` and `index` in the same render pass.
+  const [activeState, setActiveState] = useState<{
+    index: number;
+    dir: 1 | -1;
+  }>({ index: 0, dir: 1 });
+  const activeIndex = activeState.index;
+  const activeDir = activeState.dir;
   const [active, setActive] = useState(false);
 
   useEffect(() => {
@@ -68,20 +122,25 @@ function Carousel() {
       trigger: sectionRef.current,
       start: "top top",
       end: "bottom bottom",
-      scrub: 0.25,
+      scrub: 0.15,
       onUpdate: (self) => {
         progressRef.current = self.progress;
+        if (self.direction === 1 || self.direction === -1) {
+          dirRef.current = self.direction;
+        }
         const idx = Math.min(
           TOTAL - 1,
           Math.max(0, Math.round(self.progress * (TOTAL - 1))),
         );
-        setActiveIndex((prev) => (prev !== idx ? idx : prev));
+        setActiveState((prev) =>
+          prev.index === idx ? prev : { index: idx, dir: dirRef.current },
+        );
       },
       onToggle: (self) => setActive(self.isActive),
     });
 
     // Fade canvas in once section is in view (smooth entry, no pop).
-    const fadeTrigger = ScrollTrigger.create({
+    const fadeInTrigger = ScrollTrigger.create({
       trigger: sectionRef.current,
       start: "top bottom",
       end: "top 50%",
@@ -92,9 +151,24 @@ function Carousel() {
         }
       },
     });
+    // Fade canvas out as section exits — prevents the abrupt transition into
+    // the next section that came across as "weird scrolling".
+    const fadeOutTrigger = ScrollTrigger.create({
+      trigger: sectionRef.current,
+      start: "bottom 80%",
+      end: "bottom 30%",
+      scrub: 0.4,
+      onUpdate: (self) => {
+        if (canvasWrapRef.current) {
+          const o = 1 - self.progress;
+          canvasWrapRef.current.style.opacity = String(o);
+        }
+      },
+    });
     return () => {
       trigger.kill();
-      fadeTrigger.kill();
+      fadeInTrigger.kill();
+      fadeOutTrigger.kill();
     };
   }, []);
 
@@ -107,7 +181,7 @@ function Carousel() {
       id="work"
       data-accent={active_.slug}
       className="relative bg-[#070612]"
-      style={{ height: "540vh" }}
+      style={{ height: "480vh" }}
     >
       {/* Backwards-compat anchors so /#work-keepitup etc. still work */}
       {FEATURED.map((p) => (
@@ -190,12 +264,14 @@ function Carousel() {
         {/* Project metadata overlay (left rail) */}
         <div className="pointer-events-none absolute inset-0 z-10 flex items-center px-6 md:px-12 lg:px-20">
           <div className="pointer-events-auto w-full max-w-sm">
-            <AnimatePresence mode="wait">
+            <AnimatePresence mode="wait" custom={activeDir}>
               <motion.div
                 key={active_.slug}
-                initial={{ opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
+                custom={activeDir}
+                variants={CAROUSEL_META_VARIANTS}
+                initial="enter"
+                animate="center"
+                exit="exit"
                 transition={{ duration: 0.36, ease: [0.2, 0.6, 0.2, 1] }}
               >
                 <h2
@@ -245,24 +321,25 @@ function Carousel() {
                 </p>
 
                 <p
-                  className="mt-5 font-sans text-base leading-relaxed md:text-lg"
-                  style={{ color: "rgba(255,255,255,0.78)", fontWeight: 300 }}
+                  className="mt-6 font-serif"
+                  style={{
+                    fontFamily: "var(--font-fraunces), Georgia, serif",
+                    color: "rgba(255,255,255,0.94)",
+                    fontStyle: "italic",
+                    fontWeight: 300,
+                    fontSize: "clamp(1.25rem, 1.95vw, 1.65rem)",
+                    lineHeight: 1.22,
+                    letterSpacing: "-0.012em",
+                  }}
                 >
                   {active_.tagline}
                 </p>
 
-                <p
-                  className="mt-3 font-sans text-sm leading-relaxed"
-                  style={{ color: "rgba(255,255,255,0.55)", fontWeight: 300 }}
-                >
-                  {active_.pitch}
-                </p>
-
                 <div
-                  className="mt-5 flex flex-wrap gap-x-3 gap-y-1 font-mono text-[10px] uppercase tracking-[0.18em]"
+                  className="mt-6 flex flex-wrap gap-x-3 gap-y-1 font-mono text-[10px] uppercase tracking-[0.18em]"
                   style={{ color: "rgba(255,255,255,0.55)" }}
                 >
-                  {active_.stack.map((s) => (
+                  {active_.stack.slice(0, 6).map((s) => (
                     <span key={s}>{s}</span>
                   ))}
                 </div>

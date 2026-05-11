@@ -49,24 +49,32 @@ export function Hero() {
         onUpdate: applyAxes,
       });
 
-      onPointerMove = (e: PointerEvent) => {
-        if (!headlineRef.current) return;
-        const rect = headlineRef.current.getBoundingClientRect();
-        const cx = rect.left + rect.width / 2;
-        const cy = rect.top + rect.height / 2;
-        const dx = (e.clientX - cx) / rect.width;
-        const dy = (e.clientY - cy) / rect.height;
-        const d = Math.min(1, Math.hypot(dx, dy));
-        const proximity = 1 - d;
-        const soft = Math.max(0, proximity * 28);
-        const wonk = Math.max(0, proximity * 0.18);
-        headlineRef.current.style.fontVariationSettings = `"opsz" 144, "SOFT" ${soft.toFixed(2)}, "WONK" ${wonk.toFixed(3)}`;
-      };
-      bindTimer = window.setTimeout(() => {
-        if (onPointerMove) {
-          window.addEventListener("pointermove", onPointerMove, { passive: true });
-        }
-      }, 2200);
+      const supportsHover =
+        typeof window !== "undefined" &&
+        window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+      if (supportsHover) {
+        onPointerMove = (e: PointerEvent) => {
+          if (!headlineRef.current) return;
+          const rect = headlineRef.current.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
+          const dx = (e.clientX - cx) / rect.width;
+          const dy = (e.clientY - cy) / rect.height;
+          const d = Math.min(1, Math.hypot(dx, dy));
+          const proximity = 1 - d;
+          const soft = Math.max(0, proximity * 28);
+          const wonk = Math.max(0, proximity * 0.18);
+          headlineRef.current.style.fontVariationSettings = `"opsz" 144, "SOFT" ${soft.toFixed(2)}, "WONK" ${wonk.toFixed(3)}`;
+        };
+        bindTimer = window.setTimeout(() => {
+          if (onPointerMove) {
+            window.addEventListener("pointermove", onPointerMove, {
+              passive: true,
+            });
+          }
+        }, 2200);
+      }
 
       gsap.to("[data-hero-headline]", {
         yPercent: -22,
@@ -101,7 +109,7 @@ export function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative flex min-h-svh items-end overflow-hidden px-6 pt-32 pb-16 md:px-10 lg:px-16"
+      className="relative flex min-h-svh items-end overflow-hidden px-6 pt-24 pb-12 md:px-10 md:pt-32 md:pb-16 lg:px-16"
     >
       {/* Scroll cue — bottom-right, fades out as soon as the user scrolls */}
       <div
@@ -134,7 +142,7 @@ export function Hero() {
             }}
             aria-hidden
           />
-          Kiel, Germany / Available 2026
+          Kiel, Germany · Open to roles
         </p>
 
         <h1
@@ -175,26 +183,22 @@ export function Hero() {
           <div ref={subRef}>
             <p
               className="max-w-xl font-sans text-base leading-relaxed md:text-lg"
-              style={{ color: "var(--color-fg)", fontWeight: 300, opacity: 0.85 }}
+              style={{ color: "var(--color-fg)", fontWeight: 300, opacity: 0.88 }}
             >
-              Solo full-stack engineer. AI-native products + Microsoft Business
-              Central / NAV migrations, end-to-end — from agent runtime to React
-              frontend to Postgres to deploy. Originally Tirana, currently Kiel.
+              Solo full-stack engineer, AI-focused. Builds end to end — agent
+              runtimes, React Native, Postgres, deploy. Microsoft Business
+              Central on the other rail.
             </p>
             <ul
               className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-[10px] uppercase tracking-[0.22em]"
               style={{ color: "var(--color-fg-muted)" }}
             >
               <li>
-                <span style={{ color: "var(--color-fg)" }}>8</span> shipped
-              </li>
-              <li aria-hidden style={{ color: "var(--color-accent)" }}>·</li>
-              <li>
                 <span style={{ color: "var(--color-fg)" }}>2</span> tracks
               </li>
               <li aria-hidden style={{ color: "var(--color-accent)" }}>·</li>
               <li>
-                <span style={{ color: "var(--color-fg)" }}>2024 → 2026</span>
+                <span style={{ color: "var(--color-fg)" }}>2021 → now</span>
               </li>
               <li aria-hidden style={{ color: "var(--color-accent)" }}>·</li>
               <li>solo</li>

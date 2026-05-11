@@ -58,7 +58,7 @@ function NodeMesh({
   });
   return (
     <Float speed={1.2} rotationIntensity={0.4} floatIntensity={0.6}>
-      <mesh position={position}>
+      <mesh position={[position.x, position.y, position.z]}>
         <icosahedronGeometry args={[size, 1]} />
         <meshStandardMaterial
           ref={mat}

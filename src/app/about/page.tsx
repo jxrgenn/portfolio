@@ -12,7 +12,8 @@ import { IdentityMark } from "@/components/IdentityMark";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Jurgen Halili — Tirana-based full-stack engineer with AI focus. MERN, Next.js, Anthropic + OpenAI + Gemini SDKs, Microsoft Business Central / AL.",
+    "Jurgen Halili — Kiel-based full-stack engineer with AI focus. MERN, Next.js, Anthropic + OpenAI + Gemini SDKs, Microsoft Business Central / AL.",
+  alternates: { canonical: "/about" },
 };
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://jurgenhalili.dev";
@@ -20,27 +21,79 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://jurgenhalili.dev";
 const personJsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",
+  "@id": `${SITE_URL}/about#person`,
   name: "Jurgen Halili",
+  givenName: "Jurgen",
+  familyName: "Halili",
   url: SITE_URL,
+  mainEntityOfPage: `${SITE_URL}/about`,
   email: "mailto:jurgenhalili1142@gmail.com",
   telephone: "+355685833333",
   jobTitle: "Full-stack engineer with AI focus",
+  description:
+    "Solo full-stack engineer building AI-driven products end-to-end — agent runtimes, multi-LLM pipelines, React Native, Postgres, deploy. Microsoft Dynamics 365 / Business Central on the other rail.",
+  worksFor: {
+    "@type": "Organization",
+    name: "Independent / Freelance",
+  },
   address: {
     "@type": "PostalAddress",
-    addressLocality: "Tirana",
-    addressCountry: "AL",
+    addressLocality: "Kiel",
+    addressRegion: "Schleswig-Holstein",
+    addressCountry: "DE",
   },
+  nationality: { "@type": "Country", name: "Albania" },
   alumniOf: [
     { "@type": "EducationalOrganization", name: "Epoka University" },
     { "@type": "EducationalOrganization", name: "Ismail Qemali High School" },
     { "@type": "EducationalOrganization", name: "CASA Bremen Sprachschule" },
   ],
   knowsLanguage: ["sq", "en", "de"],
+  knowsAbout: [
+    "Full-stack engineering",
+    "AI engineering",
+    "TypeScript",
+    "React",
+    "Next.js",
+    "React Native",
+    "Node.js",
+    "Python",
+    "PostgreSQL",
+    "Anthropic Claude SDK",
+    "OpenAI SDK",
+    "Google Gemini SDK",
+    "Model Context Protocol",
+    "Agent runtimes",
+    "Multi-LLM pipelines",
+    "Microsoft Dynamics 365",
+    "Microsoft Business Central",
+    "AL language",
+  ],
+  hasOccupation: {
+    "@type": "Occupation",
+    name: "Software Engineer",
+    occupationLocation: { "@type": "City", name: "Kiel" },
+    skills:
+      "TypeScript, React, Next.js, React Native, Node.js, Anthropic SDK, OpenAI SDK, Microsoft Business Central",
+  },
+  seeks: {
+    "@type": "Demand",
+    name: "Full-stack engineering roles with AI focus",
+  },
   sameAs: ["https://www.linkedin.com/in/jurgen-halili-b227a6255"],
 };
 
+const profilePageJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  url: `${SITE_URL}/about`,
+  name: "About — Jurgen Halili",
+  mainEntity: { "@id": `${SITE_URL}/about#person` },
+  inLanguage: "en",
+};
+
 const lifeStats = [
-  { value: "9", label: "production projects shipped" },
+  { value: "10", label: "production projects" },
   { value: "23", label: "personal projects total" },
   { value: "5", label: "years engineering" },
   { value: "3", label: "languages spoken" },
@@ -52,9 +105,9 @@ const timeline = [
   {
     period: "Apr 2024 – Now",
     org: "Freelance Software Engineer",
-    location: "Remote · Tirana",
+    location: "Remote · Kiel",
     summary:
-      "Two parallel tracks. Track 1 — AI-driven full-stack: 9 production projects across Next.js 16, RN + Expo, multi-provider LLM SDKs, agent runtimes, AI content pipelines, deploys to Vercel + Turso + Render. Track 2 — Microsoft Dynamics 365 / Business Central: AL extensions, REST/JSON/OAuth2 integrations, NAV → BC migrations, automated AL testing.",
+      "Two parallel tracks. Track 1 — AI-driven full-stack: 10 production projects across Next.js 16, RN + Expo, multi-provider LLM SDKs, agent runtimes, AI content pipelines, deploys to Vercel + Turso + Render. Track 2 — Microsoft Dynamics 365 / Business Central: AL extensions, REST/JSON/OAuth2 integrations, NAV → BC migrations, automated AL testing.",
     type: "work",
   },
   {
@@ -222,6 +275,10 @@ export default function AboutPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(profilePageJsonLd) }}
+      />
 
       {/* HERO with identity mark + bio */}
       <section className="relative isolate overflow-hidden border-b border-[var(--color-border)] px-6 pt-32 pb-24 md:px-10 md:pt-48 lg:px-16">
@@ -243,12 +300,12 @@ export default function AboutPage() {
               <TextGenerateEffect text="Hi, I'm Jurgen — full-stack engineer with AI focus." />
             </h1>
             <p className="mt-8 max-w-2xl text-lg leading-relaxed text-[var(--color-fg-muted)]">
-              I&rsquo;m based in Tirana, Albania. I build AI-driven full-stack
+              I&rsquo;m based in Kiel, Germany. I build AI-driven full-stack
               products end-to-end — backends, web, native apps, and the agentic
               systems that connect them.
             </p>
             <p className="mt-4 max-w-2xl text-base leading-relaxed text-[var(--color-fg-subtle)]">
-              Across the nine projects on this site, the pattern is the same: I
+              Across the ten projects on this site, the pattern is the same: I
               work solo from problem to production, treat AI as a first-class
               layer of the stack rather than an add-on, and keep shipping until
               the thing is real. Day job is freelance — MERN + Next.js for SMBs,
@@ -346,7 +403,7 @@ export default function AboutPage() {
                     <a
                       href={cert.href}
                       target="_blank"
-                      rel="noreferrer"
+                      rel="noopener noreferrer"
                       className="mt-4 inline-flex items-center gap-1 font-mono text-xs text-[var(--color-accent)] underline decoration-dotted underline-offset-4 hover:opacity-80"
                     >
                       Verify <ExternalLink className="size-3" />

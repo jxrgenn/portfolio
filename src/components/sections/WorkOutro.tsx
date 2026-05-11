@@ -38,7 +38,7 @@ const MILESTONES: readonly Milestone[] = [
   {
     year: "2025",
     label: "Experience.",
-    meta: ["NextGen AI", "AI engineering · Tirana"],
+    meta: ["NextGen AI", "AI engineering"],
     accent: "#ff9272",
   },
   {
@@ -133,7 +133,7 @@ export function WorkOutro() {
     <section
       ref={wrapRef}
       id="path"
-      className="relative bg-[#070612] px-6 py-32 md:px-10 md:py-36 lg:px-16"
+      className="relative bg-[#070612] px-6 py-20 md:px-10 md:py-36 lg:px-16"
     >
       {/* Top hairline */}
       <div
@@ -148,15 +148,11 @@ export function WorkOutro() {
       <div className="relative mx-auto w-full max-w-6xl">
         <p
           data-path-eyebrow
-          className="font-serif italic"
-          style={{
-            color: "rgba(255,255,255,0.40)",
-            fontFamily: "var(--font-fraunces), Georgia, serif",
-            fontSize: 13,
-            letterSpacing: "0.02em",
-          }}
+          className="font-mono text-[11px] uppercase tracking-[0.32em]"
+          style={{ color: "rgba(255,255,255,0.50)" }}
         >
-          « path »
+          <span style={{ color: "rgba(255,255,255,0.85)" }}>02</span>
+          &nbsp; / &nbsp;Path
         </p>
 
         <h2
@@ -314,59 +310,105 @@ export function WorkOutro() {
             ))}
           </div>
 
-          {/* Mobile fallback — vertical, year + caption together */}
-          <ol className="flex flex-col gap-9 md:hidden">
-            {MILESTONES.map((m) => (
-              <li
-                key={`m-${m.year}`}
-                className="grid grid-cols-[auto_1fr] items-start gap-x-5"
-              >
-                <span
-                  aria-hidden
-                  className="mt-3 block h-2.5 w-2.5 shrink-0 rounded-full"
-                  style={{
-                    background: m.accent,
-                    boxShadow: `0 0 12px ${m.accent}`,
-                  }}
-                />
-                <div className="flex flex-col gap-1.5">
+          {/* Mobile timeline — compact two-column stop list. */}
+          <div className="relative md:hidden">
+            {/* Vertical iridescent spine. */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute w-[2px] rounded-full"
+              style={{
+                left: 9,
+                top: 10,
+                bottom: 10,
+                background:
+                  "linear-gradient(180deg, #8a85ff 0%, #7fcfff 28%, #ffd178 55%, #ff9272 80%, #c099ff 100%)",
+                boxShadow: "0 0 14px -2px rgba(160,130,255,0.50)",
+              }}
+            />
+
+            <ol className="flex flex-col gap-7">
+              {MILESTONES.map((m) => (
+                <li
+                  key={`m-${m.year}`}
+                  className="relative grid grid-cols-[20px_1fr] items-start gap-x-4"
+                >
+                  {/* Dot — sits on the spine. */}
                   <span
-                    className="font-serif"
-                    style={{
-                      fontFamily: "var(--font-fraunces), Georgia, serif",
-                      color: "rgba(255,255,255,0.95)",
-                      fontSize: "2rem",
-                      fontWeight: 400,
-                      letterSpacing: "-0.03em",
-                      lineHeight: 1,
-                      fontStyle: m.current ? "italic" : "normal",
-                    }}
+                    aria-hidden
+                    className="relative mt-[6px] grid h-5 w-5 shrink-0 place-items-center"
                   >
-                    {m.year}
+                    {m.current && (
+                      <span
+                        aria-hidden
+                        className="absolute inset-0 rounded-full"
+                        style={{
+                          background: `${m.accent}33`,
+                          animation:
+                            "status-pulse 2.2s ease-in-out infinite",
+                        }}
+                      />
+                    )}
+                    <span
+                      aria-hidden
+                      className="block h-3 w-3 rounded-full"
+                      style={{
+                        background: m.accent,
+                        boxShadow: `0 0 10px ${m.accent}, 0 0 0 2.5px #070612`,
+                      }}
+                    />
                   </span>
-                  <p
-                    className="mt-1 font-serif"
-                    style={{
-                      fontFamily: "var(--font-fraunces), Georgia, serif",
-                      fontStyle: "italic",
-                      fontSize: "1.1rem",
-                      color: "rgba(255,255,255,0.92)",
-                    }}
-                  >
-                    {m.label}
-                  </p>
-                  <ul
-                    className="font-mono text-[10px] uppercase tracking-[0.20em]"
-                    style={{ color: "rgba(255,255,255,0.55)" }}
-                  >
-                    {m.meta.map((line) => (
-                      <li key={line}>{line}</li>
-                    ))}
-                  </ul>
-                </div>
-              </li>
-            ))}
-          </ol>
+
+                  <div className="flex flex-col gap-1">
+                    {/* Year + label inline — wrap if narrow. */}
+                    <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
+                      <span
+                        className="font-serif tabular-nums leading-none"
+                        style={{
+                          fontFamily:
+                            "var(--font-fraunces), Georgia, serif",
+                          color: m.current
+                            ? "var(--color-fg)"
+                            : "rgba(255,255,255,0.95)",
+                          fontSize: "clamp(1.6rem, 7vw, 2rem)",
+                          fontWeight: 400,
+                          letterSpacing: "-0.035em",
+                          fontStyle: m.current ? "italic" : "normal",
+                          fontVariationSettings: m.current
+                            ? '"opsz" 144, "SOFT" 30, "WONK" 0.4'
+                            : '"opsz" 144, "SOFT" 0, "WONK" 0',
+                        }}
+                      >
+                        {m.year}
+                      </span>
+                      <span
+                        className="font-serif"
+                        style={{
+                          fontFamily:
+                            "var(--font-fraunces), Georgia, serif",
+                          fontStyle: "italic",
+                          fontSize: "clamp(1rem, 4.2vw, 1.15rem)",
+                          color: "rgba(255,255,255,0.90)",
+                          fontWeight: 400,
+                          letterSpacing: "-0.005em",
+                          lineHeight: 1.1,
+                        }}
+                      >
+                        {m.label}
+                      </span>
+                    </div>
+
+                    {/* Meta — single line with · separators. */}
+                    <p
+                      className="font-mono text-[10px] uppercase tracking-[0.20em]"
+                      style={{ color: "rgba(255,255,255,0.48)", lineHeight: 1.5 }}
+                    >
+                      {m.meta.join(" · ")}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
         </div>
       </div>
     </section>

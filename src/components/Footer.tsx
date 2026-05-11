@@ -32,7 +32,7 @@ export function Footer() {
             className="mt-1 font-serif italic"
             style={{ color: "var(--color-fg-muted)", fontSize: 14 }}
           >
-            Tirana, Albania — 2026
+            Kiel, Germany — 2026
           </p>
         </div>
 
@@ -53,23 +53,40 @@ export function Footer() {
               jurgenhalili1142@gmail.com
             </a>
           </li>
-          <li>
+          <li className="flex flex-wrap items-center gap-x-2 gap-y-1 md:justify-center">
             <a
               href="https://www.linkedin.com/in/jurgen-halili-b227a6255"
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className="transition-colors hover:text-[var(--color-accent)]"
             >
               linkedin
             </a>
-            <span style={{ color: "var(--color-fg-subtle)" }}> — </span>
+            <span aria-hidden style={{ color: "var(--color-fg-subtle)" }}>—</span>
             <a
-              href="https://github.com/jurgenhalili"
+              href="https://github.com/jxrgenn"
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className="transition-colors hover:text-[var(--color-accent)]"
             >
               github
+            </a>
+            <span aria-hidden style={{ color: "var(--color-fg-subtle)" }}>—</span>
+            <a
+              href="https://instagram.com/jxrgenn"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-colors hover:text-[var(--color-accent)]"
+            >
+              instagram
+            </a>
+            <span aria-hidden style={{ color: "var(--color-fg-subtle)" }}>—</span>
+            <a
+              href="/cv.pdf"
+              download
+              className="transition-colors hover:text-[var(--color-accent)]"
+            >
+              cv ↓
             </a>
           </li>
         </ul>

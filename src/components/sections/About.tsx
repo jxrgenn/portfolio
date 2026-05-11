@@ -6,7 +6,6 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SceneSection } from "@/components/scene/SceneSection";
 import { GlassPane } from "@/components/scene/GlassPane";
-import { SplitText } from "@/components/scene/SplitText";
 import { TwoTracks } from "@/components/scene/TwoTracks";
 
 if (typeof window !== "undefined") {
@@ -41,10 +40,10 @@ export function About() {
         ease: "power3.out",
         scrollTrigger: { trigger: root, start: "top 70%", once: true },
       });
-      gsap.from("[data-about-headline] [data-about-char]", {
-        yPercent: 110,
-        stagger: 0.10,
-        duration: 0.85,
+      gsap.from("[data-about-headline]", {
+        opacity: 0,
+        y: 22,
+        duration: 1.0,
         ease: "power3.out",
         scrollTrigger: { trigger: root, start: "top 65%", once: true },
       });
@@ -70,30 +69,29 @@ export function About() {
       <div ref={wrapRef} className="contents">
         <p
           data-about-eyebrow
-          className="font-mono text-[11px] uppercase tracking-[0.24em]"
+          className="font-mono text-[11px] uppercase tracking-[0.32em]"
           style={{ color: "var(--scene-ink-muted)" }}
         >
-          <span style={{ color: "var(--scene-ink)" }}>02</span>
+          <span style={{ color: "var(--scene-ink)" }}>04</span>
           &nbsp; / &nbsp;About
         </p>
 
         <h2
           data-about-headline
-          className="mt-6 overflow-hidden font-sans"
+          className="mt-6 font-serif"
           style={{
             color: "var(--scene-ink)",
-            fontFamily: "var(--font-sans)",
-            fontSize: "clamp(2.6rem, 7vw, 5.5rem)",
-            fontWeight: 500,
-            letterSpacing: "-0.035em",
-            lineHeight: 1.0,
+            fontFamily: "var(--font-fraunces), Georgia, serif",
+            fontSize: "clamp(2.8rem, 8vw, 6rem)",
+            fontWeight: 400,
+            letterSpacing: "-0.04em",
+            lineHeight: 0.94,
           }}
         >
-          <SplitText
-            text="Two tracks."
-            dataAttr="data-about-char"
-            className="block overflow-hidden"
-          />
+          Two{" "}
+          <span style={{ fontStyle: "italic", opacity: 0.6, fontWeight: 300 }}>
+            tracks.
+          </span>
         </h2>
 
         <p
@@ -158,6 +156,37 @@ export function About() {
                 ))}
               </ul>
             </GlassPane>
+
+            <div data-about-pane className="mt-7 flex flex-wrap items-center gap-x-4 gap-y-3">
+              <a
+                href="/cv.pdf"
+                download
+                data-cursor-text="Download"
+                className="inline-flex items-center gap-3 rounded-full px-5 py-3 font-sans text-sm font-medium transition-colors"
+                style={{
+                  background: "var(--scene-ink)",
+                  color: "var(--scene-bg, #fff8ee)",
+                }}
+              >
+                Download CV
+                <span aria-hidden>↓</span>
+              </a>
+              <a
+                href="/cv.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-cursor-text="View"
+                className="font-sans text-sm transition-colors"
+                style={{
+                  color: "var(--scene-ink-muted)",
+                  textDecoration: "underline",
+                  textUnderlineOffset: 5,
+                  textDecorationColor: "rgba(80,40,10,0.35)",
+                }}
+              >
+                view in browser →
+              </a>
+            </div>
 
             <dl
               data-about-meta

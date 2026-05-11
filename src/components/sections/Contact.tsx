@@ -5,7 +5,6 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SceneSection } from "@/components/scene/SceneSection";
 import { GlassCapsule } from "@/components/scene/GlassCapsule";
-import { SplitText } from "@/components/scene/SplitText";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -13,11 +12,19 @@ if (typeof window !== "undefined") {
 
 const EMAIL = "jurgenhalili1142@gmail.com";
 
-const FOOTER_LINKS = [
-  { label: "GitHub", value: "github.com/jurgenhalili", href: "https://github.com/jurgenhalili" },
-  { label: "LinkedIn", value: "linkedin.com/in/jurgen-halili", href: "https://www.linkedin.com/in/jurgen-halili/" },
-  { label: "Kiel", value: "Germany (UTC+2)", href: null as string | null },
-] as const;
+type FooterLink = {
+  label: string;
+  value: string;
+  href: string | null;
+  download?: boolean;
+};
+
+const FOOTER_LINKS: readonly FooterLink[] = [
+  { label: "GitHub", value: "github.com/jxrgenn", href: "https://github.com/jxrgenn" },
+  { label: "LinkedIn", value: "jurgen-halili", href: "https://www.linkedin.com/in/jurgen-halili-b227a6255" },
+  { label: "Instagram", value: "instagram.com/jxrgenn", href: "https://instagram.com/jxrgenn" },
+  { label: "CV", value: "download · pdf", href: "/cv.pdf", download: true },
+];
 
 export function Contact() {
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -34,10 +41,10 @@ export function Contact() {
         ease: "power3.out",
         scrollTrigger: { trigger: root, start: "top 75%", once: true },
       });
-      gsap.from("[data-contact-headline] [data-contact-char]", {
-        yPercent: 110,
-        stagger: 0.11,
-        duration: 0.95,
+      gsap.from("[data-contact-headline]", {
+        opacity: 0,
+        y: 26,
+        duration: 1.05,
         ease: "power3.out",
         scrollTrigger: { trigger: root, start: "top 70%", once: true },
       });
@@ -68,33 +75,32 @@ export function Contact() {
       <div ref={wrapRef} className="contents">
         <p
           data-contact-eyebrow
-          className="font-mono text-[11px] uppercase tracking-[0.24em]"
+          className="font-mono text-[11px] uppercase tracking-[0.32em]"
           style={{ color: "var(--scene-ink-muted)" }}
         >
-          <span style={{ color: "var(--scene-ink)" }}>03</span>
+          <span style={{ color: "var(--scene-ink)" }}>05</span>
           &nbsp; / &nbsp;Contact
         </p>
 
         <h2
           data-contact-headline
-          className="mt-8 overflow-hidden font-sans"
+          className="mt-8 font-serif"
           style={{
             color: "var(--scene-ink)",
-            fontFamily: "var(--font-sans)",
-            fontSize: "clamp(3.4rem, 11vw, 9rem)",
-            fontWeight: 500,
+            fontFamily: "var(--font-fraunces), Georgia, serif",
+            fontSize: "clamp(3rem, 10vw, 7.5rem)",
+            fontWeight: 400,
             letterSpacing: "-0.045em",
             lineHeight: 0.92,
           }}
         >
-          {["Let's build", "something good."].map((line, li) => (
-            <SplitText
-              key={li}
-              text={line}
-              dataAttr="data-contact-char"
-              className="block overflow-hidden"
-            />
-          ))}
+          <span className="block">Let&apos;s build</span>
+          <span
+            className="block"
+            style={{ fontStyle: "italic", opacity: 0.6, fontWeight: 300 }}
+          >
+            something good.
+          </span>
         </h2>
 
         <p
@@ -179,7 +185,7 @@ export function Contact() {
 
         <dl
           data-contact-footer
-          className="mt-16 grid grid-cols-1 gap-y-6 sm:grid-cols-3 sm:gap-x-8"
+          className="mt-16 grid grid-cols-2 gap-y-6 sm:grid-cols-4 sm:gap-x-6"
           style={{
             borderTop: "1px solid rgba(80,40,10,0.20)",
             paddingTop: "1.75rem",
@@ -200,14 +206,15 @@ export function Contact() {
                 {f.href ? (
                   <a
                     href={f.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    data-cursor-text="Open"
+                    target={f.download ? undefined : "_blank"}
+                    rel={f.download ? undefined : "noopener noreferrer"}
+                    download={f.download}
+                    data-cursor-text={f.download ? "Download" : "Open"}
                     className="inline-flex items-center gap-1.5"
                   >
                     {f.value}
                     <span aria-hidden style={{ color: "var(--scene-ink-muted)" }}>
-                      ↗
+                      {f.download ? "↓" : "↗"}
                     </span>
                   </a>
                 ) : (

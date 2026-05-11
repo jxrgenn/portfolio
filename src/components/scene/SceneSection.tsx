@@ -14,6 +14,7 @@ export function SceneSection({
   children,
   priority = false,
   style,
+  compact = false,
 }: {
   id?: string;
   backdrop: string;
@@ -24,7 +25,19 @@ export function SceneSection({
   children: ReactNode;
   priority?: boolean;
   style?: CSSProperties;
+  /**
+   * When true, skips the full-viewport min-height on mobile + uses tighter
+   * vertical padding. Used by stacked scene lists (SelectedWork) so 6 projects
+   * don't add up to 6 full viewport heights of scroll on a phone.
+   */
+  compact?: boolean;
 }) {
+  const innerHeightClass = compact
+    ? "min-h-[60svh] md:min-h-[100svh]"
+    : "min-h-[100svh]";
+  const paddingClass = compact
+    ? "py-16 md:py-32"
+    : "py-20 md:py-32";
   return (
     <section
       id={id}
@@ -42,7 +55,9 @@ export function SceneSection({
         className="scene-backdrop"
       />
       <div className="scene-caustics" aria-hidden />
-      <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-7xl flex-col px-6 py-24 md:px-10 md:py-32 lg:px-16">
+      <div
+        className={`relative z-10 mx-auto flex w-full max-w-7xl flex-col px-6 ${paddingClass} md:px-10 lg:px-16 ${innerHeightClass}`}
+      >
         {children}
       </div>
     </section>

@@ -83,10 +83,70 @@ export function TwoTracks() {
 
   return (
     <div ref={wrapRef} className="relative w-full" aria-hidden>
+      {/* Mobile fallback — labels would be unreadable in a 65px-tall SVG */}
+      <div className="grid grid-cols-2 gap-x-4 gap-y-3 md:hidden">
+        <div className="flex flex-col gap-2.5">
+          <p
+            className="font-mono text-[10px] uppercase tracking-[0.22em]"
+            style={{ color: "rgba(70,40,120,0.92)" }}
+          >
+            AI · NATIVE
+          </p>
+          <ul className="flex flex-col gap-2.5">
+            {AI_NODES.map((n) => (
+              <li
+                key={n.label}
+                className="flex items-center gap-2.5 text-[12px]"
+                style={{ color: "rgba(40,20,70,0.85)" }}
+              >
+                <span
+                  aria-hidden
+                  className="block h-2 w-2 rounded-full"
+                  style={{
+                    background: "#9590ff",
+                    boxShadow: "0 0 8px #9590ff",
+                  }}
+                />
+                <span className="font-sans capitalize">{n.label}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="flex flex-col gap-2.5">
+          <p
+            className="font-mono text-[10px] uppercase tracking-[0.22em]"
+            style={{ color: "rgba(120,60,20,0.92)" }}
+          >
+            BC / NAV
+          </p>
+          <ul className="flex flex-col gap-2.5">
+            {BC_NODES.map((n) => (
+              <li
+                key={n.label}
+                className="flex items-center gap-2.5 text-[12px]"
+                style={{ color: "rgba(70,30,5,0.85)" }}
+              >
+                <span
+                  aria-hidden
+                  className="block h-2 w-2 rounded-full"
+                  style={{
+                    background: "#d68d4a",
+                    boxShadow: "0 0 8px #d68d4a",
+                  }}
+                />
+                <span className="font-sans capitalize">{n.label}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      {/* Desktop SVG — rendered only md+, so the GSAP draw-in works on the visible one */}
       <svg
         viewBox="0 0 1200 210"
         preserveAspectRatio="xMidYMid meet"
-        className="block w-full"
+        className="hidden w-full md:block"
       >
         <defs>
           <linearGradient id="ai-grad" x1="0" y1="0" x2="1" y2="0">

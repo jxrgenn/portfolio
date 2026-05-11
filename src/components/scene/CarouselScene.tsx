@@ -11,12 +11,12 @@ const SPACING = 2.5;
 const FOCAL_OFFSET = 1.25;
 
 const PANELS: readonly { src: string; codename: string; year: string }[] = [
-  { src: "/scenes/work/keepitup.jpg",     codename: "KEEPITUP",        year: "2024" },
-  { src: "/scenes/work/gymapp.jpg",       codename: "GYM-APP",         year: "2024" },
-  { src: "/scenes/work/pilates.jpg",      codename: "PILATES-STUDIO",  year: "2025" },
-  { src: "/scenes/work/cleanslate.jpg",   codename: "CLEANSLATE",      year: "2025" },
+  { src: "/scenes/work/keepitup.jpg",     codename: "KEEPITUP",        year: "2026" },
+  { src: "/scenes/work/gymapp.jpg",       codename: "GYM-APP",         year: "2026" },
+  { src: "/scenes/work/pilates.jpg",      codename: "PILATES-STUDIO",  year: "2026" },
+  { src: "/scenes/work/cleanslate.jpg",   codename: "CLEANSLATE",      year: "2026" },
   { src: "/scenes/work/enderrat.jpg",     codename: "ENDERRAT-E-MIA",  year: "2026" },
-  { src: "/scenes/work/socialcommand.jpg",codename: "SOCIAL-CMD",      year: "2025" },
+  { src: "/scenes/work/socialcommand.jpg",codename: "SOCIAL-CMD",      year: "2026" },
 ] as const;
 
 const backdropFragment = /* glsl */ `
@@ -137,7 +137,7 @@ function PanelTrack({ progressRef }: { progressRef: React.MutableRefObject<numbe
     if (!g) return;
     const floatIdx = Math.max(0, Math.min(5, progressRef.current * 5));
     const targetX = -floatIdx * SPACING + FOCAL_OFFSET;
-    g.position.x += (targetX - g.position.x) * 0.10;
+    g.position.x += (targetX - g.position.x) * 0.20;
 
     // Subtle camera parallax on cursor — camera position drifts but keeps
     // looking at world origin, so the offset focal panel stays right-of-center.

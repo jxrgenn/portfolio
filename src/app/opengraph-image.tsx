@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const alt =
-  "Jurgen Halili — full-stack engineer with AI focus. Tirana, Albania.";
+  "Jurgen Halili — full-stack engineer with AI focus. Kiel, Germany.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -92,7 +92,7 @@ export default function Image() {
                 display: "flex",
               }}
             >
-              Tirana, Albania
+              Kiel, Germany
             </div>
           </div>
         </div>

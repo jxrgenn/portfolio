@@ -81,9 +81,9 @@
 [data-accent="pilates-studio"] { --project-accent: var(--accent-pilates); }
 [data-accent="cleanslate"] { --project-accent: var(--accent-cleanslate); }
 [data-accent="social-command-center"] { --project-accent: var(--accent-social); }
-[data-accent="jiang-clips"] { --project-accent: var(--accent-jiang); }
+[data-accent="reel-farmer"] { --project-accent: var(--accent-jiang); }
 [data-accent="bohesh"] { --project-accent: var(--accent-bohesh); }
-[data-accent="kercishta-garage"] { --project-accent: var(--accent-kercishta); }
+[data-accent="websites"] { --project-accent: var(--accent-kercishta); }
 
 /* ───────────────────────────────────────────────────────────────────────────
  * Phase 22 — Spatial scene primitives.
@@ -394,6 +394,47 @@
 @keyframes path-dot-pulse {
   0%, 100% { transform: scale(1); opacity: 0.55; }
   50% { transform: scale(2.4); opacity: 0; }
+}
+
+@keyframes bento-sheen {
+  0%   { transform: translateX(-40%); }
+  100% { transform: translateX(120%); }
+}
+
+/* Shiki frame — overrides the inline <pre> background and matches editorial tone. */
+.code-frame {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.025);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 24px 60px -32px rgba(0, 0, 0, 0.6);
+}
+.code-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 25%);
+}
+.code-frame pre {
+  background: transparent !important;
+  padding: 1.7rem 1.85rem 1.85rem;
+  overflow-x: auto;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 13px;
+  line-height: 1.65;
+  margin: 0;
+}
+.code-frame code {
+  font-family: inherit;
+  font-size: inherit;
+  background: transparent;
+}
+.code-frame .line {
+  display: block;
 }
 
 html,

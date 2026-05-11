@@ -31,6 +31,30 @@ export type ProjectMetric = {
   label: string;
 };
 
+export type ProjectShot = {
+  src: string;
+  alt?: string;
+  /**
+   * Bento footprint on a 4-col grid:
+   *  square 1×1 · wide 2×1 · tall 1×2 · big 2×2 · xwide 4×1.
+   * @deprecated Used by the legacy BentoShots component; ProjectGallery ignores this.
+   */
+  span?: "square" | "wide" | "tall" | "big" | "xwide";
+  /**
+   * Override device classification. If absent, ProjectGallery infers from
+   * the image aspect ratio at build time (portrait → mobile, otherwise desktop).
+   */
+  device?: "desktop" | "mobile";
+  /** Short editorial caption rendered beneath the framed shot. */
+  caption?: string;
+  /** Optional URL shown in the BrowserFrame chrome. */
+  url?: string;
+  /** "contain" for logos / icon-style art. Default "cover". */
+  fit?: "cover" | "contain";
+  /** Background color behind the image (handy for logos). */
+  bg?: string;
+};
+
 export type ProjectLink = {
   label: string;
   href: string;
@@ -53,8 +77,20 @@ export type Project = {
   // --- Detail-page content ---
   /** ~40-60 word punchy summary that merges problem + what I built. */
   pitch: string;
+  /**
+   * 5-6 sentence editorial paragraph in first person — captures the cool
+   * engineering insight, what's special about the codebase, and why I love it.
+   * Rendered with the drop-cap on the case-study page.
+   */
+  essay: string;
   /** Optional 2-6 extra screenshot paths shown in the gallery. */
   gallery?: readonly string[];
+  /**
+   * Bento gallery — varied aspect ratios with span hints. If present,
+   * supersedes `gallery` on the deep-dive page. Mix square / wide / tall /
+   * big / xwide to get visual variety.
+   */
+  shots?: readonly ProjectShot[];
   /** Paragraphs (2-4 sentences each, first-person past tense). */
   problem: readonly string[];
   /** Paragraphs (4-7 sentences total spread across 1-3 paragraphs). */
@@ -90,13 +126,23 @@ export const projects = [
     tagline: "Self-hosted AI agent that auto-fixes broken deployments.",
     year: 2026,
     status: "shipped",
-    hero: "/captures/keepitup/home_desktop.png",
+    hero: "/captures/keepitup/dashboard.png",
     heroAlt:
-      "KeepItUp — Connect Services modal showing multi-provider AI configuration",
+      "KeepItUp dashboard — connected deploy platforms, live health score, recent activity",
     stack: ["React 19", "Anthropic + OpenAI + Gemini", "Tree-sitter"],
     pitch:
       "Self-hosted AI on-call agent. Polls six deploy platforms every five minutes, parses crashes with tree-sitter across six languages, drafts a fix through OpenAI / Anthropic / Gemini, runs it past a confidence gate, and opens a PR — never pushes to main.",
-    gallery: ["/captures/keepitup/home_mobile.png"],
+    essay:
+      "KeepItUp is an autonomous SRE agent that watches six deploy platforms 24/7 and tries to turn “page on call” into “review a PR after coffee.” The brain is a two-layer reasoning system: a tree-sitter AST walker indexes the offending file across six languages and feeds the model a 50-500 line context slice instead of the whole repo, and a separate Reviewer agent gates every proposed fix behind a confidence threshold. Fixes auto-PR only at ≥85% confidence, or ≥70% if a build verification passes — because verification is a stronger signal than a raw score. Three providers (Anthropic, OpenAI, Gemini) sit behind a single LLM client with budget gates and cost telemetry, so swapping providers is a config change. The agent never pushes to main; it opens PRs, runs Semgrep + Trivy + Gitleaks scans in Docker, and rolls everything into a weighted 0-100 health score per repo. I built it because I wanted oncall to be a thing I review with coffee, not a thing that wakes me up.",
+    shots: [
+      { src: "/captures/keepitup/hub.png", alt: "Project hub — services connected", caption: "Project hub — six platforms connected, live health score per repo.", url: "keepitup.local/dashboard" },
+      { src: "/captures/keepitup/code.png", alt: "Code view — fix proposed inline", caption: "Tree-sitter AST view — proposed fix annotated against the call graph.", url: "keepitup.local/projects/api/fixes" },
+      { src: "/captures/keepitup/logs.png", alt: "Live logs from BetterStack", caption: "Runtime logs streamed from BetterStack into the agent's context.", url: "keepitup.local/logs" },
+      { src: "/captures/keepitup/planner.png", alt: "Agent planner timeline", caption: "v2 agent planner — orchestrator, runtime, state, memory laid out as a timeline.", url: "keepitup.local/agent/plan" },
+      { src: "/captures/keepitup/console.png", alt: "Agent console output", caption: "Agent console — tool calls and reasoning streamed live.", url: "keepitup.local/agent/console" },
+      { src: "/captures/keepitup/tg_convo1.png", alt: "Telegram alert thread", caption: "Telegram bot — alert thread with one-tap acknowledge.", url: "t.me/keepitup_bot" },
+      { src: "/captures/keepitup/tg_convo2.png", alt: "Telegram fix-PR notification", caption: "Fix-PR notification — review-after-coffee, never push to main.", url: "t.me/keepitup_bot" },
+    ],
     problem: [
       "Solo founders and small teams ship fast but lack 24/7 ops. A 3 AM Vercel build break or runtime crash either silently rots or wakes someone up at the worst possible time.",
       "I built KeepItUp because I wanted \"page on call\" to turn into \"review a PR after coffee\" — without handing the keys to a black-box SaaS, and without the agent ever pushing straight to main.",
@@ -193,6 +239,8 @@ export const projects = [
     stack: ["Expo + RN", "Claude Haiku + Flux", "RevenueCat"],
     pitch:
       "Albanian-language bedtime stories, generated, illustrated, and narrated. Expo app on a Mongoose backend. Claude Haiku writes, fal.ai Flux Schnell paints four matched illustrations, TTS narrates, RevenueCat + AdMob fund the free tier, and an in-house pipeline renders the launch ad creatives.",
+    essay:
+      "Ëndërrat e Mia is an AI bedtime-story app for Albanian-speaking families — a market that essentially has zero native-language children's content, so parents end up translating Disney+ at bedtime. Each story is a three-step pipeline rendered atomically: Claude Haiku writes the narrative in Albanian, fal.ai's Flux Schnell paints four matched watercolor illustrations from the same character setup, and TTS narrates the whole thing — you never get orphaned text with missing audio. The most quietly proud move is the single Transaction ledger: free credits earned from ads, RevenueCat subscription credits, AdMob rewards, and one-off purchases all write to the same table, so balance, churn, and fraud queries are naturally unified instead of requiring three accounting systems. There's also a self-built programmatic ad-creative pipeline in `videos/generateAdImages*.js` — five scripts that render TikTok ad frames using the same children's-book watercolor styling as the in-app illustrations, so brand consistency is baked in. I shipped roughly thirty creatives for the launch this way, without a designer. I built it because my native-language community deserves bedtime stories that don't come from Google Translate.",
     problem: [
       "Albanian-speaking families — in Albania, Kosovo, and the diaspora — have almost no native-language children's content. Disney+, audiobooks, and AI tools all default to English, so parents end up translating on the fly at bedtime.",
       "I built Ëndërrat e Mia because I wanted \"story time in your kid's language\" to be a one-tap action, not a parent's improv set.",
@@ -292,20 +340,22 @@ export const projects = [
     order: 3,
     title: "GymApp",
     tagline: "White-label gym OS — NFC entry, member app, multi-tenant admin.",
-    year: 2025,
+    year: 2026,
     status: "shipped",
-    hero: "/captures/gymapp/dashboard-v2-home.png",
-    heroAlt: "GymApp dashboard showing daily check-ins and member activity",
+    hero: "/captures/gymapp_new/web_dashboard.png",
+    heroAlt: "GymApp admin dashboard — daily check-ins, occupancy live count, recent activity",
     stack: ["Express + Postgres", "Socket.io + Redis", "Expo + MUI"],
     pitch:
       "White-label gym OS for the Albanian market. Four deployables — admin web, member app, API, NFC scanner-bridge — sharing one branding record. Socket.io with a Redis adapter fans live occupancy across PM2 workers so every dashboard sees the same number.",
-    gallery: [
-      "/captures/gymapp/dashboard-v2-analytics.png",
-      "/captures/gymapp/dashboard-v2-cards.png",
-      "/captures/gymapp/dashboard-v2-members.png",
-      "/captures/gymapp/check-workout.png",
-      "/captures/gymapp/check-schedule.png",
-      "/captures/gymapp/check-stats.png",
+    essay:
+      "GymApp is a white-label gym OS for the Albanian market — four independently deployable products that share one database and one branding record. The admin web, the member app, the API, and the NFC scanner-bridge all live in one monorepo; every Gym row stores its own primary color, logo, and bundle identifier, and at runtime the React Native member app reads `GymConfigContext` and *becomes* that gym's branded app. Live occupancy fans out across PM2 cluster workers via Socket.io with a Redis pub/sub adapter, so a tap at the turnstile reaches every dashboard, every member phone, every scanner — without polling. The scanner-bridge itself is a tiny `node-hid` service that reads card UIDs off a USB NFC reader and POSTs to `/api/visits`, decoupling hardware from the API entirely so a Raspberry Pi at the gate doesn't know any backend internals. Multi-tenancy is enforced by a `gymId` foreign key on every domain model plus middleware-scoped queries; super-admins can hop tenants. I also built a Remotion ad pipeline that renders TikTok creatives from the same React components used in the app — so the ad creative and the product UI literally cannot drift.",
+    shots: [
+      { src: "/captures/gymapp_new/web_analytics.png", alt: "Analytics — revenue, attendance, churn", caption: "Analytics — revenue, attendance, and churn at a glance.", url: "fitzone.al/admin/analytics" },
+      { src: "/captures/gymapp_new/web_classes.png", alt: "Class scheduling and templates", caption: "Class scheduler — recurring slots, capacity, instructor lookup.", url: "fitzone.al/admin/classes" },
+      { src: "/captures/gymapp_new/web_subscriptions.png", alt: "Membership and subscription management", caption: "Subscriptions — tiered plans, renewals, dunning, lapse alerts.", url: "fitzone.al/admin/subscriptions" },
+      { src: "/captures/gymapp_new/web_check_in_monitor.png", alt: "Live check-in monitor for the front desk", caption: "Live check-in monitor — Socket.io stream, every NFC tap visible.", url: "fitzone.al/admin/checkins" },
+      { src: "/captures/gymapp_new/web_global_search.png", alt: "Global search across members + classes + cards", caption: "Global search — members, NFC cards, classes, all keystroke-filtered.", url: "fitzone.al/admin/search" },
+      { src: "/captures/gymapp_new/web_announcements.png", alt: "Per-gym announcements broadcast to the member app", caption: "Announcements — broadcast to all member apps for that gym.", url: "fitzone.al/admin/announcements" },
     ],
     problem: [
       "Albanian gyms typically run on paper logbooks and WhatsApp. Off-the-shelf SaaS like Mindbody is priced for US studios and isn't localized.",
@@ -394,12 +444,20 @@ export const projects = [
     tagline: "Boutique studio platform — admin web, mobile app, API, 594 tests.",
     year: 2026,
     status: "shipped",
-    hero: "/captures/pilates_studio/home_desktop.png",
-    heroAlt: "PilatesGym admin sign-in screen",
+    hero: "/captures/pilates_studio/Calendar.png",
+    heroAlt: "PilatesGym admin — weekly class calendar with bookings and instructors",
     stack: ["pnpm monorepo", "Express + Prisma", "Turso + libSQL"],
     pitch:
       "Branded studio platform — admin web, mobile app, API, 594 tests. Same Prisma schema runs on better-sqlite3 in dev and Turso (libsql) in prod via adapters. Express ships as a Vercel function with zero rewrites. Resend for email, Sentry for errors, Playwright for E2E.",
-    gallery: ["/captures/pilates_studio/home_mobile.png"],
+    essay:
+      "Pilates Studio is a four-deployable platform for one boutique studio — the same Prisma schema runs on `better-sqlite3` in dev and Turso (libsql) in prod, swapped through the adapter pattern with zero code changes. Express ships as a Vercel serverless catch-all (`api/[[...path]].ts`), so the same code runs as a long-lived server locally and as edge functions in production. An audit middleware records every admin write — actor, resource, IP, user-agent — but never blocks the real operation if the audit insert fails, because losing a booking to a slow audit table is not an acceptable failure mode. 21 Prisma models, 594 tests across API + admin + mobile + Playwright E2E, transactional email through Resend with a graceful no-op when keys are missing. The booking flow has proper status transitions with auto-promotion from the waitlist on cancellation, so admins don't manually re-shuffle attendance. I built it because boutique studios get nickel-and-dimed by SaaS, and I wanted to prove a single solo dev could ship the same shape with discipline.",
+    shots: [
+      { src: "/captures/pilates_studio/Analytics.png", alt: "Studio analytics — bookings, revenue, attendance", caption: "Analytics — bookings, revenue, attendance trends.", url: "pilatesgym.al/admin/analytics" },
+      { src: "/captures/pilates_studio/Classes.png", alt: "Class catalog and templates", caption: "Class catalog — recurring templates and waitlist auto-promotion.", url: "pilatesgym.al/admin/classes" },
+      { src: "/captures/pilates_studio/Subscriptions.png", alt: "Membership & subscription management", caption: "Memberships — tiered plans, renewals, dunning.", url: "pilatesgym.al/admin/memberships" },
+      { src: "/captures/pilates_studio/clients.png", alt: "Client roster with health flags", caption: "Client roster — health flags surfaced on hover.", url: "pilatesgym.al/admin/clients" },
+      { src: "/captures/pilates_studio/Equipment.png", alt: "Studio equipment inventory", caption: "Equipment inventory — usage logged per class.", url: "pilatesgym.al/admin/equipment" },
+    ],
     problem: [
       "Boutique fitness studios juggle scheduling, memberships, payments, and waitlists across three or four SaaS tools that don't talk to each other.",
       "I built pilates-studio to replace that stack with one branded platform the studio actually owns — same data model, same brand, one bill.",
@@ -502,12 +560,27 @@ export const projects = [
     tagline: "$20/month operating system for cleaning businesses.",
     year: 2026,
     status: "shipped",
-    hero: "/captures/cleanslate/home_desktop.png",
-    heroAlt: "CleanSlate German marketing landing page with hero, pricing, FAQ",
+    hero: "/captures/cleanslate/landing_page.png",
+    heroAlt: "CleanSlate German marketing landing page — hero, problem, features",
     stack: ["Next.js 16", "Supabase + RLS", "Telnyx + LemonSqueezy"],
     pitch:
       "$20/month operating system for solo cleaners in Germany. Next.js 16 with strict architecture: thin routes, services own data, Supabase RLS, money in cents, phones in E.164. Telnyx + WhatsApp for SMS, four Vercel cron endpoints, full German marketing site at the edge.",
-    gallery: ["/captures/cleanslate/home_mobile.png"],
+    essay:
+      "CleanSlate is a €20-flat operating system for solo cleaners in Germany — a discipline product disguised as a SaaS. Every architectural rule is enforced with no exceptions: route files dispatch to services, services own all data ops, components never touch Supabase, money is always cents, phones always E.164, RLS scopes every query to the user. The subscription expiry path is a pure RLS policy — when the trial runs out, no UI code runs; the database simply stops accepting INSERTs and the read-only state is automatic. Four Vercel cron endpoints handle trial reminders, overdue invoices, recurring job generation, and pre-job SMS, so the operator never logs in to do admin. Eleven services own the domain (billing, clients, earnings, invoices, jobs, profiles, search, SMS, WhatsApp, email, line items), and the full German marketing site — Datenschutz, Impressum, AGB, MDX-driven blog and ratgeber, a `/rechner` cost calculator — sits in a separate `(marketing)` route group from the authenticated `(app)`. I built it because the discipline *is* the product — you can't accidentally introduce a bug when components physically can't touch the database.",
+    shots: [
+      { src: "/captures/cleanslate/its_annoying.png", alt: "Landing problem section — 'Das nervt dich jeden Tag'", caption: "Problem section — 3 editorial pain quotes with their CleanSlate counter.", url: "cleanslate.app" },
+      { src: "/captures/cleanslate/functions.png", alt: "Landing features grid", caption: "Features — 6 things, no enterprise bloat.", url: "cleanslate.app#features" },
+      { src: "/captures/cleanslate/comparison.png", alt: "Landing comparison table", caption: "Mehr Funktionen. Weniger Kosten. — vs. CleanManager + ToolTime.", url: "cleanslate.app" },
+      { src: "/captures/cleanslate/faq.png", alt: "Landing FAQ accordion", caption: "FAQ — sticky title, accordion right.", url: "cleanslate.app" },
+      { src: "/captures/cleanslate/sign_in.png", alt: "Sign-in screen", caption: "Sign in — Supabase SSR, gated app behind /login.", url: "cleanslate.app/login" },
+      { src: "/captures/cleanslate/web_dashboard.png", alt: "App dashboard with today's jobs", caption: "Dashboard — today's jobs, gate codes, pet info, one tap to start.", url: "cleanslate.app/dashboard" },
+      { src: "/captures/cleanslate/Schedule.png", alt: "Schedule view", caption: "Schedule — recurring jobs auto-generated by the nightly cron.", url: "cleanslate.app/schedule" },
+      { src: "/captures/cleanslate/web_client.png", alt: "Client detail view", caption: "Client detail — every cleaning preference and access code in one place.", url: "cleanslate.app/clients/uuid" },
+      { src: "/captures/cleanslate/web_invoices.png", alt: "Invoices list", caption: "Invoices — German Pflichtangaben, status flow draft → sent → paid.", url: "cleanslate.app/invoices" },
+      { src: "/captures/cleanslate/web_earnings.png", alt: "Earnings overview", caption: "Earnings — weekly + monthly chart from completed jobs, not invoices.", url: "cleanslate.app/earnings" },
+      { src: "/captures/cleanslate/finish_up.png", alt: "Job completion flow", caption: "Finish up — completion notes, checklist, next-visit notes, auto-invoice.", url: "cleanslate.app/jobs/uuid/finish" },
+      { src: "/captures/cleanslate/mobile_landing_page.png", alt: "CleanSlate landing page on mobile", caption: "Landing on mobile — hero, problem, features stack cleanly under 400px." },
+    ],
     problem: [
       "Solo cleaners run their business on a phone notes app and a Google Calendar. They forget recurring jobs, miss client preferences, and chase invoices for weeks.",
       "Every existing CRM — Jobber, Housecall Pro — starts at $50-$100/month and is built for crews of ten. I built CleanSlate to be $20/month flat, sized for one-person operations, with the German market specifically in mind.",
@@ -595,15 +668,21 @@ export const projects = [
     slug: "social-command-center",
     order: 6,
     title: "Social Command Center",
-    tagline: "AI content pipeline + auto-poster for managing many trade brands.",
+    tagline: "Industrial Instagram content for any brand — autonomous, multi-tenant.",
     year: 2026,
     status: "in-progress",
-    hero: "/captures/social_command_center/home_desktop.png",
-    heroAlt: "Social Command Center dashboard with brand pipeline status",
+    hero: "/captures/social_command_center/dashboard.png",
+    heroAlt: "Social Command Center dashboard — 7-brand pipeline status, BullMQ queue, content planner",
     stack: ["Next.js 16", "BullMQ + Drizzle", "OpenAI + Postiz"],
     pitch:
-      "Industrial content drip for a 7-brand operator. A weekly BullMQ cron walks every brand through a 6-stage pipeline; posts auto-schedule via the Postiz API once images land. Three Claude Code slash commands give a zero-API-cost generation path that bypasses OpenAI entirely.",
-    gallery: ["/captures/social_command_center/home_mobile.png"],
+      "Autonomous Instagram content factory for any brand. Drop a brand config + knowledge base, and a weekly BullMQ cron walks every brand through a 6-stage pipeline; posts auto-schedule via the Postiz API once images land. Three Claude Code slash commands give a zero-API-cost generation path that bypasses OpenAI entirely.",
+    essay:
+      "Social Command Center is an autonomous Instagram content factory for trade brands — adding a brand is a filesystem operation, not a code change. Each brand drops a JSON config plus a knowledge-base directory (brand DNA, customer ICP, voice), and a weekly BullMQ cron fires Mondays at 6 AM and walks every brand through a six-stage pipeline: Brand Discovery → Research → Strategy → Content Gen → Quality Gate → Post Creation, with retry/backoff and a real quality gate before anything reaches the calendar. Posts wait in `awaiting_image` until images are dragged into the dashboard, then auto-schedule via the Postiz REST API — a state machine, not a vibe. The cool unlock is the zero-API-cost path: three Claude Code slash commands (`/analyze-brand`, `/generate-content-plan`, `/generate-content`) read the knowledge base directly from disk and POST to `/api/import-content`, so I can generate twelve weeks of content for all seven brands without touching the OpenAI bill. I built it because seven brands times thirty posts a month is not a thing a human should be doing manually — and turning content generation into a deterministic, version-controlled pipeline made the agency-of-one model actually viable.",
+    shots: [
+      { src: "/captures/social_command_center/Calendar.png", alt: "Multi-brand content calendar", caption: "Multi-brand content calendar — Postiz auto-schedules once images land.", url: "scc.local/calendar" },
+      { src: "/captures/social_command_center/home_desktop.png", alt: "Operator dashboard — brand list and weekly pipeline state", caption: "Home — every brand's pipeline state at a glance, with the next batch queued.", url: "scc.local" },
+      { src: "/captures/social_command_center/home_mobile.png", alt: "Operator dashboard on mobile — brand list and weekly pipeline state", caption: "Home — same dashboard on mobile, for approving on the go." },
+    ],
     problem: [
       "A small agency or operator running 7+ trade brands — electricians, plumbers, lawn care, cleaning — needs a constant content drip on each. Manually planning, writing, and scheduling 30+ posts a week kills the founder.",
       "I built SCC to industrialize that drip end to end, so adding a brand is a filesystem operation and the worker handles the rest.",
@@ -680,25 +759,33 @@ export const projects = [
   },
 
   // ---------------------------------------------------------------------------
-  // 7. jiang-clips
+  // 7. Reel Farmer
   // ---------------------------------------------------------------------------
   {
-    slug: "jiang-clips",
+    slug: "reel-farmer",
     order: 7,
-    title: "jiang-clips",
-    tagline: "Bun pipeline that turns YouTube videos into TikTok shorts.",
+    title: "Reel Farmer",
+    tagline: "Self-hosted YouTube → TikTok pipeline. One command, multi-account.",
     year: 2026,
     status: "shipped",
-    hero: "/captures/jiang_clips_web/home_desktop.png",
+    hero: "/captures/reel_farmer/dashboard.png",
     heroAlt:
-      "jiang-clips Reel Farmer dashboard with 4-stage pipeline and review queue",
+      "Reel Farmer dashboard with 4-stage pipeline and review queue",
     stack: ["Bun + TS", "Whisper + Gemini", "Remotion + Puppeteer"],
     pitch:
       "Bun pipeline that turns YouTube into TikTok. yt-dlp downloads, Whisper transcribes, Gemini picks the clips, Remotion renders 1080×1920, stealth puppeteer uploads across multiple authenticated accounts. Resumable from any step. Companion Next.js dashboard reads the SQLite run database.",
-    gallery: ["/captures/jiang_clips_web/home_mobile.png"],
+    essay:
+      "Reel Farmer is a self-hosted Bun pipeline that turns YouTube into TikTok shorts across multiple authenticated accounts — yt-dlp downloads, Whisper transcribes (configurable model size), Gemini picks the clips with the transcript in context, Remotion renders 1080×1920, stealth puppeteer uploads. Every stage writes to a deterministic `data/runs/<run-id>/` tree and stamps a SQLite checkpoint database, so `bun run resume <run-id>` skips finished work and picks up exactly where the last crash hit — long pipelines are inevitable, resumability is what makes them usable. The slideshow composer uses the same Remotion render pipeline as the captioned clips, so Pinterest-sourced slideshows and YouTube clips share a visual language. The multi-account uploader lives behind a single `account-manager.ts` API — cookie/session management, stealth puppeteer, and TikTok's compliance-flag dance all hidden behind one upload call. Trend and content scouts auto-discover what to clip rather than waiting for the operator to paste URLs. A separate Next.js dashboard reads the SQLite run database for status and queue management. I built it because I run a small media operation across multiple Albanian-themed accounts and a $30/month SaaS that doesn't do slideshows wasn't going to cut it.",
+    shots: [
+      { src: "/captures/reel_farmer/schedule.png", alt: "Posting schedule across brands", caption: "Posting schedule — multi-account drip across the week.", url: "reelfarmer.local/schedule" },
+      { src: "/captures/reel_farmer/jobs.png", alt: "Active pipeline jobs queue", caption: "Active pipeline jobs — resumable from any of 7 stages.", url: "reelfarmer.local/jobs" },
+      { src: "/captures/reel_farmer/accounts.png", alt: "Multi-account TikTok session manager", caption: "Account manager — stealth sessions per Albanian-themed brand.", url: "reelfarmer.local/accounts" },
+      { src: "/captures/reel_farmer/generate1.png", alt: "Clip generation — Gemini picks", caption: "Gemini clip-picker — transcript scored, top moments surfaced.", url: "reelfarmer.local/runs/123" },
+      { src: "/captures/reel_farmer/generate2.png", alt: "Generated clip preview", caption: "Rendered preview — Remotion vertical 1080×1920 with captions burned in.", url: "reelfarmer.local/runs/123/clip" },
+    ],
     problem: [
       "Shorts and TikTok creators need 5-10 vertical clips a day from long-form sources, but manual editing eats hours. Existing tools — Opus Clip, Vizard — are SaaS at $30+/month, don't handle slideshows, and don't support multi-account uploading.",
-      "I built jiang-clips as a self-hosted one-button pipeline that runs across multiple Albanian-themed accounts I operate.",
+      "I built Reel Farmer as a self-hosted one-button pipeline that runs across multiple Albanian-themed accounts I operate.",
     ],
     approach: [
       "I built a Bun + TypeScript CLI that orchestrates a 7-step pipeline: download (yt-dlp), transcribe (Whisper, configurable model size), identify the best clips (Gemini with the transcript), generate captions and metadata, render vertical 1080x1920 video with Remotion, build slideshows from Pinterest-sourced images via canvas, and upload to TikTok using puppeteer-extra + stealth across multiple authenticated accounts.",
@@ -783,8 +870,47 @@ export const projects = [
     heroAlt: "Bohesh app icon",
     stack: ["Expo + RN 0.83", "Supabase + Realtime", "react-native-maps"],
     imageMode: "contain",
+    shots: [
+      {
+        src: "/captures/bohesh/mockup_welcome.jpg",
+        alt: "Bohesh welcome screen — design mockup",
+        caption: "Welcome — minimal, photo-led entry. Design mockup; in-progress build.",
+      },
+      {
+        src: "/captures/bohesh/mockup_home_map.jpg",
+        alt: "Live map of pinned hangouts — design mockup",
+        caption: "Home — live map of pinned hangouts, split with the feed. Design mockup.",
+      },
+      {
+        src: "/captures/bohesh/mockup_onboarding.jpg",
+        alt: "Onboarding flow — design mockup",
+        caption: "Onboarding — name, hometown, vibe preferences. Design mockup.",
+      },
+      {
+        src: "/captures/bohesh/mockup_create_hangout.jpg",
+        alt: "Create hangout sheet — design mockup",
+        caption: "Create — pin a hangout in seconds: where, when, vibe, who's invited. Design mockup.",
+      },
+      {
+        src: "/captures/bohesh/mockup_hangout_detail.jpg",
+        alt: "Hangout detail with vibe checks — design mockup",
+        caption: "Detail — RSVPs, photos, live vibe checks once the hangout starts. Design mockup.",
+      },
+      {
+        src: "/captures/bohesh/mockup_activity.jpg",
+        alt: "Activity feed — design mockup",
+        caption: "Activity — vibe checks, RSVPs, and crew nudges from the people you trust. Design mockup.",
+      },
+      {
+        src: "/captures/bohesh/mockup_profile.jpg",
+        alt: "Profile + reputation — design mockup",
+        caption: "Profile — vibe-check-earned trust, hangouts hosted, crews. Design mockup.",
+      },
+    ],
     pitch:
       "Tirana's social pulse — a live map of who's hanging out where, tonight. Expo + Supabase Realtime + react-native-maps. Vibe-checks let any hangout get live-rated mid-event. MMKV for hot-path caching, OTP auth, deep-link invites, persistent crews for repeat plans.",
+    essay:
+      "Bohesh is a live social-pulse map of Tirana — a discovery layer for organic, in-person plans, not a Meetup clone and not a dating app. The thing I'm most proud of is Vibe Checks as a first-class entity: a hangout can be live-rated mid-event, and the `submit_vibe_check` RPC enforces attendance proof and a 48-hour rating window before counting. Earn fifteen vibe checks from ten unique people and `profiles.is_trusted` flips automatically — reputation is built from shared experiences, not follower counts, so trust actually means something. The data layer is split into three services (`hangout-crud`, `hangout-queries`, `hangout-actions`) so reads, writes, and orchestrated business logic each have a clean boundary, which makes RLS reasoning local and testing actually targeted. MMKV replaces AsyncStorage on the cold-start hot path — synchronous and encrypted — so auth state and draft hangouts don't add async hops to first-launch time. I built it because Tirana's social life lives in WhatsApp groups and Instagram DMs, and visitors and new residents have no way in.",
     problem: [
       "Tirana's social life happens in WhatsApp groups and Instagram DMs. New residents, students, and visitors can't see what's happening tonight; locals lose track of their own crews.",
       "I built bohesh as a discovery layer for organic, in-person plans — not a Meetup.com clone, not a dating app, just \"what's happening near me right now and can I join?\"",
@@ -866,91 +992,259 @@ export const projects = [
   },
 
   // ---------------------------------------------------------------------------
-  // 9. Kërçishta Garage
+  // 9. Websites — three small brand sites
   // ---------------------------------------------------------------------------
   {
-    slug: "kercishta-garage",
+    slug: "websites",
     order: 9,
-    title: "Kërçishta Garage",
-    tagline: "Auto-shop landing page with a private CRM behind /admin.",
+    title: "Websites",
+    tagline: "Three brand sites — Three.js hero, MongoDB CRM, fitness coaching.",
     year: 2026,
     status: "shipped",
-    hero: "/captures/kercishta_garage/home_desktop.png",
-    heroAlt: "Kërçishta Garage hero with Three.js Hyperspeed animation",
-    stack: ["React 19 + Vite", "Three.js + Framer", "MongoDB Atlas"],
+    hero: "/captures/websites/kercishta_landing_page.png",
+    heroAlt: "Kërçishta Garage landing — Three.js Hyperspeed hero",
+    stack: ["React + Vite", "Three.js + Framer", "MongoDB Atlas"],
     pitch:
-      "One-day Vercel build for a neighborhood garage: public landing with a Three.js Hyperspeed hero, hidden /admin CRM behind a password gate, leads + service records in MongoDB Atlas. Bilingual EN/SQ inline. Real revenue/cost charts so the owner finally knows whether the shop is profitable.",
-    gallery: ["/captures/kercishta_garage/home_mobile.png"],
+      "Three live brand sites, all solo. Kërçishta Garage — Three.js Hyperspeed hero plus a hidden /admin CRM (MongoDB, JWT, bilingual EN/SQ) so the garage owner finally knows whether the shop is profitable. Klodi Trainer — a personal-trainer site with a fitness quiz and transformation gallery. jxsoft.al — fast, restrained marketing site for a small software studio.",
+    essay:
+      "Three small brand sites, all solo, sharing one Vite + Vercel pipeline. Kërçishta Garage is the most ambitious — a Three.js Hyperspeed hero that gives a one-day build a real visual hook, plus a hidden /admin CRM gated by a password and a Bearer token in `sessionStorage`: not in nav, no public link, just a known URL plus a passphrase. The whole full-stack app — public site, contact form, admin CRM, MongoDB integration — fits in one `App.tsx`, deliberate scope discipline because splitting it would have been gold-plating for a one-and-a-half-day build. Klodi Trainer is a coaching funnel built around a multi-step fitness quiz — quiz state lives in URL params so partial answers survive a refresh, and no backend gets touched until the final submit. jxsoft.al is the boring-on-purpose brochure site for my own software studio — fast load, clean type, no animation theater, because credibility matters more than wow-factor for a studio site. I love that all three live behind one boring pipeline and only diverge where the brand actually earned the divergence.",
+    shots: [
+      { src: "/captures/websites/kercishta_landing_page.png", alt: "Kërçishta Garage landing — Three.js Hyperspeed hero", caption: "Kërçishta Garage — landing with Three.js Hyperspeed hero.", url: "kercishta-garage.com" },
+      { src: "/captures/websites/kercishta_Services.png", alt: "Kërçishta Garage — services list", caption: "Kërçishta — services and pricing.", url: "kercishta-garage.com/services" },
+      { src: "/captures/websites/kercishta_booking.png", alt: "Kërçishta Garage — booking flow", caption: "Kërçishta — bilingual EN/SQ booking flow.", url: "kercishta-garage.com/booking" },
+      { src: "/captures/websites/kercishta_rates.png", alt: "Kërçishta Garage — service rates", caption: "Kërçishta — labour rates and parts.", url: "kercishta-garage.com/rates" },
+      { src: "/captures/websites/kloditrainer_landing_page.png", alt: "Klodi Trainer landing page", caption: "Klodi Trainer — landing.", url: "kloditrainer.al" },
+      { src: "/captures/websites/kloditrainer_fitness_quiz.png", alt: "Klodi Trainer — fitness quiz onboarding", caption: "Klodi Trainer — multi-step fitness quiz.", url: "kloditrainer.al/quiz" },
+      { src: "/captures/websites/kloditrainer_transformations.png", alt: "Klodi Trainer — client transformations gallery", caption: "Klodi Trainer — transformation gallery.", url: "kloditrainer.al/transformations" },
+      { src: "/captures/websites/kloditrainer_coach.png", alt: "Klodi Trainer — coach bio", caption: "Klodi Trainer — coach bio.", url: "kloditrainer.al/coach" },
+      { src: "/captures/websites/jxsoft_landing_page.png", alt: "jxsoft.al landing page", caption: "jxsoft.al — landing.", url: "jxsoft.al" },
+      { src: "/captures/websites/jxsoft_work.png", alt: "jxsoft.al — selected work", caption: "jxsoft.al — selected work.", url: "jxsoft.al/work" },
+      { src: "/captures/websites/jxsoft_tech_stack.png", alt: "jxsoft.al — tech stack section", caption: "jxsoft.al — tech stack.", url: "jxsoft.al/stack" },
+      { src: "/captures/websites/jxsoft_timeline.png", alt: "jxsoft.al — timeline", caption: "jxsoft.al — engagement timeline.", url: "jxsoft.al/timeline" },
+    ],
     problem: [
-      "A neighborhood garage needed two things: a real web presence so people could find them and book in, and a dirt-simple way to log every job and see if the shop was profitable — without paying for a SaaS CRM.",
-      "I built Kërçishta Garage to deliver both in one Vercel deploy, in about a day and a half.",
+      "Three small clients each needed a real web presence, fast — a neighborhood garage that wanted leads and a private CRM, a personal trainer who needed a credible online front door with a fitness quiz, and a software studio that needed a simple landing.",
+      "Off-the-shelf SaaS builders look templated and don't extend. Each site is small enough that a one-day Vite + Vercel build pays for itself versus a year of WordPress / Wix subscriptions.",
     ],
     approach: [
-      "I built a Vite + React 19 single-page site with framer-motion animations and a Three.js Hyperspeed hero for visual punch. The contact form posts a Lead to MongoDB Atlas through Vercel-hosted API routes (`/api/leads`, `/api/records`).",
-      "The admin dashboard is intentionally unlinked: navigate to `/admin`, enter the password, get a Bearer token in sessionStorage, and unlock CRUD over leads and service records plus revenue/cost charts. An Express server lives alongside the api/ functions for local dev. Albanian and English translations are inline in a single translations file driving every string.",
-      "Backend-side, I added helmet, JWT, bcrypt, and a rate limiter. The whole thing is deliberately small — single App.tsx houses the entire app state because the scope didn't justify more.",
+      "All three are Vite + React + framer-motion sites deployed on Vercel. Kërçishta is the most ambitious — it adds a Three.js Hyperspeed hero for visual punch and a hidden, password-gated /admin CRM that posts leads and service records to MongoDB Atlas via Vercel functions, with revenue/cost charts and inline EN/SQ bilingual content driven by a single translations file.",
+      "Klodi Trainer leans on a multi-step fitness quiz that funnels visitors into a coaching consult, paired with a transformation gallery for social proof — no CMS, content lives in the repo. jxsoft.al is deliberately restrained — fast load, clean type, no animation theater — because it's a brochure site where credibility matters more than wow-factor.",
+      "Where each site needed something custom (CRM auth, Three.js, quiz state machine), I built the smallest version of it; where it didn't, I shipped boring HTML+CSS and moved on.",
     ],
     techStack: {
       Frontend: [
-        "React 19.2",
+        "React 19",
         "Vite 6",
-        "TypeScript 5.8",
-        "Tailwind 3",
-        "framer-motion 12",
-        "three 0.167",
-        "postprocessing 6",
-        "lucide-react",
+        "TypeScript",
+        "Tailwind",
+        "framer-motion",
+        "three 0.167 (Kërçishta)",
+        "postprocessing (Kërçishta)",
       ],
       Backend: [
-        "Express 4 (local dev)",
-        "Vercel serverless functions (prod)",
-        "MongoDB 7 driver",
-        "JWT",
-        "bcryptjs",
+        "Vercel serverless functions",
+        "Express (local dev)",
+        "MongoDB 7 driver (Kërçishta CRM)",
+        "JWT + bcryptjs",
         "helmet",
         "express-rate-limit",
-        "express-validator",
-        "winston",
-        "morgan",
-        "cookie-parser",
       ],
-      Infra: ["Vercel (`vercel.json`)", "Render (`render.yaml`)"],
+      Infra: ["Vercel", "Render (Kërçishta)", "MongoDB Atlas"],
       Other: [
-        "Bearer token derived from `ADMIN_PASSWORD` env var, stored in sessionStorage",
+        "Bearer token derived from `ADMIN_PASSWORD` env var, stored in sessionStorage (Kërçishta /admin)",
       ],
     },
     underHood: [
       {
-        path: "/admin",
-        title: "hidden, password-gated, sessionStorage token",
-        body: "Not in nav, no public link, just a known URL plus a password. Dead-simple security model that's exactly right for a one-person garage.",
+        path: "Kërçishta /admin",
+        title: "hidden, password-gated CRM",
+        body: "Not in nav, no public link — just a known URL plus a password. Dead-simple security model that's exactly right for a one-person garage; same Vercel deploy as the public site.",
       },
       {
-        path: "components/HyperSpeedPresets.js",
-        title: "Three.js hero",
-        body: "Hyperspeed preset config gives a 1-day build a real visual hook without bringing in a 3D pipeline.",
+        path: "Klodi Trainer fitness quiz",
+        title: "multi-step state machine → coaching funnel",
+        body: "A short quiz (goal, history, schedule, injuries) funnels visitors into a tailored consult booking. State lives in URL params so partial answers survive refresh — no backend until the final submit.",
       },
       {
-        path: "App.tsx",
-        title: "single file — types, api object, render tree",
-        body: "Pragmatic for the scope; splitting it would have been gold-plating.",
+        path: "Kërçishta HyperSpeedPresets.js",
+        title: "Three.js Hyperspeed hero",
+        body: "Preset config gives a 1-day build a real visual hook without bringing in a full 3D pipeline. Decision: visual punch only where it earns its weight.",
       },
     ],
     metrics: [
-      { value: "3", label: "API routes (auth, leads, records) + lib helpers" },
-      { value: "2", label: "MongoDB collections (leads, records)" },
-      { value: "3", label: "lead statuses (new, contacted, resolved)" },
-      { value: "EN/SQ", label: "inline bilingual translations (Albanian primary)" },
-      { value: "1-2", label: "days from first commit to shipped" },
+      { value: "3", label: "live brand sites (kerçishta-garage / kloditrainer / jxsoft)" },
+      { value: "1", label: "MongoDB-backed CRM (Kërçishta /admin)" },
+      { value: "EN/SQ", label: "bilingual content on Kërçishta" },
+      { value: "1-2", label: "days each from first commit to shipped" },
+      { value: "Vite + Vercel", label: "shared pipeline across all three" },
     ],
     timeline:
-      "First commit ~2026-01-20, last commit ~2026-01-21 — built in roughly 1-2 days and bootstrapped from a Google AI Studio template. Shipped: vercel.json, render.yaml, `dist/` build present, deployment guides in repo.",
-    role: "Solo — frontend, backend, three.js hero, admin, and bilingual content.",
+      "Kërçishta Garage built ~2026-01-20 to 21 (1-2 days). Klodi Trainer and jxsoft.al shipped as small marketing builds in similar timeframes. All three live on Vercel.",
+    role: "Solo across all three — frontend, backend, Three.js, CRM, bilingual content.",
     liftQuote:
-      "\"One day, one Vercel deploy — public site out front, password-gated CRM behind /admin, and the garage owner finally knows whether the shop is profitable.\"",
+      "\"Three live sites, one pipeline — visual punch only where it earned its weight, boring static everywhere else.\"",
     links: [
+      { label: "kerçishta-garage.com", href: "archived — domain offline" },
+      { label: "kloditrainer.al", href: "https://kloditrainer.al" },
+      { label: "jxsoft.al", href: "https://jxsoft.al" },
+    ],
+  },
+  // ---------------------------------------------------------------------------
+  // 10. advance.al
+  // ---------------------------------------------------------------------------
+  {
+    slug: "advance-al",
+    order: 10,
+    title: "advance.al",
+    tagline:
+      "Albania's job marketplace — embedding-ranked matching, three-sided platform.",
+    year: 2026,
+    status: "shipped",
+    hero: "/captures/advance_al/home.png",
+    heroAlt:
+      "advance.al home page — Albania's job marketplace, search bar over a hero",
+    stack: ["React 18 + Vite", "Express + MongoDB", "OpenAI embeddings"],
+    pitch:
+      "advance.al is Albania's job marketplace — three sides (jobseekers, employers, admins) on one platform. Matching isn't just keyword filters: jobs and candidates are embedded with text-embedding-3-small, then ranked by cosine similarity with a hard category-match boost so old internships don't drown out current skills. Bilingual SQ/EN, GDPR-aware, 288 backend tests + Playwright walker reports across every role.",
+    essay:
+      "advance.al is Albania's job marketplace and the only project here built with paying users from day one — three sides on a single platform: jobseekers, employers, and admins, each with their own dashboard. The piece I'm proudest of is the matching layer: every job description and every candidate profile gets embedded with `text-embedding-3-small` (1536 dims) and ranked by cosine similarity, but pure semantic similarity ranks an AI Engineer's old banking internship too high, so I added a language-agnostic domain inferrer that recognises both English and Albanian skill tokens (zhvillues, programues, financë) and applies a hard category-match boost on top — without it, banking jobs flooded the top of every senior dev's list. The backend is Express 5 + MongoDB 8 with a Redis rate-limited OpenAI client, embedding-worker queues, an alert system that emails me when embedding drift exceeds a threshold, and 288 Jest tests under a strict philosophy that bans permissive matchers and tautological assertions. The frontend is React 18 + Vite + Mantine + shadcn/ui with bilingual SQ/EN copy, four-step employer onboarding wizards, and Playwright \"walker\" tests that screenshot every page across desktop + iPhone 12 + Pixel 5 for every release. The admin side is a real ops console — business control panel, bulk notifications, configuration audit log, GDPR data retention crons that auto-purge soft-deleted accounts after 30 days — because the platform handles real CVs, real applications, and real money. I love that this one is messy, multi-tenant, and live: I learned how a marketplace actually works by running one.",
+    shots: [
+      {
+        src: "/captures/advance_al/jobs_listing.png",
+        alt: "Jobs listing with filters by city, category, level",
+        caption:
+          "Jobs feed — filters by city, category, level, posted-date. Backed by an embedding-ranked match score on the logged-in path.",
+        url: "advance.al/jobs",
+      },
+      {
+        src: "/captures/advance_al/job_detail.png",
+        alt: "Job detail page with company, description, apply CTA",
+        caption:
+          "Job detail — company, description, apply CTA. Application creates a stored Application doc and notifies the employer.",
+        url: "advance.al/jobs/:id",
+      },
+      {
+        src: "/captures/advance_al/jobseeker_landing.png",
+        alt: "Marketing landing page for jobseekers",
+        caption:
+          "Jobseekers landing — pitch + sign-up funnel. Profile fields drive the embedding used to rank match scores.",
+        url: "advance.al/jobseekers",
+      },
+      {
+        src: "/captures/advance_al/employer_landing.png",
+        alt: "Marketing landing page for employers",
+        caption:
+          "Employers landing — pricing, features, post-a-job funnel.",
+        url: "advance.al/employers",
+      },
+      {
+        src: "/captures/advance_al/employer_dashboard.png",
+        alt: "Employer dashboard with 3 active jobs and applicant counts",
+        caption:
+          "Employer dashboard — active job list with applicant counts. Real-time as applications land.",
+        url: "advance.al/employer-dashboard",
+      },
+      {
+        src: "/captures/advance_al/post_job_wizard.png",
+        alt: "Multi-step post-job wizard — step 1 of 4",
+        caption:
+          "Post-job wizard — four-step flow. Title + category embeddings are computed on save.",
+        url: "advance.al/post-job",
+      },
+      {
+        src: "/captures/advance_al/jobseeker_profile.png",
+        alt: "Jobseeker profile with skills, work, and education filled in",
+        caption:
+          "Jobseeker profile — skills, work, education. Saving re-embeds the user and re-ranks recommended jobs.",
+        url: "advance.al/profile",
+      },
+      {
+        src: "/captures/advance_al/mobile_home.png",
+        alt: "advance.al home page on iPhone 12",
+        caption:
+          "Mobile — full responsive build, captured nightly by the Playwright walker on iPhone 12 + Pixel 5.",
+      },
+    ],
+    problem: [
+      "Albania's job market lives in WhatsApp groups, Facebook walls, and a handful of legacy job boards that look like 2010. Employers can't reach qualified candidates outside their immediate network, and jobseekers can't get visibility into who's hiring beyond Tirana — let alone what they're actually qualified for.",
+      "I took advance.al over and built it into a real marketplace: a discovery layer that ranks jobs by genuine fit instead of recency, with proper employer tooling on the other side so SMEs can actually run hiring without a Greenhouse subscription priced in dollars.",
+    ],
+    approach: [
+      "The system has three personas. Jobseekers register, fill a structured profile (skills, work history, education, location, preferences), and get a feed ranked by an embedding-based match score plus saved-jobs + applications. Employers register their company, post jobs through a four-step wizard, manage applicants from a dashboard, and run bulk-notification campaigns. Admins get a business-control panel — feature flags, configuration audits, system health, revenue analytics, GDPR retention crons.",
+      "Backend is Express 5 + MongoDB 8 (Mongoose) + Upstash Redis for rate-limiting + Cloudinary for file uploads + Sentry for errors. Embeddings come from OpenAI `text-embedding-3-small` (1536 dims), with a shared client and rate-limited p-limit pool so jobs + users + scripts don't trample each other. CV parsing uses `pdfjs-dist` + `mammoth` to extract text, then OpenAI for structured extraction.",
+      "Frontend is React 18 + Vite + TypeScript + Mantine for forms + Radix/shadcn for primitives, with a typed API client and proper auth context. Testing is the heaviest part of this stack: 288 backend Jest tests under a strict philosophy (no permissive matchers, no `toBeTruthy` for fields under test, no own-backend mocking), plus Playwright \"walker\" suites that step through every public + logged-in route across three viewports and ship screenshot reports.",
+    ],
+    techStack: {
+      Frontend: [
+        "React 18",
+        "Vite",
+        "TypeScript",
+        "Mantine 8",
+        "shadcn/ui (Radix)",
+        "react-hook-form",
+        "react-query",
+        "Tailwind",
+        "Playwright",
+      ],
+      Backend: [
+        "Express 5",
+        "Mongoose 8 + MongoDB",
+        "Upstash Redis",
+        "JWT + bcryptjs",
+        "express-rate-limit",
+        "helmet + CORS allowlist",
+        "express-validator",
+        "Jest (288 tests)",
+      ],
+      AI: [
+        "OpenAI text-embedding-3-small (1536d)",
+        "Cosine similarity + category-match boost",
+        "Domain inference (SQ + EN tokens)",
+        "OpenAI structured extraction for CV parsing",
+      ],
+      Infra: [
+        "Cloudinary",
+        "Sentry",
+        "Nodemailer (transactional email)",
+        "Twilio (optional SMS)",
+        "Vercel preview URLs (CORS whitelist)",
+      ],
+    },
+    underHood: [
+      {
+        path: "backend/src/services/userEmbeddingService.js",
+        title: "language-agnostic domain boost",
+        body: "Pure cosine similarity ranked old banking internships too high for AI engineers. Solution: a domain inferrer that recognises both English (developer, finance, sales) and Albanian (zhvillues, programues, financë, shitje) skill tokens and applies a hard category-match boost on top. Bilingual products need bilingual heuristics — embeddings alone aren't enough.",
+      },
+      {
+        path: "backend/src/services/alertService.js",
+        title: "embedding-drift email alerts",
+        body: "The matching layer is load-bearing, so when the embedding queue stalls or drift crosses a threshold the system emails me directly. Failure modes in semantic search are silent by default — I refused to let a stale embedding pipeline ship bad matches without making noise.",
+      },
+      {
+        path: "frontend/walker-screenshots/",
+        title: "Playwright walker — every page × three viewports",
+        body: "A walker test suite steps through every public + jobseeker + employer + admin route on desktop Chromium, iPhone 12, and Pixel 5, dropping numbered screenshots into a report directory. Catches visual regressions across the whole surface in one CI run — and doubles as the screenshot pipeline for marketing.",
+      },
+    ],
+    metrics: [
+      { value: "288", label: "backend Jest tests across 18 route modules" },
+      { value: "20", label: "Mongoose models (Application, Job, User, BusinessCampaign, etc.)" },
+      { value: "108", label: ".tsx files in the frontend" },
+      { value: "18", label: "REST route modules in backend/src/routes/" },
+      { value: "1536", label: "OpenAI embedding dims (text-embedding-3-small)" },
+      { value: "3 × 6", label: "Playwright walker reports — 3 viewports × 6 flows" },
+      { value: "SQ + EN", label: "fully bilingual UI and emails" },
+    ],
+    timeline:
+      "Took over and rebuilt through 2026 H1; live on advance.al with paying employers and a steady jobseeker feed. Currently shipping continuously.",
+    role:
+      "Solo across backend, frontend, embedding pipeline, admin tooling, deploy.",
+    liftQuote:
+      "\"Bilingual products need bilingual heuristics — pure embeddings ranked banking internships too high until the domain boost landed.\"",
+    links: [
+      { label: "Live site", href: "https://advance.al" },
       { label: "Code", href: "private — available on request" },
-      { label: "Source", href: "Google AI Studio template (referenced in README)" },
     ],
   },
 ] as const satisfies readonly Project[];

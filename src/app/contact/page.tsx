@@ -9,7 +9,8 @@ import { Globe } from "@/components/effects/Globe";
 export const metadata: Metadata = {
   title: "Contact",
   description:
-    "Get in touch with Jurgen Halili — full-stack engineer based in Tirana, Albania.",
+    "Get in touch with Jurgen Halili — full-stack engineer based in Kiel, Germany.",
+  alternates: { canonical: "/contact" },
 };
 
 const ROLES = [
@@ -92,7 +93,7 @@ export default function ContactPage() {
                     <a
                       href="https://www.linkedin.com/in/jurgen-halili-b227a6255"
                       target="_blank"
-                      rel="noreferrer"
+                      rel="noopener noreferrer"
                       className="font-mono text-sm text-[var(--color-fg)] underline decoration-dotted underline-offset-4 hover:text-[var(--color-accent)]"
                     >
                       jurgen-halili
@@ -107,7 +108,7 @@ export default function ContactPage() {
                 Where
               </p>
               <p className="mt-4 font-serif text-2xl text-[var(--color-fg)]">
-                Tirana, Albania
+                Kiel, Germany
               </p>
               <p className="mt-2 font-mono text-xs text-[var(--color-fg-subtle)]">
                 CET / CEST · UTC+1 / +2

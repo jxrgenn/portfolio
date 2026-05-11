@@ -1,11 +1,24 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProjectAccentSection } from "@/components/ProjectAccentSection";
 import { ProjectHeroCard } from "@/components/ProjectHeroCard";
+import { ProjectGallery } from "@/components/ProjectGallery";
 import { Stamp } from "@/components/editorial/Stamp";
 import { SectionMast } from "@/components/editorial/SectionMast";
-import { getAllSlugs, getProject, projects } from "@/lib/projects";
+import { getImageMeta } from "@/lib/imageMeta";
+import { getAllSlugs, getProject, projects, type ProjectShot } from "@/lib/projects";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://jurgenhalili.dev";
+
+function shotsFromGallery(
+  srcs: readonly string[],
+  title: string,
+): readonly ProjectShot[] {
+  return srcs.map((src, i) => ({
+    src,
+    alt: `${title} — fig. ${String(i + 2).padStart(2, "0")}`,
+  }));
+}
 
 export async function generateStaticParams() {
   return getAllSlugs().map((slug) => ({ slug }));
@@ -22,10 +35,12 @@ export async function generateMetadata({
   return {
     title: project.title,
     description: project.tagline,
+    alternates: { canonical: `/projects/${slug}` },
     openGraph: {
       title: project.title,
       description: project.tagline,
       type: "article",
+      url: `/projects/${slug}`,
     },
   };
 }
@@ -47,13 +62,61 @@ export default async function ProjectPage({
   const prev = idx > 0 ? projects[idx - 1] : null;
   const next = idx < projects.length - 1 ? projects[idx + 1] : null;
   const caseNum = String(project.order).padStart(2, "0");
-  const heroObjectClass =
-    project.imageMode === "contain"
-      ? "object-contain p-12 md:p-16"
-      : "object-cover";
+  const heroMeta = await getImageMeta(project.hero);
+  const heroWidth = heroMeta?.width ?? 1600;
+  const heroHeight = heroMeta?.height ?? 1000;
+
+  const projectUrl = `${SITE_URL}/projects/${slug}`;
+  const datePublishedIso = `${project.year}-01-01`;
+  const creativeWorkJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    name: project.title,
+    headline: project.title,
+    description: project.tagline,
+    abstract: project.pitch,
+    text: project.essay,
+    url: projectUrl,
+    image: `${SITE_URL}${project.hero}`,
+    inLanguage: "en",
+    datePublished: datePublishedIso,
+    dateCreated: String(project.year),
+    dateModified: new Date().toISOString(),
+    keywords: project.stack.join(", "),
+    creativeWorkStatus: project.status,
+    author: {
+      "@type": "Person",
+      "@id": `${SITE_URL}/about#person`,
+      name: "Jurgen Halili",
+      url: `${SITE_URL}/about`,
+    },
+    isPartOf: { "@type": "WebSite", url: SITE_URL, name: "Jurgen Halili" },
+  };
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Projects",
+        item: `${SITE_URL}/#cases`,
+      },
+      { "@type": "ListItem", position: 3, name: project.title, item: projectUrl },
+    ],
+  };
 
   return (
     <ProjectAccentSection slug={project.slug}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(creativeWorkJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <SectionMast
         number={`Case ${caseNum}`}
         label={project.title.toUpperCase()}
@@ -124,20 +187,24 @@ export default async function ProjectPage({
 
       {/* === HERO IMAGE === */}
       <section className="px-6 pb-20 md:px-10 lg:px-16">
-        <ProjectHeroCard
-          src={project.hero}
-          alt={project.heroAlt}
-          objectClass={heroObjectClass}
-        />
-        <p
-          className="mt-3 font-serif italic"
-          style={{ color: "var(--color-fg-muted)", fontSize: 13 }}
-        >
-          fig. 01 — {project.heroAlt}
-        </p>
+        <div className="mx-auto max-w-4xl">
+          <ProjectHeroCard
+            src={project.hero}
+            alt={project.heroAlt}
+            width={heroWidth}
+            height={heroHeight}
+            contain={project.imageMode === "contain"}
+          />
+          <p
+            className="mt-3 font-serif italic"
+            style={{ color: "var(--color-fg-muted)", fontSize: 13 }}
+          >
+            fig. 01 — {project.heroAlt}
+          </p>
+        </div>
       </section>
 
-      {/* === PITCH === */}
+      {/* === ESSAY === */}
       <section
         className="border-y px-6 py-20 md:px-10 md:py-24 lg:px-16"
         style={{ borderColor: "var(--color-fg)", background: "var(--color-bg-elevated)" }}
@@ -149,28 +216,30 @@ export default async function ProjectPage({
           >
             The pitch
           </p>
-          <p
-            className="col-span-12 font-serif md:col-span-9"
-            style={{
-              color: "var(--color-fg)",
-              fontSize: "clamp(1.4rem, 2.2vw, 2rem)",
-              lineHeight: 1.32,
-              letterSpacing: "-0.01em",
-            }}
-          >
-            <span
-              className="float-left mr-3 -mt-2 font-serif"
+          <div className="col-span-12 md:col-span-9">
+            <p
+              className="font-serif"
               style={{
-                color: "var(--color-accent)",
-                fontSize: "5rem",
-                lineHeight: 0.85,
-                fontWeight: 600,
+                color: "var(--color-fg)",
+                fontSize: "clamp(1.2rem, 1.8vw, 1.6rem)",
+                lineHeight: 1.42,
+                letterSpacing: "-0.005em",
               }}
             >
-              {project.pitch.charAt(0)}
-            </span>
-            {project.pitch.slice(1)}
-          </p>
+              <span
+                className="float-left mr-3 -mt-2 font-serif"
+                style={{
+                  color: "var(--color-accent)",
+                  fontSize: "5rem",
+                  lineHeight: 0.85,
+                  fontWeight: 600,
+                }}
+              >
+                {project.essay.charAt(0)}
+              </span>
+              {project.essay.slice(1)}
+            </p>
+          </div>
         </div>
       </section>
 
@@ -331,62 +400,43 @@ export default async function ProjectPage({
       </section>
 
       {/* === GALLERY === */}
-      {project.gallery && project.gallery.length > 0 && (
-        <section
-          className="border-y px-6 py-20 md:px-10 md:py-24 lg:px-16"
-          style={{ borderColor: "var(--color-fg)", background: "var(--color-bg-elevated)" }}
-        >
-          <div
-            className="flex items-baseline justify-between border-b pb-3"
-            style={{ borderColor: "var(--color-fg)", borderBottomWidth: 2 }}
+      {(() => {
+        const shots: readonly ProjectShot[] =
+          project.shots && project.shots.length > 0
+            ? project.shots
+            : shotsFromGallery(project.gallery ?? [], project.title);
+        if (shots.length === 0) return null;
+        return (
+          <section
+            className="border-y px-6 py-20 md:px-10 md:py-24 lg:px-16"
+            style={{
+              borderColor: "var(--color-fg)",
+              background: "var(--color-bg-elevated)",
+            }}
           >
-            <h2
-              className="font-serif"
-              style={{ color: "var(--color-fg)", fontSize: 22, fontWeight: 500 }}
+            <div
+              className="mx-auto max-w-5xl flex items-baseline justify-between border-b pb-3"
+              style={{ borderColor: "var(--color-fg)", borderBottomWidth: 2 }}
             >
-              <span style={{ fontStyle: "italic" }}>More shots</span>
-            </h2>
-            <p
-              className="font-serif italic"
-              style={{ color: "var(--color-fg-muted)", fontSize: 13 }}
-            >
-              {project.gallery.length} {project.gallery.length === 1 ? "frame" : "frames"}
-            </p>
-          </div>
-          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {project.gallery.map((src, i) => {
-              const isMobile = src.includes("mobile") || src.includes("check-");
-              return (
-                <figure key={src}>
-                  <div
-                    className={`relative w-full overflow-hidden ${
-                      isMobile ? "aspect-[9/19]" : "aspect-[16/10]"
-                    }`}
-                    style={{
-                      border: "2px solid var(--color-fg)",
-                      background: isMobile ? "#000" : "var(--color-bg-overlay)",
-                    }}
-                  >
-                    <Image
-                      src={src}
-                      alt={`${project.title} frame ${i + 2}`}
-                      fill
-                      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                      className={isMobile ? "object-contain" : "object-cover object-top"}
-                    />
-                  </div>
-                  <figcaption
-                    className="mt-2 font-serif italic"
-                    style={{ color: "var(--color-fg-muted)", fontSize: 12 }}
-                  >
-                    fig. 0{i + 2}
-                  </figcaption>
-                </figure>
-              );
-            })}
-          </div>
-        </section>
-      )}
+              <h2
+                className="font-serif"
+                style={{ color: "var(--color-fg)", fontSize: 22, fontWeight: 500 }}
+              >
+                <span style={{ fontStyle: "italic" }}>Gallery</span>
+              </h2>
+              <p
+                className="font-serif italic"
+                style={{ color: "var(--color-fg-muted)", fontSize: 13 }}
+              >
+                {shots.length} {shots.length === 1 ? "frame" : "frames"}
+              </p>
+            </div>
+            <div className="mt-12 md:mt-16">
+              <ProjectGallery shots={shots} />
+            </div>
+          </section>
+        );
+      })()}
 
       {/* === LIFT QUOTE === */}
       <section className="px-6 py-24 md:px-10 md:py-32 lg:px-16">

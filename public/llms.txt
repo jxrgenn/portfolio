@@ -1,0 +1,28 @@
+# Jurgen Halili — Portfolio
+
+> Solo full-stack engineer with AI focus, based in Kiel, Germany. Builds AI-driven products end-to-end: agent runtimes, multi-LLM pipelines, React Native, Postgres. Microsoft Dynamics 365 / Business Central on the other rail. Available for full-stack + AI roles.
+
+## About
+- [About — bio, work history, certifications, skills](https://jurgenhalili.dev/about): five years engineering, BSc Software Engineering from Epoka University, MERN + Next.js + Anthropic / OpenAI / Gemini SDKs.
+- [Contact](https://jurgenhalili.dev/contact)
+
+## Projects (10 production projects)
+
+- [KeepItUp](https://jurgenhalili.dev/projects/keepitup) — Self-hosted AI agent that auto-fixes broken deployments. Stack: React 19, Anthropic + OpenAI + Gemini, Tree-sitter. Status: shipped.
+- [Ëndërrat e Mia](https://jurgenhalili.dev/projects/enderrat-e-mia) — AI bedtime stories in Albanian, illustrated and read aloud. Stack: Expo + RN, Claude Haiku + Flux, RevenueCat. Status: in-progress.
+- [GymApp](https://jurgenhalili.dev/projects/gym-app) — White-label gym OS — NFC entry, member app, multi-tenant admin. Stack: Express + Postgres, Socket.io + Redis, Expo + MUI. Status: shipped.
+- [Pilates Studio](https://jurgenhalili.dev/projects/pilates-studio) — Boutique studio platform — admin web, mobile app, API, 594 tests. Stack: pnpm monorepo, Express + Prisma, Turso + libSQL. Status: shipped.
+- [CleanSlate](https://jurgenhalili.dev/projects/cleanslate) — $20/month operating system for cleaning businesses. Stack: Next.js 16, Supabase + RLS, Telnyx + LemonSqueezy. Status: shipped.
+- [Social Command Center](https://jurgenhalili.dev/projects/social-command-center) — Industrial Instagram content for any brand — autonomous, multi-tenant. Stack: Next.js 16, BullMQ + Drizzle, OpenAI + Postiz. Status: in-progress.
+- [Reel Farmer](https://jurgenhalili.dev/projects/reel-farmer) — Self-hosted YouTube → TikTok pipeline. One command, multi-account. Stack: Bun + TS, Whisper + Gemini, Remotion + Puppeteer. Status: shipped.
+- [Bohesh](https://jurgenhalili.dev/projects/bohesh) — Tirana's social pulse — find or start hangouts on a live map. Stack: Expo + RN 0.83, Supabase + Realtime, react-native-maps. Status: in-progress.
+- [Websites](https://jurgenhalili.dev/projects/websites) — Three brand sites — Three.js hero, MongoDB CRM, fitness coaching. Stack: React + Vite, Three.js + Framer, MongoDB Atlas. Status: shipped.
+- [advance.al](https://jurgenhalili.dev/projects/advance-al) — Albania's job marketplace — embedding-ranked matching, three-sided platform. Stack: React 18 + Vite, Express + MongoDB, OpenAI embeddings. Status: shipped.
+
+## Languages spoken
+- Albanian (native)
+- English (fluent)
+- German (B1)
+
+## Location
+- Kiel, Schleswig-Holstein, Germany

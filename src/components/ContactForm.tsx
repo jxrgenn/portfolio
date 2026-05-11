@@ -149,7 +149,7 @@ export function ContactForm() {
         type="submit"
         disabled={status === "submitting"}
         aria-busy={status === "submitting"}
-        className="group relative inline-flex items-center gap-2 overflow-hidden rounded-full px-6 py-3 font-mono text-sm uppercase tracking-wider text-[var(--color-bg)] shadow-[0_0_24px_rgba(34,211,238,0.35)] transition-all hover:-translate-y-0.5 hover:shadow-[0_0_44px_rgba(34,211,238,0.55)] disabled:cursor-progress disabled:opacity-60"
+        className="group relative inline-flex items-center gap-2 overflow-hidden rounded-full px-6 py-3 font-mono text-sm uppercase tracking-wider text-[var(--color-bg)] shadow-[0_0_24px_rgba(34,211,238,0.35)] transition-all hover:-translate-y-0.5 hover:shadow-[0_0_44px_rgba(34,211,238,0.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg)] disabled:cursor-progress disabled:opacity-60"
       >
         <span
           aria-hidden

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Fraunces } from "next/font/google";
 import "./globals.css";
 import { SkipLink } from "@/components/SkipLink";
@@ -47,8 +47,22 @@ export const metadata: Metadata = {
   },
   twitter: { card: "summary_large_image" },
   robots: { index: true, follow: true },
-  authors: [{ name: "Jurgen Halili" }],
+  authors: [{ name: "Jurgen Halili", url: SITE_URL }],
   creator: "Jurgen Halili",
+  alternates: {
+    canonical: "/",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#0a0612" },
+    { media: "(prefers-color-scheme: light)", color: "#0a0612" },
+  ],
+  colorScheme: "dark",
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({

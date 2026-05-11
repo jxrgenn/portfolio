@@ -1,0 +1,125 @@
+# Jurgen Halili — Portfolio (full content)
+
+> Solo full-stack engineer with AI focus, based in Kiel, Germany. This file contains the full prose of every case study on jurgenhalili.dev for AI search engines that prefer single-fetch ingestion over crawling.
+
+## About
+
+Jurgen Halili. Kiel, Germany. Albanian, fluent English, B1 German. Five years engineering. BSc Software Engineering, Epoka University, GPA 3.04, university honor list. Half-ride scholarship. High school: Ismail Qemali, Tirana — GPA 9.97, twice physics + math olympiad finalist. German: A2 100/100 at CASA Bremen. Currently freelance: AI-driven full-stack (track 1) + Microsoft Dynamics 365 / Business Central (track 2).
+
+Stack: TypeScript, JavaScript, Python, Java, C, AL, SQL. Next.js 16, React 19, React Native + Expo, Tailwind 4, shadcn/ui, Three.js, Framer Motion. Node.js + Express, Spring Boot, Flask, Socket.io, BullMQ. PostgreSQL, MongoDB, Prisma, Drizzle, Sequelize, Mongoose, Supabase + RLS, Turso (libSQL), SQLite, Redis. Anthropic SDK, OpenAI SDK, Google Gemini SDK, Tree-sitter, Whisper, fal.ai (Flux), Model Context Protocol. Docker, Vercel, Render, GitHub Actions, Playwright, Vitest, Jest, Remotion, Puppeteer. Microsoft Dynamics 365, Business Central, AL Language, REST + OAuth2 integrations, NAV → BC migrations.
+
+Certifications: Anthropic Introduction to Model Context Protocol (Skilljar, 2026). AI Engineer Agentic Track (Udemy, 17 hours, 2025).
+
+Contact: jurgenhalili1142@gmail.com. LinkedIn: jurgen-halili-b227a6255.
+
+## Projects
+
+### KeepItUp
+
+URL: https://jurgenhalili.dev/projects/keepitup
+Year: 2026. Status: shipped. Stack: React 19, Anthropic + OpenAI + Gemini, Tree-sitter.
+
+Self-hosted AI agent that auto-fixes broken deployments.
+
+Self-hosted AI on-call agent. Polls six deploy platforms every five minutes, parses crashes with tree-sitter across six languages, drafts a fix through OpenAI / Anthropic / Gemini, runs it past a confidence gate, and opens a PR — never pushes to main.
+
+KeepItUp is an autonomous SRE agent that watches six deploy platforms 24/7 and tries to turn “page on call” into “review a PR after coffee.” The brain is a two-layer reasoning system: a tree-sitter AST walker indexes the offending file across six languages and feeds the model a 50-500 line context slice instead of the whole repo, and a separate Reviewer agent gates every proposed fix behind a confidence threshold. Fixes auto-PR only at ≥85% confidence, or ≥70% if a build verification passes — because verification is a stronger signal than a raw score. Three providers (Anthropic, OpenAI, Gemini) sit behind a single LLM client with budget gates and cost telemetry, so swapping providers is a config change. The agent never pushes to main; it opens PRs, runs Semgrep + Trivy + Gitleaks scans in Docker, and rolls everything into a weighted 0-100 health score per repo. I built it because I wanted oncall to be a thing I review with coffee, not a thing that wakes me up.
+
+### Ëndërrat e Mia
+
+URL: https://jurgenhalili.dev/projects/enderrat-e-mia
+Year: 2026. Status: in-progress. Stack: Expo + RN, Claude Haiku + Flux, RevenueCat.
+
+AI bedtime stories in Albanian, illustrated and read aloud.
+
+Albanian-language bedtime stories, generated, illustrated, and narrated. Expo app on a Mongoose backend. Claude Haiku writes, fal.ai Flux Schnell paints four matched illustrations, TTS narrates, RevenueCat + AdMob fund the free tier, and an in-house pipeline renders the launch ad creatives.
+
+Ëndërrat e Mia is an AI bedtime-story app for Albanian-speaking families — a market that essentially has zero native-language children's content, so parents end up translating Disney+ at bedtime. Each story is a three-step pipeline rendered atomically: Claude Haiku writes the narrative in Albanian, fal.ai's Flux Schnell paints four matched watercolor illustrations from the same character setup, and TTS narrates the whole thing — you never get orphaned text with missing audio. The most quietly proud move is the single Transaction ledger: free credits earned from ads, RevenueCat subscription credits, AdMob rewards, and one-off purchases all write to the same table, so balance, churn, and fraud queries are naturally unified instead of requiring three accounting systems. There's also a self-built programmatic ad-creative pipeline in `videos/generateAdImages*.js` — five scripts that render TikTok ad frames using the same children's-book watercolor styling as the in-app illustrations, so brand consistency is baked in. I shipped roughly thirty creatives for the launch this way, without a designer. I built it because my native-language community deserves bedtime stories that don't come from Google Translate.
+
+### GymApp
+
+URL: https://jurgenhalili.dev/projects/gym-app
+Year: 2026. Status: shipped. Stack: Express + Postgres, Socket.io + Redis, Expo + MUI.
+
+White-label gym OS — NFC entry, member app, multi-tenant admin.
+
+White-label gym OS for the Albanian market. Four deployables — admin web, member app, API, NFC scanner-bridge — sharing one branding record. Socket.io with a Redis adapter fans live occupancy across PM2 workers so every dashboard sees the same number.
+
+GymApp is a white-label gym OS for the Albanian market — four independently deployable products that share one database and one branding record. The admin web, the member app, the API, and the NFC scanner-bridge all live in one monorepo; every Gym row stores its own primary color, logo, and bundle identifier, and at runtime the React Native member app reads `GymConfigContext` and *becomes* that gym's branded app. Live occupancy fans out across PM2 cluster workers via Socket.io with a Redis pub/sub adapter, so a tap at the turnstile reaches every dashboard, every member phone, every scanner — without polling. The scanner-bridge itself is a tiny `node-hid` service that reads card UIDs off a USB NFC reader and POSTs to `/api/visits`, decoupling hardware from the API entirely so a Raspberry Pi at the gate doesn't know any backend internals. Multi-tenancy is enforced by a `gymId` foreign key on every domain model plus middleware-scoped queries; super-admins can hop tenants. I also built a Remotion ad pipeline that renders TikTok creatives from the same React components used in the app — so the ad creative and the product UI literally cannot drift.
+
+### Pilates Studio
+
+URL: https://jurgenhalili.dev/projects/pilates-studio
+Year: 2026. Status: shipped. Stack: pnpm monorepo, Express + Prisma, Turso + libSQL.
+
+Boutique studio platform — admin web, mobile app, API, 594 tests.
+
+Branded studio platform — admin web, mobile app, API, 594 tests. Same Prisma schema runs on better-sqlite3 in dev and Turso (libsql) in prod via adapters. Express ships as a Vercel function with zero rewrites. Resend for email, Sentry for errors, Playwright for E2E.
+
+Pilates Studio is a four-deployable platform for one boutique studio — the same Prisma schema runs on `better-sqlite3` in dev and Turso (libsql) in prod, swapped through the adapter pattern with zero code changes. Express ships as a Vercel serverless catch-all (`api/[[...path]].ts`), so the same code runs as a long-lived server locally and as edge functions in production. An audit middleware records every admin write — actor, resource, IP, user-agent — but never blocks the real operation if the audit insert fails, because losing a booking to a slow audit table is not an acceptable failure mode. 21 Prisma models, 594 tests across API + admin + mobile + Playwright E2E, transactional email through Resend with a graceful no-op when keys are missing. The booking flow has proper status transitions with auto-promotion from the waitlist on cancellation, so admins don't manually re-shuffle attendance. I built it because boutique studios get nickel-and-dimed by SaaS, and I wanted to prove a single solo dev could ship the same shape with discipline.
+
+### CleanSlate
+
+URL: https://jurgenhalili.dev/projects/cleanslate
+Year: 2026. Status: shipped. Stack: Next.js 16, Supabase + RLS, Telnyx + LemonSqueezy.
+
+$20/month operating system for cleaning businesses.
+
+$20/month operating system for solo cleaners in Germany. Next.js 16 with strict architecture: thin routes, services own data, Supabase RLS, money in cents, phones in E.164. Telnyx + WhatsApp for SMS, four Vercel cron endpoints, full German marketing site at the edge.
+
+CleanSlate is a €20-flat operating system for solo cleaners in Germany — a discipline product disguised as a SaaS. Every architectural rule is enforced with no exceptions: route files dispatch to services, services own all data ops, components never touch Supabase, money is always cents, phones always E.164, RLS scopes every query to the user. The subscription expiry path is a pure RLS policy — when the trial runs out, no UI code runs; the database simply stops accepting INSERTs and the read-only state is automatic. Four Vercel cron endpoints handle trial reminders, overdue invoices, recurring job generation, and pre-job SMS, so the operator never logs in to do admin. Eleven services own the domain (billing, clients, earnings, invoices, jobs, profiles, search, SMS, WhatsApp, email, line items), and the full German marketing site — Datenschutz, Impressum, AGB, MDX-driven blog and ratgeber, a `/rechner` cost calculator — sits in a separate `(marketing)` route group from the authenticated `(app)`. I built it because the discipline *is* the product — you can't accidentally introduce a bug when components physically can't touch the database.
+
+### Social Command Center
+
+URL: https://jurgenhalili.dev/projects/social-command-center
+Year: 2026. Status: in-progress. Stack: Next.js 16, BullMQ + Drizzle, OpenAI + Postiz.
+
+Industrial Instagram content for any brand — autonomous, multi-tenant.
+
+Autonomous Instagram content factory for any brand. Drop a brand config + knowledge base, and a weekly BullMQ cron walks every brand through a 6-stage pipeline; posts auto-schedule via the Postiz API once images land. Three Claude Code slash commands give a zero-API-cost generation path that bypasses OpenAI entirely.
+
+Social Command Center is an autonomous Instagram content factory for trade brands — adding a brand is a filesystem operation, not a code change. Each brand drops a JSON config plus a knowledge-base directory (brand DNA, customer ICP, voice), and a weekly BullMQ cron fires Mondays at 6 AM and walks every brand through a six-stage pipeline: Brand Discovery → Research → Strategy → Content Gen → Quality Gate → Post Creation, with retry/backoff and a real quality gate before anything reaches the calendar. Posts wait in `awaiting_image` until images are dragged into the dashboard, then auto-schedule via the Postiz REST API — a state machine, not a vibe. The cool unlock is the zero-API-cost path: three Claude Code slash commands (`/analyze-brand`, `/generate-content-plan`, `/generate-content`) read the knowledge base directly from disk and POST to `/api/import-content`, so I can generate twelve weeks of content for all seven brands without touching the OpenAI bill. I built it because seven brands times thirty posts a month is not a thing a human should be doing manually — and turning content generation into a deterministic, version-controlled pipeline made the agency-of-one model actually viable.
+
+### Reel Farmer
+
+URL: https://jurgenhalili.dev/projects/reel-farmer
+Year: 2026. Status: shipped. Stack: Bun + TS, Whisper + Gemini, Remotion + Puppeteer.
+
+Self-hosted YouTube → TikTok pipeline. One command, multi-account.
+
+Bun pipeline that turns YouTube into TikTok. yt-dlp downloads, Whisper transcribes, Gemini picks the clips, Remotion renders 1080×1920, stealth puppeteer uploads across multiple authenticated accounts. Resumable from any step. Companion Next.js dashboard reads the SQLite run database.
+
+Reel Farmer is a self-hosted Bun pipeline that turns YouTube into TikTok shorts across multiple authenticated accounts — yt-dlp downloads, Whisper transcribes (configurable model size), Gemini picks the clips with the transcript in context, Remotion renders 1080×1920, stealth puppeteer uploads. Every stage writes to a deterministic `data/runs/<run-id>/` tree and stamps a SQLite checkpoint database, so `bun run resume <run-id>` skips finished work and picks up exactly where the last crash hit — long pipelines are inevitable, resumability is what makes them usable. The slideshow composer uses the same Remotion render pipeline as the captioned clips, so Pinterest-sourced slideshows and YouTube clips share a visual language. The multi-account uploader lives behind a single `account-manager.ts` API — cookie/session management, stealth puppeteer, and TikTok's compliance-flag dance all hidden behind one upload call. Trend and content scouts auto-discover what to clip rather than waiting for the operator to paste URLs. A separate Next.js dashboard reads the SQLite run database for status and queue management. I built it because I run a small media operation across multiple Albanian-themed accounts and a $30/month SaaS that doesn't do slideshows wasn't going to cut it.
+
+### Bohesh
+
+URL: https://jurgenhalili.dev/projects/bohesh
+Year: 2026. Status: in-progress. Stack: Expo + RN 0.83, Supabase + Realtime, react-native-maps.
+
+Tirana's social pulse — find or start hangouts on a live map.
+
+Tirana's social pulse — a live map of who's hanging out where, tonight. Expo + Supabase Realtime + react-native-maps. Vibe-checks let any hangout get live-rated mid-event. MMKV for hot-path caching, OTP auth, deep-link invites, persistent crews for repeat plans.
+
+Bohesh is a live social-pulse map of Tirana — a discovery layer for organic, in-person plans, not a Meetup clone and not a dating app. The thing I'm most proud of is Vibe Checks as a first-class entity: a hangout can be live-rated mid-event, and the `submit_vibe_check` RPC enforces attendance proof and a 48-hour rating window before counting. Earn fifteen vibe checks from ten unique people and `profiles.is_trusted` flips automatically — reputation is built from shared experiences, not follower counts, so trust actually means something. The data layer is split into three services (`hangout-crud`, `hangout-queries`, `hangout-actions`) so reads, writes, and orchestrated business logic each have a clean boundary, which makes RLS reasoning local and testing actually targeted. MMKV replaces AsyncStorage on the cold-start hot path — synchronous and encrypted — so auth state and draft hangouts don't add async hops to first-launch time. I built it because Tirana's social life lives in WhatsApp groups and Instagram DMs, and visitors and new residents have no way in.
+
+### Websites
+
+URL: https://jurgenhalili.dev/projects/websites
+Year: 2026. Status: shipped. Stack: React + Vite, Three.js + Framer, MongoDB Atlas.
+
+Three brand sites — Three.js hero, MongoDB CRM, fitness coaching.
+
+Three live brand sites, all solo. Kërçishta Garage — Three.js Hyperspeed hero plus a hidden /admin CRM (MongoDB, JWT, bilingual EN/SQ) so the garage owner finally knows whether the shop is profitable. Klodi Trainer — a personal-trainer site with a fitness quiz and transformation gallery. jxsoft.al — fast, restrained marketing site for a small software studio.
+
+Three small brand sites, all solo, sharing one Vite + Vercel pipeline. Kërçishta Garage is the most ambitious — a Three.js Hyperspeed hero that gives a one-day build a real visual hook, plus a hidden /admin CRM gated by a password and a Bearer token in `sessionStorage`: not in nav, no public link, just a known URL plus a passphrase. The whole full-stack app — public site, contact form, admin CRM, MongoDB integration — fits in one `App.tsx`, deliberate scope discipline because splitting it would have been gold-plating for a one-and-a-half-day build. Klodi Trainer is a coaching funnel built around a multi-step fitness quiz — quiz state lives in URL params so partial answers survive a refresh, and no backend gets touched until the final submit. jxsoft.al is the boring-on-purpose brochure site for my own software studio — fast load, clean type, no animation theater, because credibility matters more than wow-factor for a studio site. I love that all three live behind one boring pipeline and only diverge where the brand actually earned the divergence.
+
+### advance.al
+
+URL: https://jurgenhalili.dev/projects/advance-al
+Year: 2026. Status: shipped. Stack: React 18 + Vite, Express + MongoDB, OpenAI embeddings.
+
+Albania's job marketplace — embedding-ranked matching, three-sided platform.
+
+advance.al is Albania's job marketplace — three sides (jobseekers, employers, admins) on one platform. Matching isn't just keyword filters: jobs and candidates are embedded with text-embedding-3-small, then ranked by cosine similarity with a hard category-match boost so old internships don't drown out current skills. Bilingual SQ/EN, GDPR-aware, 288 backend tests + Playwright walker reports across every role.
+
+advance.al is Albania's job marketplace and the only project here built with paying users from day one — three sides on a single platform: jobseekers, employers, and admins, each with their own dashboard. The piece I'm proudest of is the matching layer: every job description and every candidate profile gets embedded with `text-embedding-3-small` (1536 dims) and ranked by cosine similarity, but pure semantic similarity ranks an AI Engineer's old banking internship too high, so I added a language-agnostic domain inferrer that recognises both English and Albanian skill tokens (zhvillues, programues, financë) and applies a hard category-match boost on top — without it, banking jobs flooded the top of every senior dev's list. The backend is Express 5 + MongoDB 8 with a Redis rate-limited OpenAI client, embedding-worker queues, an alert system that emails me when embedding drift exceeds a threshold, and 288 Jest tests under a strict philosophy that bans permissive matchers and tautological assertions. The frontend is React 18 + Vite + Mantine + shadcn/ui with bilingual SQ/EN copy, four-step employer onboarding wizards, and Playwright \"walker\" tests that screenshot every page across desktop + iPhone 12 + Pixel 5 for every release. The admin side is a real ops console — business control panel, bulk notifications, configuration audit log, GDPR data retention crons that auto-purge soft-deleted accounts after 30 days — because the platform handles real CVs, real applications, and real money. I love that this one is messy, multi-tenant, and live: I learned how a marketplace actually works by running one.

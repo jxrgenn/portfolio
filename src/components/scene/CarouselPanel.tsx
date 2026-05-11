@@ -22,7 +22,7 @@ export function CarouselPanel({
   spacing: number;
   progressRef: React.MutableRefObject<number>;
 }) {
-  const tex = useLoader(THREE.TextureLoader, src);
+  const tex = useLoader(THREE.TextureLoader, src) as THREE.Texture;
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.wrapS = tex.wrapT = THREE.ClampToEdgeWrapping;
   tex.minFilter = THREE.LinearMipMapLinearFilter;
@@ -54,20 +54,20 @@ export function CarouselPanel({
     const sign = index < floatIdx ? -1 : 1;
     const targetRotY = THREE.MathUtils.lerp(0, sign * 0.55, Math.min(1.5, d) / 1.5);
 
-    g.scale.x += (targetScale - g.scale.x) * 0.12;
-    g.scale.y += (targetScale - g.scale.y) * 0.12;
-    g.scale.z += (targetScale - g.scale.z) * 0.12;
-    g.rotation.y += (targetRotY - g.rotation.y) * 0.10;
-    mat.opacity += (targetOpacity - mat.opacity) * 0.12;
-    frameMat.opacity += (targetOpacity - frameMat.opacity) * 0.12;
+    g.scale.x += (targetScale - g.scale.x) * 0.22;
+    g.scale.y += (targetScale - g.scale.y) * 0.22;
+    g.scale.z += (targetScale - g.scale.z) * 0.22;
+    g.rotation.y += (targetRotY - g.rotation.y) * 0.20;
+    mat.opacity += (targetOpacity - mat.opacity) * 0.22;
+    frameMat.opacity += (targetOpacity - frameMat.opacity) * 0.22;
 
     // Reflection + label fade — only present on the focal panel.
     const focalAmount = Math.max(0, 1 - dC * 1.6);
-    if (refl) refl.opacity += (focalAmount * 0.22 - refl.opacity) * 0.12;
+    if (refl) refl.opacity += (focalAmount * 0.22 - refl.opacity) * 0.22;
     if (label) {
       const labelMat = label.material as THREE.Material & { opacity?: number };
       if (labelMat.opacity !== undefined) {
-        labelMat.opacity += (focalAmount - labelMat.opacity) * 0.12;
+        labelMat.opacity += (focalAmount - labelMat.opacity) * 0.22;
       }
     }
 
@@ -105,7 +105,7 @@ export function CarouselPanel({
         <planeGeometry args={[ASPECT, 1]} />
         <meshBasicMaterial
           ref={matRef}
-          map={tex}
+          map={tex as never}
           toneMapped={false}
           transparent
           opacity={1}
@@ -118,7 +118,7 @@ export function CarouselPanel({
         <planeGeometry args={[ASPECT, 0.7]} />
         <meshBasicMaterial
           ref={reflMatRef}
-          map={tex}
+          map={tex as never}
           toneMapped={false}
           transparent
           opacity={0}
