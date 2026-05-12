@@ -126,7 +126,7 @@ export const projects = [
     tagline: "Self-hosted AI agent that auto-fixes broken deployments.",
     year: 2026,
     status: "shipped",
-    hero: "/captures/keepitup/dashboard.png",
+    hero: "/captures/keepitup/home_desktop.png",
     heroAlt:
       "KeepItUp dashboard — connected deploy platforms, live health score, recent activity",
     stack: ["React 19", "Anthropic + OpenAI + Gemini", "Tree-sitter"],

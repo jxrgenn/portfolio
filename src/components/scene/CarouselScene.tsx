@@ -11,20 +11,12 @@ import { projects } from "@/lib/projects";
 const SPACING = 2.5;
 const FOCAL_OFFSET = 1.25;
 
-// Curated scene textures live under /public/scenes/work/ when they exist.
-// Otherwise fall back to the project's hero image so every project from
-// projects.ts gets a panel — no project silently missing from the carousel.
-const SCENE_TEXTURES: Record<string, string> = {
-  keepitup: "/scenes/work/keepitup.jpg",
-  "gym-app": "/scenes/work/gymapp.jpg",
-  "pilates-studio": "/scenes/work/pilates.jpg",
-  cleanslate: "/scenes/work/cleanslate.jpg",
-  "enderrat-e-mia": "/scenes/work/enderrat.jpg",
-  "social-command-center": "/scenes/work/socialcommand.jpg",
-};
-
+// Single source of truth: the carousel panel texture is whatever the
+// case-study page uses as its hero. Update project.hero and both surfaces
+// stay in sync. (Previously a /scenes/work/*.jpg thumbnail map existed —
+// it drifted out of date because hero updates didn't propagate here.)
 const PANELS: readonly { src: string; codename: string; year: string }[] = projects.map((p) => ({
-  src: SCENE_TEXTURES[p.slug] ?? p.hero,
+  src: p.hero,
   codename: p.title.toUpperCase().replace(/\s+/g, "-").replace(/[^A-Z0-9-]/g, ""),
   year: String(p.year),
 }));
