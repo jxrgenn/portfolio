@@ -167,6 +167,7 @@ function PanelTrack({ progressRef }: { progressRef: React.MutableRefObject<numbe
           codename={p.codename}
           year={p.year}
           index={i}
+          total={PANELS.length}
           spacing={SPACING}
           progressRef={progressRef}
         />

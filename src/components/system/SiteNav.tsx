@@ -114,8 +114,8 @@ export function SiteNav() {
           </ul>
 
           <a
-            href="mailto:jurgenhalili1142@gmail.com"
-            data-cursor-text="Email"
+            href="/#contact"
+            data-cursor-text="Contact"
             className="hidden rounded-full px-4 py-1.5 font-sans text-[11px] uppercase tracking-[0.2em] transition-colors md:inline-flex md:items-center md:gap-2"
             style={{
               border: "1px solid var(--color-border-strong)",

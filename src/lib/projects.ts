@@ -137,11 +137,7 @@ export const projects = [
     shots: [
       { src: "/captures/keepitup/hub.png", alt: "Project hub — services connected", caption: "Project hub — six platforms connected, live health score per repo.", url: "keepitup.local/dashboard" },
       { src: "/captures/keepitup/code.png", alt: "Code view — fix proposed inline", caption: "Tree-sitter AST view — proposed fix annotated against the call graph.", url: "keepitup.local/projects/api/fixes" },
-      { src: "/captures/keepitup/logs.png", alt: "Live logs from BetterStack", caption: "Runtime logs streamed from BetterStack into the agent's context.", url: "keepitup.local/logs" },
       { src: "/captures/keepitup/planner.png", alt: "Agent planner timeline", caption: "v2 agent planner — orchestrator, runtime, state, memory laid out as a timeline.", url: "keepitup.local/agent/plan" },
-      { src: "/captures/keepitup/console.png", alt: "Agent console output", caption: "Agent console — tool calls and reasoning streamed live.", url: "keepitup.local/agent/console" },
-      { src: "/captures/keepitup/tg_convo1.png", alt: "Telegram alert thread", caption: "Telegram bot — alert thread with one-tap acknowledge.", url: "t.me/keepitup_bot" },
-      { src: "/captures/keepitup/tg_convo2.png", alt: "Telegram fix-PR notification", caption: "Fix-PR notification — review-after-coffee, never push to main.", url: "t.me/keepitup_bot" },
     ],
     problem: [
       "Solo founders and small teams ship fast but lack 24/7 ops. A 3 AM Vercel build break or runtime crash either silently rots or wakes someone up at the worst possible time.",

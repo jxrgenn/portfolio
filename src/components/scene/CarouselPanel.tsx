@@ -12,6 +12,7 @@ export function CarouselPanel({
   codename,
   year,
   index,
+  total,
   spacing,
   progressRef,
 }: {
@@ -19,6 +20,7 @@ export function CarouselPanel({
   codename: string;
   year: string;
   index: number;
+  total: number;
   spacing: number;
   progressRef: React.MutableRefObject<number>;
 }) {
@@ -45,7 +47,8 @@ export function CarouselPanel({
     const label = labelRef.current;
     if (!g || !mat || !inner || !frameMat) return;
 
-    const floatIdx = Math.max(0, Math.min(5, progressRef.current * 5));
+    const maxIdx = Math.max(1, total - 1);
+    const floatIdx = Math.max(0, Math.min(maxIdx, progressRef.current * maxIdx));
     const d = Math.abs(index - floatIdx);
     const dC = Math.min(1, d);
 

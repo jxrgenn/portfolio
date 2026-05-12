@@ -208,8 +208,8 @@ export function Hero() {
           <div ref={ctaRef} className="flex items-center gap-6">
             <MagneticCTA href="#work">Selected work</MagneticCTA>
             <a
-              href="mailto:jurgenhalili1142@gmail.com"
-              data-cursor-text="Email"
+              href="#contact"
+              data-cursor-text="Contact"
               className="font-sans text-sm transition-colors"
               style={{
                 color: "var(--color-fg)",
