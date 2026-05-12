@@ -5,7 +5,12 @@ import { useLoader, useFrame } from "@react-three/fiber";
 import { Text } from "@react-three/drei";
 import * as THREE from "three";
 
-const ASPECT = 16 / 10;
+// Default plane aspect — used only until the texture's natural dims load.
+const DEFAULT_ASPECT = 16 / 10;
+// Fixed visual HEIGHT for every panel. Width derives from each texture's
+// actual aspect so portrait phone mockups stay portrait, wide laptops stay
+// wide — no stretching, no letterboxing.
+const PANEL_HEIGHT = 1;
 
 export function CarouselPanel({
   src,
@@ -30,6 +35,12 @@ export function CarouselPanel({
   tex.minFilter = THREE.LinearMipMapLinearFilter;
   tex.magFilter = THREE.LinearFilter;
   tex.anisotropy = 8;
+
+  // Derive each panel's plane aspect from the loaded texture so the mockup
+  // renders at its NATURAL aspect ratio (no stretch, no letterbox).
+  const img = tex.image as { width?: number; height?: number } | undefined;
+  const ASPECT =
+    img && img.width && img.height ? img.width / img.height : DEFAULT_ASPECT;
 
   const groupRef = useRef<THREE.Group>(null);
   const innerRef = useRef<THREE.Mesh>(null);
