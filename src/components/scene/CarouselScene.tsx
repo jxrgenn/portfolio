@@ -68,20 +68,24 @@ float fbm(vec2 p) {
 }
 
 vec3 paletteAt(int i) {
-  if (i <= 0) return vec3(0.10, 0.30, 0.40);
-  if (i == 1) return vec3(0.16, 0.32, 0.18);
-  if (i == 2) return vec3(0.46, 0.30, 0.30);
-  if (i == 3) return vec3(0.36, 0.42, 0.50);
-  if (i == 4) return vec3(0.42, 0.26, 0.20);
-  return vec3(0.32, 0.14, 0.30);
+  if (i <= 0) return vec3(0.10, 0.30, 0.40);  // keepitup — teal
+  if (i == 1) return vec3(0.30, 0.20, 0.45);  // enderrat — purple
+  if (i == 2) return vec3(0.46, 0.30, 0.30);  // gym-app — warm clay
+  if (i == 3) return vec3(0.36, 0.42, 0.50);  // pilates — slate
+  if (i == 4) return vec3(0.42, 0.26, 0.20);  // cleanslate — terracotta
+  if (i == 5) return vec3(0.34, 0.22, 0.40);  // social-cmd — magenta
+  if (i == 6) return vec3(0.16, 0.34, 0.32);  // reel-farmer — deep teal
+  if (i == 7) return vec3(0.20, 0.22, 0.40);  // bohesh — indigo
+  if (i == 8) return vec3(0.38, 0.30, 0.18);  // websites — olive
+  return vec3(0.18, 0.32, 0.46);              // advance.al — cool blue
 }
 
 void main() {
-  float idx = clamp(uProgress * 5.0, 0.0, 5.0);
+  float idx = clamp(uProgress * 9.0, 0.0, 9.0);
   int i = int(floor(idx));
   float t = fract(idx);
   vec3 a = paletteAt(i);
-  vec3 b = paletteAt(min(i + 1, 5));
+  vec3 b = paletteAt(min(i + 1, 9));
   vec3 base = mix(a, b, smoothstep(0.0, 1.0, t));
 
   vec2 uv = vUv;
@@ -145,7 +149,12 @@ function PanelTrack({ progressRef }: { progressRef: React.MutableRefObject<numbe
   useFrame((state) => {
     const g = groupRef.current;
     if (!g) return;
-    const floatIdx = Math.max(0, Math.min(5, progressRef.current * 5));
+    // Translate the panel rail along X based on scroll progress so the
+    // focal panel sits right-of-center. Range must match panel count —
+    // a hardcoded `* 5` would clamp this to 6 panels and physically
+    // leave the later ones off-screen.
+    const maxIdx = Math.max(1, PANELS.length - 1);
+    const floatIdx = Math.max(0, Math.min(maxIdx, progressRef.current * maxIdx));
     const targetX = -floatIdx * SPACING + FOCAL_OFFSET;
     g.position.x += (targetX - g.position.x) * 0.20;
 
