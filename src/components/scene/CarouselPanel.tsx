@@ -5,12 +5,7 @@ import { useLoader, useFrame } from "@react-three/fiber";
 import { Text } from "@react-three/drei";
 import * as THREE from "three";
 
-// Default plane aspect — used only until the texture's natural dims load.
-const DEFAULT_ASPECT = 16 / 10;
-// Fixed visual HEIGHT for every panel. Width derives from each texture's
-// actual aspect so portrait phone mockups stay portrait, wide laptops stay
-// wide — no stretching, no letterboxing.
-const PANEL_HEIGHT = 1;
+const ASPECT = 16 / 10;
 
 export function CarouselPanel({
   src,
@@ -36,11 +31,30 @@ export function CarouselPanel({
   tex.magFilter = THREE.LinearFilter;
   tex.anisotropy = 8;
 
-  // Derive each panel's plane aspect from the loaded texture so the mockup
-  // renders at its NATURAL aspect ratio (no stretch, no letterbox).
+  // Apply UV scaling so the texture fits inside the 16:10 plane WITHOUT
+  // stretching. For wider textures: scale Y; for taller: scale X. The
+  // texture is centered, edges of the plane sample the texture's edge
+  // pixels (via ClampToEdgeWrapping) — so the device sits centered with
+  // the scene gradient filling the rest of the panel naturally.
   const img = tex.image as { width?: number; height?: number } | undefined;
-  const ASPECT =
-    img && img.width && img.height ? img.width / img.height : DEFAULT_ASPECT;
+  if (img && img.width && img.height) {
+    const texAspect = img.width / img.height;
+    if (texAspect > ASPECT) {
+      // Texture is wider than plane — letterbox top/bottom (sample edges).
+      const yScale = ASPECT / texAspect;
+      tex.repeat.set(1, yScale);
+      tex.offset.set(0, (1 - yScale) / 2);
+    } else if (texAspect < ASPECT) {
+      // Texture is taller than plane — pillarbox left/right (sample edges).
+      const xScale = texAspect / ASPECT;
+      tex.repeat.set(xScale, 1);
+      tex.offset.set((1 - xScale) / 2, 0);
+    } else {
+      tex.repeat.set(1, 1);
+      tex.offset.set(0, 0);
+    }
+    tex.needsUpdate = true;
+  }
 
   const groupRef = useRef<THREE.Group>(null);
   const innerRef = useRef<THREE.Mesh>(null);
