@@ -369,6 +369,12 @@ export const projects = [
       { src: "/captures/gymapp_new/web_check_in_monitor.png", alt: "Live check-in monitor for the front desk", caption: "Live check-in monitor — Socket.io stream, every NFC tap visible.", url: "fitzone.al/admin/checkins" },
       { src: "/captures/gymapp_new/web_global_search.png", alt: "Global search across members + classes + cards", caption: "Global search — members, NFC cards, classes, all keystroke-filtered.", url: "fitzone.al/admin/search" },
       { src: "/captures/gymapp_new/web_announcements.png", alt: "Per-gym announcements broadcast to the member app", caption: "Announcements — broadcast to all member apps for that gym.", url: "fitzone.al/admin/announcements" },
+      { src: "/captures/gymapp_new/app/mobile_01.png", alt: "Member app — FitnessHub home dashboard", caption: "Member app home — branded per gym from the Gym record (this one's white-labeled as FitnessHub). Day streak, workouts, average minutes, and live At-The-Gym-Now occupancy via Socket.io." },
+      { src: "/captures/gymapp_new/app/mobile_02.png", alt: "Member app — class schedule with day chips", caption: "Class schedule — Strength, HIIT, Yoga slots with capacity, duration, and instructor. Tap to book." },
+      { src: "/captures/gymapp_new/app/mobile_03.png", alt: "Member app — monthly workout calendar with completion dots", caption: "Workouts calendar — completed (green), missed (orange), tracked vs untracked visits (blue) per day. Driven by the chosen split template." },
+      { src: "/captures/gymapp_new/app/mobile_04.png", alt: "Member app — activity history list with track buttons", caption: "Activity history — every visit and workout in one list, with Track CTAs for any untracked gym visit." },
+      { src: "/captures/gymapp_new/app/mobile_05.png", alt: "Member app — class detail modal for Yoga Flow", caption: "Class detail — date, duration, capacity, instructor, description. Single-tap booking against the live capacity counter." },
+      { src: "/captures/gymapp_new/app/mobile_06.png", alt: "Member app — customize workout plan, push day exercises", caption: "Plan customizer — pick a split (Push/Pull/Legs shown), drag exercises in, set reps/rest. Then it drops into the calendar above." },
     ],
     problem: [
       "Albanian gyms typically run on paper logbooks and WhatsApp. Off-the-shelf SaaS like Mindbody is priced for US studios and isn't localized.",
