@@ -237,6 +237,19 @@ export const projects = [
     heroAlt:
       "Ëndërrat e Mia — generated illustration from the story pipeline",
     stack: ["Expo + RN", "Claude Haiku + Flux", "RevenueCat"],
+    shots: [
+      { src: "/captures/endrrat_e_mia/app/mobile_01.png", alt: "Ëndërrat e Mia — home / library", caption: "Home — the family's library of generated stories, sorted by recency." },
+      { src: "/captures/endrrat_e_mia/app/mobile_02.png", alt: "Ëndërrat e Mia — story creation flow start", caption: "Create — pick a child, a theme, and let the pipeline run." },
+      { src: "/captures/endrrat_e_mia/app/mobile_03.png", alt: "Ëndërrat e Mia — settings", caption: "Settings — language preference, credit balance, parental controls." },
+      { src: "/captures/endrrat_e_mia/app/mobile_04.png", alt: "Ëndërrat e Mia — profile / account", caption: "Profile — account, subscription tier, transaction history (the single Transaction ledger)." },
+      { src: "/captures/endrrat_e_mia/app/mobile_05.png", alt: "Ëndërrat e Mia — credits balance", caption: "Credits — free credits from ads, paid packs, and RevenueCat subscription credits all unified." },
+      { src: "/captures/endrrat_e_mia/app/mobile_06.png", alt: "Ëndërrat e Mia — story cover with watercolor illustration", caption: "Story cover — Flux Schnell watercolor matched to the child + theme." },
+      { src: "/captures/endrrat_e_mia/app/mobile_07.png", alt: "Ëndërrat e Mia — creation flow continuation", caption: "Creation — character setup carries through to all four illustrations." },
+      { src: "/captures/endrrat_e_mia/app/mobile_08.png", alt: "Ëndërrat e Mia — story player page with illustration", caption: "Story player — Claude Haiku narrative in Albanian over a Flux Schnell scene, ElevenLabs TTS narrates." },
+      { src: "/captures/endrrat_e_mia/app/mobile_09.png", alt: "Ëndërrat e Mia — community / feed", caption: "Community — shared stories with upvotes and reports for real moderation." },
+      { src: "/captures/endrrat_e_mia/app/mobile_10.png", alt: "Ëndërrat e Mia — story full-page illustration", caption: "Full-page illustration — children's-book watercolor styling, the same styling powers the launch ad creatives." },
+      { src: "/captures/endrrat_e_mia/app/mobile_11.png", alt: "Ëndërrat e Mia — story closing page", caption: "Closing — every story renders atomically: you never get text without matched art and audio." },
+    ],
     pitch:
       "Albanian-language bedtime stories, generated, illustrated, and narrated. Expo app on a Mongoose backend. Claude Haiku writes, fal.ai Flux Schnell paints four matched illustrations, TTS narrates, RevenueCat + AdMob fund the free tier, and an in-house pipeline renders the launch ad creatives.",
     essay:
