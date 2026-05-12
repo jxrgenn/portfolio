@@ -11,12 +11,24 @@ import { projects } from "@/lib/projects";
 const SPACING = 2.5;
 const FOCAL_OFFSET = 1.25;
 
-// Single source of truth: the carousel panel texture is whatever the
-// case-study page uses as its hero. Update project.hero and both surfaces
-// stay in sync. (Previously a /scenes/work/*.jpg thumbnail map existed —
-// it drifted out of date because hero updates didn't propagate here.)
+// Each panel renders the project's photoreal device mockup (laptop / iPad /
+// iPhone in context, AI-generated). Falls back to the raw hero screenshot
+// if the device file is missing.
+const DEVICE_MOCKUPS: Record<string, string> = {
+  keepitup: "/scenes/devices/keepitup.png",
+  "gym-app": "/scenes/devices/gymapp.png",
+  "pilates-studio": "/scenes/devices/pilates.png",
+  cleanslate: "/scenes/devices/cleanslate.png",
+  "enderrat-e-mia": "/scenes/devices/enderrat.png",
+  "social-command-center": "/scenes/devices/socialcommand.png",
+  "reel-farmer": "/scenes/devices/reelfarmer.png",
+  bohesh: "/scenes/devices/bohesh.png",
+  websites: "/scenes/devices/websites.png",
+  "advance-al": "/scenes/devices/advanceal.png",
+};
+
 const PANELS: readonly { src: string; codename: string; year: string }[] = projects.map((p) => ({
-  src: p.hero,
+  src: DEVICE_MOCKUPS[p.slug] ?? p.hero,
   codename: p.title.toUpperCase().replace(/\s+/g, "-").replace(/[^A-Z0-9-]/g, ""),
   year: String(p.year),
 }));

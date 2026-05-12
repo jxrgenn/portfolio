@@ -27,14 +27,59 @@ type SceneConfig = {
   glow: string;
 };
 
-const SCENES: readonly SceneConfig[] = [
-  { slug: "keepitup",              tone: "cool", backdrop: "/scenes/backdrops/work-keepitup.jpg",      composite: "/scenes/work/keepitup.jpg",      alignment: "right", glow: "rgba(110, 200, 230, 0.42)" },
-  { slug: "gym-app",               tone: "cool", backdrop: "/scenes/backdrops/work-gymapp.jpg",        composite: "/scenes/work/gymapp.jpg",        alignment: "left",  glow: "rgba(150, 220, 130, 0.40)" },
-  { slug: "pilates-studio",        tone: "warm", backdrop: "/scenes/backdrops/work-pilates.jpg",       composite: "/scenes/work/pilates.jpg",       alignment: "right", glow: "rgba(255, 210, 200, 0.55)" },
-  { slug: "cleanslate",            tone: "warm", backdrop: "/scenes/backdrops/work-cleanslate.jpg",    composite: "/scenes/work/cleanslate.jpg",    alignment: "left",  glow: "rgba(220, 235, 250, 0.55)" },
-  { slug: "enderrat-e-mia",        tone: "cool", backdrop: "/scenes/backdrops/work-enderrat.jpg",      composite: "/scenes/work/enderrat.jpg",      alignment: "right", glow: "rgba(255, 180, 140, 0.40)" },
-  { slug: "social-command-center", tone: "cool", backdrop: "/scenes/backdrops/work-socialcommand.jpg", composite: "/scenes/work/socialcommand.jpg", alignment: "left",  glow: "rgba(220, 130, 220, 0.42)" },
-] as const;
+// Per-project styling (tone + backdrop + glow). Each entry is curated for the
+// projects we have hand-tuned scenes for; new projects fall back to a neutral
+// variant cycled by index. composite always uses project.hero so the carousel
+// updates in lockstep with the case-study page.
+type Variant = { tone: SceneTone; backdrop: string; glow: string };
+const VARIANTS: Record<string, Variant> = {
+  keepitup:                { tone: "cool", backdrop: "/scenes/backdrops/work-keepitup.jpg",      glow: "rgba(110, 200, 230, 0.42)" },
+  "gym-app":               { tone: "cool", backdrop: "/scenes/backdrops/work-gymapp.jpg",        glow: "rgba(150, 220, 130, 0.40)" },
+  "pilates-studio":        { tone: "warm", backdrop: "/scenes/backdrops/work-pilates.jpg",       glow: "rgba(255, 210, 200, 0.55)" },
+  cleanslate:              { tone: "warm", backdrop: "/scenes/backdrops/work-cleanslate.jpg",    glow: "rgba(220, 235, 250, 0.55)" },
+  "enderrat-e-mia":        { tone: "cool", backdrop: "/scenes/backdrops/work-enderrat.jpg",      glow: "rgba(255, 180, 140, 0.40)" },
+  "social-command-center": { tone: "cool", backdrop: "/scenes/backdrops/work-socialcommand.jpg", glow: "rgba(220, 130, 220, 0.42)" },
+};
+const FALLBACK_BACKDROPS = [
+  "/scenes/backdrops/work-keepitup.jpg",
+  "/scenes/backdrops/work-pilates.jpg",
+  "/scenes/backdrops/work-cleanslate.jpg",
+  "/scenes/backdrops/work-gymapp.jpg",
+];
+const FALLBACK_GLOWS = [
+  "rgba(180, 220, 200, 0.42)",
+  "rgba(180, 140, 220, 0.42)",
+  "rgba(255, 200, 130, 0.42)",
+  "rgba(130, 180, 255, 0.42)",
+];
+
+// Map project slug → device-mockup PNG filename in /public/scenes/devices/.
+// Each is a photoreal AI render of a laptop/iPad/iPhone in context, with
+// the project's UI on the screen — generated via gen-missing-devices.sh.
+const DEVICE_MOCKUPS: Record<string, string> = {
+  keepitup: "/scenes/devices/keepitup.png",
+  "gym-app": "/scenes/devices/gymapp.png",
+  "pilates-studio": "/scenes/devices/pilates.png",
+  cleanslate: "/scenes/devices/cleanslate.png",
+  "enderrat-e-mia": "/scenes/devices/enderrat.png",
+  "social-command-center": "/scenes/devices/socialcommand.png",
+  "reel-farmer": "/scenes/devices/reelfarmer.png",
+  bohesh: "/scenes/devices/bohesh.png",
+  websites: "/scenes/devices/websites.png",
+  "advance-al": "/scenes/devices/advanceal.png",
+};
+
+const SCENES: readonly SceneConfig[] = projects.map((p, i) => {
+  const v = VARIANTS[p.slug];
+  return {
+    slug: p.slug,
+    tone: v?.tone ?? (i % 2 === 0 ? "cool" : "warm"),
+    backdrop: v?.backdrop ?? FALLBACK_BACKDROPS[i % FALLBACK_BACKDROPS.length],
+    composite: DEVICE_MOCKUPS[p.slug] ?? p.hero, // device-framed mockup first, raw hero as fallback
+    alignment: i % 2 === 0 ? "right" : "left",
+    glow: v?.glow ?? FALLBACK_GLOWS[i % FALLBACK_GLOWS.length],
+  };
+});
 
 export function SelectedWork() {
   return (
