@@ -6,18 +6,28 @@ import { Environment, Lightformer } from "@react-three/drei";
 import { EffectComposer, Bloom, ChromaticAberration } from "@react-three/postprocessing";
 import * as THREE from "three";
 import { CarouselPanel } from "./CarouselPanel";
+import { projects } from "@/lib/projects";
 
 const SPACING = 2.5;
 const FOCAL_OFFSET = 1.25;
 
-const PANELS: readonly { src: string; codename: string; year: string }[] = [
-  { src: "/scenes/work/keepitup.jpg",     codename: "KEEPITUP",        year: "2026" },
-  { src: "/scenes/work/gymapp.jpg",       codename: "GYM-APP",         year: "2026" },
-  { src: "/scenes/work/pilates.jpg",      codename: "PILATES-STUDIO",  year: "2026" },
-  { src: "/scenes/work/cleanslate.jpg",   codename: "CLEANSLATE",      year: "2026" },
-  { src: "/scenes/work/enderrat.jpg",     codename: "ENDERRAT-E-MIA",  year: "2026" },
-  { src: "/scenes/work/socialcommand.jpg",codename: "SOCIAL-CMD",      year: "2026" },
-] as const;
+// Curated scene textures live under /public/scenes/work/ when they exist.
+// Otherwise fall back to the project's hero image so every project from
+// projects.ts gets a panel — no project silently missing from the carousel.
+const SCENE_TEXTURES: Record<string, string> = {
+  keepitup: "/scenes/work/keepitup.jpg",
+  "gym-app": "/scenes/work/gymapp.jpg",
+  "pilates-studio": "/scenes/work/pilates.jpg",
+  cleanslate: "/scenes/work/cleanslate.jpg",
+  "enderrat-e-mia": "/scenes/work/enderrat.jpg",
+  "social-command-center": "/scenes/work/socialcommand.jpg",
+};
+
+const PANELS: readonly { src: string; codename: string; year: string }[] = projects.map((p) => ({
+  src: SCENE_TEXTURES[p.slug] ?? p.hero,
+  codename: p.title.toUpperCase().replace(/\s+/g, "-").replace(/[^A-Z0-9-]/g, ""),
+  year: String(p.year),
+}));
 
 const backdropFragment = /* glsl */ `
 precision highp float;

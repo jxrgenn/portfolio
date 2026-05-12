@@ -19,23 +19,15 @@ const SelectedWorkFallback = dynamic(
   { ssr: false },
 );
 
-const SLUGS: readonly string[] = [
-  "keepitup",
-  "gym-app",
-  "pilates-studio",
-  "cleanslate",
-  "enderrat-e-mia",
-  "social-command-center",
-] as const;
-
-const FEATURED = SLUGS.map((slug) => {
-  const p = projects.find((x) => x.slug === slug);
-  if (!p) throw new Error(`Missing featured project: ${slug}`);
-  return p;
-});
+// All projects, in order. CarouselScene also reads from projects.ts so the
+// two stay in lockstep — any new project automatically gets a panel.
+const FEATURED = projects;
 
 const TOTAL = FEATURED.length;
 const TX = String(TOTAL).padStart(2, "0");
+// Section height scales with project count so each panel still gets ~80vh
+// of scroll travel even as the list grows.
+const SECTION_HEIGHT_VH = TOTAL * 80;
 
 // Direction-aware metadata variants. dir = 1 forward, -1 backward.
 // Forward: new enters from below, old exits up. Backward: flipped.
@@ -181,7 +173,7 @@ function Carousel() {
       id="work"
       data-accent={active_.slug}
       className="relative bg-[#070612]"
-      style={{ height: "480vh" }}
+      style={{ height: `${SECTION_HEIGHT_VH}vh` }}
     >
       {/* Backwards-compat anchors so /#work-keepitup etc. still work */}
       {FEATURED.map((p) => (

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { ActivityData, Day } from "./LiveActivity";
@@ -58,7 +59,20 @@ function formatBusiest(d: Day | null): { label: string; sub: string } {
 export function LiveActivityClient({ data }: { data: ActivityData }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState<number | null>(null);
+  const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(null);
   const [updatedLabel, setUpdatedLabel] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  const handleHover = (i: number | null, el?: HTMLElement) => {
+    setHovered(i);
+    if (i === null || !el) {
+      setTooltipPos(null);
+      return;
+    }
+    const r = el.getBoundingClientRect();
+    setTooltipPos({ x: r.left + r.width / 2, y: r.top });
+  };
 
   // Update relative timestamp on mount, then every 30s.
   useEffect(() => {
@@ -329,6 +343,7 @@ export function LiveActivityClient({ data }: { data: ActivityData }) {
               days={data.days.slice(-7 * 17)}
               hovered={hovered}
               setHovered={setHovered}
+              onHover={handleHover}
               todayIndexInFull={todayIndex}
               fullLength={data.days.length}
             />
@@ -429,17 +444,16 @@ export function LiveActivityClient({ data }: { data: ActivityData }) {
 
                 {data.days.map((d, i) => {
                   const isToday = i === todayIndex;
-                  const active = hovered === i;
                   return (
                     <button
                       key={d.date}
                       data-live-cell
                       type="button"
                       aria-label={`${d.count} contributions on ${d.date}`}
-                      onMouseEnter={() => setHovered(i)}
-                      onMouseLeave={() => setHovered(null)}
-                      onFocus={() => setHovered(i)}
-                      onBlur={() => setHovered(null)}
+                      onMouseEnter={(e) => handleHover(i, e.currentTarget)}
+                      onMouseLeave={() => handleHover(null)}
+                      onFocus={(e) => handleHover(i, e.currentTarget)}
+                      onBlur={() => handleHover(null)}
                       className="relative rounded-[2px] outline-none transition-transform duration-200 ease-out hover:z-20 hover:scale-[1.55] focus-visible:z-20 focus-visible:scale-[1.55]"
                       style={{
                         background: levelColor(d.level),
@@ -464,19 +478,6 @@ export function LiveActivityClient({ data }: { data: ActivityData }) {
                               "path-dot-pulse 2.4s ease-in-out infinite",
                           }}
                         />
-                      )}
-                      {active && (
-                        <span
-                          aria-hidden
-                          className="pointer-events-none absolute -top-9 left-1/2 z-30 -translate-x-1/2 whitespace-nowrap rounded-md px-2 py-1 font-mono text-[10px] uppercase tracking-[0.18em]"
-                          style={{
-                            background: "rgba(20,17,32,0.96)",
-                            color: "rgba(255,255,255,0.94)",
-                            border: "1px solid rgba(255,255,255,0.14)",
-                          }}
-                        >
-                          {d.count} on {d.date}
-                        </span>
                       )}
                     </button>
                   );
@@ -540,6 +541,27 @@ export function LiveActivityClient({ data }: { data: ActivityData }) {
           </p>
         )}
       </div>
+
+      {/* Portal-rendered tooltip — escapes all overflow contexts so it never
+       * clips against the heatmap's overflow-x-auto wrapper. */}
+      {mounted && tooltipPos && hovered !== null && data.days[hovered] &&
+        createPortal(
+          <div
+            aria-hidden
+            className="pointer-events-none fixed z-[9999] whitespace-nowrap rounded-md px-2 py-1 font-mono text-[10px] uppercase tracking-[0.18em]"
+            style={{
+              left: tooltipPos.x,
+              top: tooltipPos.y - 8,
+              transform: "translate(-50%, -100%)",
+              background: "rgba(20,17,32,0.96)",
+              color: "rgba(255,255,255,0.94)",
+              border: "1px solid rgba(255,255,255,0.14)",
+            }}
+          >
+            {data.days[hovered].count} on {data.days[hovered].date}
+          </div>,
+          document.body,
+        )}
     </section>
   );
 }
@@ -548,12 +570,14 @@ function CompactMobileHeatmap({
   days,
   hovered,
   setHovered,
+  onHover,
   todayIndexInFull,
   fullLength,
 }: {
   days: Day[];
   hovered: number | null;
   setHovered: (i: number | null) => void;
+  onHover: (i: number | null, el?: HTMLElement) => void;
   todayIndexInFull: number;
   fullLength: number;
 }) {
@@ -595,18 +619,17 @@ function CompactMobileHeatmap({
         {days.map((d, i) => {
           const fullIdx = offsetIndex + i;
           const isToday = fullIdx === todayIndexInFull;
-          const active = hovered === fullIdx;
           return (
             <button
               key={d.date}
               type="button"
               aria-label={`${d.count} contributions on ${d.date}`}
-              onTouchStart={() => setHovered(fullIdx)}
+              onTouchStart={(e) => onHover(fullIdx, e.currentTarget)}
               onTouchEnd={() => {
-                window.setTimeout(() => setHovered(null), 1400);
+                window.setTimeout(() => onHover(null), 1400);
               }}
-              onMouseEnter={() => setHovered(fullIdx)}
-              onMouseLeave={() => setHovered(null)}
+              onMouseEnter={(e) => onHover(fullIdx, e.currentTarget)}
+              onMouseLeave={() => onHover(null)}
               className="relative rounded-[2px] outline-none"
               style={{
                 background: levelColor(d.level),
@@ -630,19 +653,6 @@ function CompactMobileHeatmap({
                     animation: "path-dot-pulse 2.4s ease-in-out infinite",
                   }}
                 />
-              )}
-              {active && (
-                <span
-                  aria-hidden
-                  className="pointer-events-none absolute -top-8 left-1/2 z-30 -translate-x-1/2 whitespace-nowrap rounded-md px-2 py-1 font-mono text-[9px] uppercase tracking-[0.18em]"
-                  style={{
-                    background: "rgba(20,17,32,0.96)",
-                    color: "rgba(255,255,255,0.94)",
-                    border: "1px solid rgba(255,255,255,0.14)",
-                  }}
-                >
-                  {d.count} on {d.date}
-                </span>
               )}
             </button>
           );
