@@ -131,36 +131,14 @@ function Carousel() {
       onToggle: (self) => setActive(self.isActive),
     });
 
-    // Fade canvas in once section is in view (smooth entry, no pop).
-    const fadeInTrigger = ScrollTrigger.create({
-      trigger: sectionRef.current,
-      start: "top bottom",
-      end: "top 50%",
-      scrub: 0.4,
-      onUpdate: (self) => {
-        if (canvasWrapRef.current) {
-          canvasWrapRef.current.style.opacity = String(self.progress);
-        }
-      },
-    });
-    // Fade canvas out as section exits — prevents the abrupt transition into
-    // the next section that came across as "weird scrolling".
-    const fadeOutTrigger = ScrollTrigger.create({
-      trigger: sectionRef.current,
-      start: "bottom 80%",
-      end: "bottom 30%",
-      scrub: 0.4,
-      onUpdate: (self) => {
-        if (canvasWrapRef.current) {
-          const o = 1 - self.progress;
-          canvasWrapRef.current.style.opacity = String(o);
-        }
-      },
-    });
+    // Canvas defaults to opacity 1 (set inline above). Was previously a
+    // ScrollTrigger-driven fade-in starting at 0 — that trigger was racy on
+    // mount (Lenis + ScrollTrigger timing) and left the panels permanently
+    // invisible if the user scrolled past "top 50%" before it initialized.
+    // No fade-in needed: the section is sticky, scroll naturally drives the
+    // panel transitions; the section's bg already matches the page below it.
     return () => {
       trigger.kill();
-      fadeInTrigger.kill();
-      fadeOutTrigger.kill();
     };
   }, []);
 
@@ -214,7 +192,7 @@ function Carousel() {
         <div
           ref={canvasWrapRef}
           className="absolute inset-0"
-          style={{ opacity: 0, willChange: "opacity" }}
+          style={{ opacity: 1, willChange: "opacity" }}
         >
           <Canvas
             gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
