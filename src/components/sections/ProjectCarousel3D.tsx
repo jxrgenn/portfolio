@@ -197,7 +197,7 @@ function Carousel() {
           <Canvas
             gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
             dpr={[1, 1.5]}
-            frameloop={active ? "always" : "never"}
+            frameloop="always"
             camera={{ position: [0, 0, 5.2], fov: 32 }}
             style={{ position: "absolute", inset: 0 }}
           >
