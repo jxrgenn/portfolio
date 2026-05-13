@@ -149,18 +149,26 @@ function Backdrop({ progressRef }: { progressRef: React.MutableRefObject<number>
 function PanelTrack({ progressRef }: { progressRef: React.MutableRefObject<number> }) {
   const groupRef = useRef<THREE.Group>(null);
   const { camera } = useThree();
+  // Frame counter for diagnostic logging (every ~2s)
+  const frameCount = useRef(0);
 
   useFrame((state) => {
     const g = groupRef.current;
     if (!g) return;
-    // Translate the panel rail along X based on scroll progress so the
-    // focal panel sits right-of-center. Range must match panel count —
-    // a hardcoded `* 5` would clamp this to 6 panels and physically
-    // leave the later ones off-screen.
     const maxIdx = Math.max(1, PANELS.length - 1);
     const floatIdx = Math.max(0, Math.min(maxIdx, progressRef.current * maxIdx));
     const targetX = -floatIdx * SPACING + FOCAL_OFFSET;
     g.position.x += (targetX - g.position.x) * 0.20;
+
+    // Diagnostic — log every ~2s so we can verify useFrame is actually
+    // running in production. Remove after this is confirmed working.
+    frameCount.current++;
+    if (frameCount.current % 120 === 0) {
+      // eslint-disable-next-line no-console
+      console.log(
+        `[carousel] frame=${frameCount.current} progress=${progressRef.current.toFixed(3)} floatIdx=${floatIdx.toFixed(2)} group.x=${g.position.x.toFixed(2)} targetX=${targetX.toFixed(2)} panels=${PANELS.length} cam=(${camera.position.x.toFixed(2)},${camera.position.y.toFixed(2)},${camera.position.z.toFixed(2)})`,
+      );
+    }
 
     // Subtle camera parallax on cursor — camera position drifts but keeps
     // looking at world origin, so the offset focal panel stays right-of-center.

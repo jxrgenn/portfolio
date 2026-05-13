@@ -31,31 +31,6 @@ export function CarouselPanel({
   tex.magFilter = THREE.LinearFilter;
   tex.anisotropy = 8;
 
-  // Apply UV scaling so the texture fits inside the 16:10 plane WITHOUT
-  // stretching. For wider textures: scale Y; for taller: scale X. The
-  // texture is centered, edges of the plane sample the texture's edge
-  // pixels (via ClampToEdgeWrapping) — so the device sits centered with
-  // the scene gradient filling the rest of the panel naturally.
-  const img = tex.image as { width?: number; height?: number } | undefined;
-  if (img && img.width && img.height) {
-    const texAspect = img.width / img.height;
-    if (texAspect > ASPECT) {
-      // Texture is wider than plane — letterbox top/bottom (sample edges).
-      const yScale = ASPECT / texAspect;
-      tex.repeat.set(1, yScale);
-      tex.offset.set(0, (1 - yScale) / 2);
-    } else if (texAspect < ASPECT) {
-      // Texture is taller than plane — pillarbox left/right (sample edges).
-      const xScale = texAspect / ASPECT;
-      tex.repeat.set(xScale, 1);
-      tex.offset.set((1 - xScale) / 2, 0);
-    } else {
-      tex.repeat.set(1, 1);
-      tex.offset.set(0, 0);
-    }
-    tex.needsUpdate = true;
-  }
-
   const groupRef = useRef<THREE.Group>(null);
   const innerRef = useRef<THREE.Mesh>(null);
   const matRef = useRef<THREE.MeshBasicMaterial>(null);
