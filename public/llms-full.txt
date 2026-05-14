@@ -140,3 +140,69 @@ The Reviewer pass is a separate agent reading the diff cold — no chain-of-thou
 Three providers (Anthropic Claude, OpenAI, Google Gemini) sit behind a single internal LLM client that owns provider selection, budget tracking, and per-call cost telemetry. The Generator/Reviewer split deliberately uses different providers to catch errors a single-model pipeline would miss — shared blind spots are the failure mode to avoid. Budget gates stop runaway agents from burning through credits when CI starts oscillating.
 
 The agent never pushes to main. It opens PRs. Semgrep + Trivy + Gitleaks scans run against the diff in Docker before the PR opens. The whole stack rolls up to a per-repo health score from 0 to 100 — build status, deploy success rate, security findings, fix track record. Build the gate before the generator: the generator is the part that demos well, but the gate is the part that determines whether the agent is something you can actually run unattended.
+
+### Resumable pipelines — how Reel Farmer survives a crash mid-render
+
+URL: https://jurgenhalili.dev/notes/reel-farmer-resumable-pipelines
+Date: 2026-05-14. 6 min read.
+
+Reel Farmer is a self-hosted Bun pipeline that turns YouTube videos into TikTok shorts across multiple authenticated accounts — yt-dlp downloads, Whisper transcribes, Gemini picks clips, Remotion renders 1080×1920, stealth puppeteer uploads. The thing the design had to get right wasn't any individual stage; it was making sure a crash never cost more than the seconds since the last completed step.
+
+Every run gets a UUID-shaped directory at `data/runs/<run-id>/`. Every artifact lands at a deterministic path inside it: `src/raw.mp4`, `src/transcript.json`, `clips/01.mp4`, `renders/01.vertical.mp4`, `uploads/01.metadata.json`. The path is the contract. Any tool that wants to operate on a stage's output knows where to look — no scanning, no indexing, no dashboards. `ls data/runs/<run-id>/` is a complete progress report.
+
+Alongside the file tree sits a SQLite database with one row per (run-id, stage, status, timestamp, error). Status is one of `pending`, `running`, `completed`, `failed`. Every stage's first act is to mark its row `running`. Every stage's last act is to mark it `completed` — or `failed` with a stack trace. `bun run resume <run-id>` reads this table, finds the first non-completed stage, and starts from there. Failed status carries a retry counter; after three retries the run is marked dead and stays dead until an operator looks.
+
+The trick isn't catching exceptions and retrying within a stage. The trick is: every stage is a pure function of its inputs. If a stage crashed before completing, its output files are absent or partial. Resume just re-runs the stage; because the file paths are deterministic, the second attempt overwrites the first attempt's debris without cleanup logic. Idempotent stages plus deterministic paths equals resumable pipeline. The SQLite table is only the index; the file tree is the source of truth.
+
+The design choice of SQLite over Redis or Postgres is deliberate: this pipeline runs on one box, no horizontal scaling story. SQLite gives ACID guarantees with zero deployment overhead. A crashed pipeline's full state is one `tar -cz` away from being inspected elsewhere. If it ever grew to multiple machines I'd swap SQLite for Postgres; the abstraction is one file and it's swappable.
+
+A companion Next.js dashboard reads the SQLite run table and renders a per-run timeline. It writes nothing. The pipeline can crash, the dashboard keeps working. The dashboard can crash, the pipeline keeps working. The design rule: paths are contracts. If two stages need to coordinate, give them a deterministic file location to coordinate through.
+
+### Vector embeddings for job-matching — why pure cosine similarity isn't enough
+
+URL: https://jurgenhalili.dev/notes/advance-al-vector-embeddings-job-matching
+Date: 2026-05-14. 7 min read.
+
+advance.al is Albania's job marketplace and the only project on this site with paying users from day one. The matching engine has to answer two questions for every job posted: which candidates are best for this job, and why. Pure cosine similarity over OpenAI embeddings handles the first. It falls apart on the second.
+
+Every profile and every job gets vectorized with `text-embedding-3-small` (1536 dimensions) at write time. The text is a normalized blob — title plus skills plus experience summary, and for jobs the responsibilities section. Albanian and English content live in the same vector space because the model handles both. Cosine similarity then ranks candidates against a job or jobs against a candidate. This is the easy half. Throw OpenAI's embedding API at it and you're done — assuming you don't mind your employer dashboard saying "candidate scored 0.83" with no explanation underneath.
+
+On top of cosine, every match gets a seven-dimension breakdown: title match, skills match, experience match, location match, education match, salary fit, availability match. Each dimension is computed with its own rules — title is a normalized fuzzy match, skills use Jaccard against a controlled taxonomy, experience is a year-band overlap, location is a region/remote-status check, education matches degree levels, salary fit is range overlap, availability matches start-date windows. The employer dashboard can show "scored 78: title 32/40, skills 25/30, experience 12/15, location -1 (remote-only candidate, on-site role)" next to the candidate row.
+
+Two layers let each one change independently. Cosine ranks; the dimension breakdown explains. Up-weighting skills relative to title is one weight change in the breakdown formula; the cosine ranking is untouched. It also means the recommendation can survive the next OpenAI embedding-model deprecation — `text-embedding-3-small` is the current default, and if it's replaced, cosine numbers will move but the dimension breakdown stays stable.
+
+Every new job triggers an embedding worker on its own heartbeat process. The worker recomputes top-N matches and queues bilingual notifications through Resend. Each email has UTM tracking and a one-click unsubscribe token. Users get one email per matching job per day at most, deduped at the worker.
+
+The change I'd make next: embed each section of a CV separately and average at query time, instead of one blob per profile. Long-form CVs lose nuance when flattened to 1536 dims. The fix is a schema change and a re-embedding pass — cheap compared to rebuilding the matching engine.
+
+### Same schema, different databases — the Prisma adapter swap in Pilates Studio
+
+URL: https://jurgenhalili.dev/notes/prisma-adapter-swap-dev-prod-parity
+Date: 2026-05-14. 6 min read.
+
+Pilates Studio runs better-sqlite3 in dev and Turso (libsql) in production. Same Prisma schema, same query code, same migration history. The adapter pattern handles the swap in two lines of config. This is the kind of dev/prod parity I used to fake with docker-compose; now I don't need to.
+
+For most of its history Prisma was a closed system — one query engine, one wire protocol, one set of supported databases per engine. The adapter pattern decoupled the query engine from the connection: PrismaClient now accepts an `adapter` field that handles the actual database conversation. `@prisma/adapter-libsql` ships with libsql. `@prisma/adapter-better-sqlite3` ships with better-sqlite3. The schema and migrations are identical between them. The swap happens in one place — `src/lib/db.ts` returns the right adapter based on an env var.
+
+The argument I used to hear was "just run Postgres in Docker locally." This works until someone's M-series Mac can't run the libpq image fast enough, or a teammate's connection limits don't match prod. The adapter pattern says: prod uses Turso (edge-replicated libsql), dev uses better-sqlite3 (in-process, no daemon). Both speak the same SQL dialect. Migrations apply identically. Schema diffs get caught at write time by the same Prisma validator. The dev pain is now zero — the database is a file in the repo's gitignore.
+
+Pilates Studio's API ships as a Vercel serverless catch-all at `api/[[...path]].ts`. The same Express app runs as a long-lived server locally and as edge functions in production. The adapter swap is part of why this works — locally, the Express app keeps a single better-sqlite3 connection alive for its uptime; in production, each Vercel function invocation gets its own libsql client, which is fine because libsql connections are cheap and stateless. One codebase, two runtime models, zero rewrites.
+
+The trade is a SQLite-dialect surface — no jsonb, no listen/notify, no range types. For an admin web plus mobile app plus booking API with 21 Prisma models, this is a non-issue. The full test surface (Vitest unit, supertest API integration, Playwright E2E for admin and mobile) runs against better-sqlite3. Production runs against Turso. The schema is the same. The migrations are the same. If a test passes locally, the prod behavior is one network hop different, not one database different.
+
+### RLS as a subscription gate — letting Postgres turn off trial accounts for you
+
+URL: https://jurgenhalili.dev/notes/rls-subscription-gate-cleanslate
+Date: 2026-05-14. 6 min read.
+
+CleanSlate is a €20-flat operating system for solo cleaners in Germany. The subscription expiry path is the cleanest part of the codebase, because there is no path. When a user's trial runs out, the UI doesn't run a check; the database stops accepting INSERTs. The read-only state is automatic.
+
+The usual approach to subscription gating is a `useEffect` on every authenticated page that checks if the user's subscription is active and redirects if not. This is a race-condition factory — the check runs after the page mounts, so for a few hundred milliseconds the UI shows the gated content. Every component that wants to do anything destructive needs its own check. And the database doesn't care. A clever user with the right knowledge could hit the API directly and write a row regardless of what the UI thinks.
+
+CleanSlate moves the check to Supabase RLS. Every INSERT and UPDATE policy includes a clause like `EXISTS (SELECT 1 FROM subscriptions WHERE user_id = auth.uid() AND status = 'active' AND current_period_end > NOW())`. When the period ends, the policy stops matching — INSERTs fail at the database, UPDATEs are blocked. SELECT is still allowed because the user can read their own data; they just can't change it. The UI doesn't need a single line of subscription-checking code. If a write fails, it fails the same way any RLS violation fails, and the existing error handling shows "your subscription has expired" instead of "you don't have permission."
+
+The constraint is now adjacent to the data, not to the UI. Adding a new write endpoint doesn't risk forgetting the check. There's no race condition — the policy is evaluated at every query, in the same transaction as the write. A direct API call bypassing the UI gets the same treatment. There's no privileged path.
+
+Subscription renewal happens through four Vercel cron endpoints — trial reminders, overdue invoices, recurring job generation, pre-job SMS. The operator never logs in to do admin. The crons run on a schedule, but if they don't run, the database state stays correct anyway, because the RLS policy doesn't depend on a job firing. LemonSqueezy webhooks update the `subscriptions` table when payments succeed. Telnyx sends SMS, Resend sends email. The database is the source of truth; everything else is glue.
+
+The trade is commitment to Postgres plus RLS — switching to a NoSQL backend would be a rewrite, and RLS policies are harder to test in isolation than service-layer checks. The failure mode is also silent: if a policy is wrong, a write just fails, with no exception pointing at a missing check. I built CleanSlate as a discipline product. Every architectural rule is enforced with no exceptions, and RLS as a subscription gate is the same rule applied to time — the policy is the gate, not a UI check pretending to be one.

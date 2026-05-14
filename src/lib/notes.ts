@@ -92,6 +92,267 @@ export const notes: readonly Note[] = [
       },
     ],
   },
+  {
+    slug: "reel-farmer-resumable-pipelines",
+    title:
+      "Resumable pipelines: how Reel Farmer survives a crash mid-render",
+    date: "2026-05-14",
+    readingMinutes: 6,
+    description:
+      "Reel Farmer is a six-stage Bun pipeline that takes long enough that crashes are inevitable. The trick isn't preventing crashes — it's making sure a crash never costs more than the seconds since the last completed stage. Deterministic file paths plus a SQLite checkpoint database, no queues, no event buses.",
+    keywords: [
+      "resumable pipeline",
+      "checkpoint pattern",
+      "long-running pipeline",
+      "Bun TypeScript",
+      "Remotion render",
+      "yt-dlp",
+      "Whisper transcription",
+      "SQLite checkpoint",
+      "idempotent stages",
+    ],
+    relatedProject: "reel-farmer",
+    lede:
+      "Reel Farmer is a self-hosted Bun pipeline that turns YouTube videos into TikTok shorts across multiple authenticated accounts — yt-dlp downloads, Whisper transcribes, Gemini picks the clips, Remotion renders 1080×1920, stealth puppeteer uploads. The whole thing takes long enough that crashes are inevitable. The thing I had to get right wasn't any individual stage; it was making sure a crash never cost me more than the seconds since the last completed step.",
+    sections: [
+      {
+        heading: "The run-id tree",
+        paragraphs: [
+          "Every run gets a UUID-shaped directory at `data/runs/<run-id>/`. Every artifact lands at a deterministic path inside it. `src/raw.mp4`, `src/transcript.json`, `clips/01.mp4`, `renders/01.vertical.mp4`, `uploads/01.metadata.json`. The path is the contract.",
+          "Any tool that wants to operate on a stage's output knows exactly where to look without scanning, without indexing, without a \"where did the rendering land\" query. Bonus: `ls data/runs/<run-id>/` is a complete progress report. No dashboard needed when you're debugging at 1am.",
+        ],
+      },
+      {
+        heading: "The SQLite checkpoint",
+        paragraphs: [
+          "Alongside the file tree sits a SQLite database with one row per (run-id, stage, status, timestamp, error). Status is one of `pending`, `running`, `completed`, `failed`.",
+          "Every stage's first act is to mark its own row `running` with a start timestamp. Every stage's last act is to mark it `completed` — or `failed` with a stack trace. `bun run resume <run-id>` reads this table, finds the first non-completed stage, and starts from there. Failed status carries a retry counter; after three retries the run is marked dead and stays dead until I look.",
+        ],
+      },
+      {
+        heading: "Resume by design, not by retry",
+        paragraphs: [
+          "The trick isn't catching exceptions and retrying within a stage — that's just nested try/catch and ends in cascading flake. The trick is: every stage is a pure function of its inputs.",
+          "If a stage crashed before completing, its output files are either absent or partial. Resume just re-runs the stage. Because the file paths are deterministic, the second attempt overwrites the first attempt's debris without needing cleanup logic.",
+          "Idempotent stages plus deterministic paths equals resumable pipeline. The SQLite table is only the index; the file tree is the source of truth.",
+        ],
+      },
+      {
+        heading: "Why SQLite and not Redis or Postgres",
+        paragraphs: [
+          "This pipeline runs on one box. There's no horizontal-scaling story. SQLite gives me ACID guarantees with zero deployment overhead — the database file lives next to the run tree. A crashed pipeline's full state is one `tar -cz` away from being inspected on a different machine.",
+          "Postgres would be over-engineered for the cardinality. Redis would lose the durability story; even AOF persistence doesn't beat a single SQLite file for \"all the state is in one place.\" If the pipeline ever grew to multiple machines I'd swap SQLite for Postgres; the abstraction is one file, and it's swappable.",
+        ],
+      },
+      {
+        heading: "The companion dashboard reads the same database",
+        paragraphs: [
+          "A separate Next.js app reads the SQLite run table and renders a per-run timeline. It writes nothing. The pipeline can crash, the dashboard keeps working. The dashboard can crash, the pipeline keeps working. The split is enforced by the fact that they share read-only state and nothing else.",
+        ],
+      },
+      {
+        heading: "Paths are contracts",
+        paragraphs: [
+          "I built this because I run a small media operation across multiple Albanian-themed accounts. A pipeline that needs an operator to babysit it isn't a pipeline; it's an annoying job.",
+          "The design rule I'd repeat: paths are contracts. If two stages need to coordinate, give them a deterministic file location to coordinate through. No queues, no event buses, just a path you can `ls`.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "advance-al-vector-embeddings-job-matching",
+    title:
+      "Vector embeddings for job-matching — why pure cosine similarity isn't enough",
+    date: "2026-05-14",
+    readingMinutes: 7,
+    description:
+      "Cosine similarity over OpenAI embeddings handles ranking. It falls apart on explanation — recruiters can't show a hiring manager a number from 0 to 1 and call it a recommendation. advance.al puts a 7-dimension explainable score on top of the embedding so the dashboard can show why a candidate scored 78.",
+    keywords: [
+      "vector embeddings",
+      "job matching",
+      "semantic search",
+      "cosine similarity",
+      "explainable AI",
+      "OpenAI embeddings",
+      "text-embedding-3-small",
+      "candidate matching",
+      "recruiting AI",
+    ],
+    relatedProject: "advance-al",
+    lede:
+      "advance.al is Albania's job marketplace and the only project on this site with paying users from day one. The matching engine has to answer two questions for every job posted: which candidates are best for this job, and why. Pure cosine similarity over OpenAI embeddings handles the first. It falls apart on the second.",
+    sections: [
+      {
+        heading: "What the embeddings actually do",
+        paragraphs: [
+          "Every profile and every job gets vectorized with `text-embedding-3-small` (1536 dimensions) at write time. The text fed to the embedder is a normalized blob: title plus skills plus experience summary, and for jobs the responsibilities section. Albanian and English content live in the same vector space because the model handles both.",
+          "Cosine similarity then ranks candidates against a job, or jobs against a candidate's wishlist. This is the easy half. Throw OpenAI's embedding API at it and you're done — assuming you don't mind your employer dashboard saying \"candidate scored 0.83\" with no explanation underneath.",
+        ],
+      },
+      {
+        heading: "The 7-dimension explainable score on top",
+        paragraphs: [
+          "Cosine alone is opaque. Recruiters can't show a hiring manager a number from 0 to 1 and call it a recommendation. So on top of cosine, every match also gets a seven-dimension breakdown: title match, skills match, experience match, location match, education match, salary fit, availability match.",
+          "Each dimension is computed with its own rules. Title is a normalized fuzzy match; skills use Jaccard against a controlled taxonomy; experience is a year-band overlap; location is a region/remote-status check; education matches degree levels; salary fit is range overlap; availability matches start-date windows. These are explainable. The employer dashboard can show \"scored 78: title 32/40, skills 25/30, experience 12/15, location -1 (remote-only candidate, on-site role)…\" next to the candidate row.",
+        ],
+      },
+      {
+        heading: "Why two layers and not one",
+        paragraphs: [
+          "A single-formula score, whether it's pure cosine or a weighted aggregate of features, is a black box you can't tune without breaking everyone's existing rankings.",
+          "Two layers let each one change independently. Cosine ranks; the dimension breakdown explains. If we want to up-weight skills relative to title next quarter, we change one weight in the breakdown formula and the cosine ranking is untouched.",
+          "It also means the recommendation can survive the next OpenAI embedding-model deprecation. `text-embedding-3-small` is the current default; if it's replaced, every existing match's cosine number will move, but the dimension breakdown stays stable.",
+        ],
+      },
+      {
+        heading: "The fanout",
+        paragraphs: [
+          "Every new job triggers an embedding worker on its own heartbeat process. The worker recomputes top-N matches and queues bilingual notifications through Resend. Each email has UTM tracking and a one-click unsubscribe token.",
+          "Users get one email per matching job per day at most, deduped at the embedding worker (not at the email layer — by the time it hits Resend, it's too late to dedupe cheaply).",
+        ],
+      },
+      {
+        heading: "What I'd do differently",
+        paragraphs: [
+          "I'd embed each section of a CV separately and average at query time, instead of one blob per profile. Long-form CVs lose nuance when flattened to 1536 dims; a candidate with strong recent senior experience and a long, irrelevant earlier career gets dragged toward the middle.",
+          "This is on the roadmap. The fix is a schema change and a re-embedding pass — cheap compared to rebuilding the matching engine.",
+        ],
+      },
+      {
+        heading: "Why this exists",
+        paragraphs: [
+          "I built advance.al because Albania's job market lived in WhatsApp groups, Facebook walls, and a handful of legacy boards that look like 2010. A marketplace that could match a backend developer to a backend job without manually rewriting their CV twice was a thing nobody had bothered to ship.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "prisma-adapter-swap-dev-prod-parity",
+    title:
+      "Same schema, different databases — the Prisma adapter swap in Pilates Studio",
+    date: "2026-05-14",
+    readingMinutes: 6,
+    description:
+      "Pilates Studio runs better-sqlite3 in dev and Turso (libsql) in production. Same Prisma schema, same query code, same migration history — the adapter pattern handles the swap in two lines of config. This is the kind of dev/prod parity I used to fake with docker-compose. I don't need to anymore.",
+    keywords: [
+      "Prisma adapter",
+      "Turso libsql",
+      "better-sqlite3",
+      "dev prod parity",
+      "Prisma ORM",
+      "Vercel serverless Express",
+      "SQLite production",
+      "edge database",
+    ],
+    relatedProject: "pilates-studio",
+    lede:
+      "Pilates Studio runs better-sqlite3 in dev and Turso (libsql) in production. Same Prisma schema, same query code, same migration history. The adapter pattern handles the swap in two lines of config. This is the kind of dev/prod parity I used to fake with docker-compose; now I don't need to.",
+    sections: [
+      {
+        heading: "What changed in Prisma",
+        paragraphs: [
+          "For most of its history, Prisma was a closed system — one query engine, one wire protocol, one set of supported databases per engine. The adapter pattern decoupled the query engine from the connection: PrismaClient now accepts an `adapter` field that handles the actual database conversation.",
+          "`@prisma/adapter-libsql` ships with libsql. `@prisma/adapter-better-sqlite3` ships with better-sqlite3. The schema and migrations are identical between them. The swap happens in one place — `src/lib/db.ts` returns the right adapter based on an env var.",
+        ],
+      },
+      {
+        heading: "Why dev/prod parity actually matters",
+        paragraphs: [
+          "The argument I used to hear was \"just run Postgres in Docker locally.\" This works until the day someone's M-series Mac can't run the libpq Docker image fast enough, or a teammate's connection limits don't match prod.",
+          "The adapter pattern says: prod uses Turso (edge-replicated libsql), dev uses better-sqlite3 (in-process, no daemon). Both speak the same SQL dialect. Migrations apply identically. Schema diffs get caught at write time by the same Prisma validator.",
+          "The dev pain is now zero. There's no daemon to babysit; the database is a file in the repo's gitignore.",
+        ],
+      },
+      {
+        heading: "The catch-all Express-on-Vercel trick",
+        paragraphs: [
+          "Pilates Studio's API ships as a Vercel serverless catch-all at `api/[[...path]].ts`. The same Express app runs as a long-lived server locally and as edge functions in production.",
+          "The adapter swap is part of why this works. Locally, the Express app keeps a single better-sqlite3 connection alive for its uptime. In production, each Vercel function invocation gets its own libsql client, which is fine because libsql connections are cheap and stateless.",
+          "One codebase, two runtime models. Zero rewrites between them.",
+        ],
+      },
+      {
+        heading: "What this trades away",
+        paragraphs: [
+          "You're now committed to a SQLite-dialect surface. If you need Postgres-specific features — jsonb, listen/notify, range types — you can't have them.",
+          "For an admin web plus mobile app plus booking API with 21 Prisma models, this is a non-issue. For a different shape of product it might be.",
+        ],
+      },
+      {
+        heading: "21 models, 594 tests, all under the same swap",
+        paragraphs: [
+          "The full test surface — Vitest for unit, supertest for API integration, Playwright for E2E against the admin web and the mobile app — runs against better-sqlite3.",
+          "Production runs against Turso. The schema is the same. The migrations are the same. If a test passes locally, the prod behavior is one network hop different, not one database different.",
+          "I picked this stack because boutique studios get nickel-and-dimed by SaaS, and I wanted to prove a single solo dev could ship the same shape with the same testing rigor as a multi-engineer team. The adapter swap is one of three or four decisions that made it possible.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "rls-subscription-gate-cleanslate",
+    title:
+      "RLS as a subscription gate — letting Postgres turn off trial accounts for you",
+    date: "2026-05-14",
+    readingMinutes: 6,
+    description:
+      "CleanSlate's subscription expiry path is the cleanest part of the codebase, because there is no path. When a trial runs out, the UI doesn't run a check. The database stops accepting INSERTs. The read-only state is automatic.",
+    keywords: [
+      "Postgres RLS",
+      "Supabase RLS",
+      "row level security",
+      "subscription gate",
+      "trial expiry",
+      "policy-driven access",
+      "Supabase patterns",
+    ],
+    relatedProject: "cleanslate",
+    lede:
+      "CleanSlate is a €20-flat operating system for solo cleaners in Germany. The subscription expiry path is the cleanest part of the codebase, because there is no path. When a user's trial runs out, the UI doesn't run a check; the database stops accepting INSERTs. The read-only state is automatic.",
+    sections: [
+      {
+        heading: "What most subscription gates look like",
+        paragraphs: [
+          "The usual approach is a `useEffect` on every authenticated page that checks if the user's subscription is active and redirects if not. This is a race-condition factory. The check runs after the page mounts, so for a few hundred milliseconds the UI shows the gated content. Worse: every component that wants to do anything destructive needs its own check.",
+          "And the database doesn't care. A clever user with the right knowledge could hit the API directly and write a row regardless of what the UI thinks.",
+        ],
+      },
+      {
+        heading: "The CleanSlate approach",
+        paragraphs: [
+          "The check moves to Supabase RLS. Every INSERT and UPDATE policy includes a clause like `EXISTS (SELECT 1 FROM subscriptions WHERE user_id = auth.uid() AND status = 'active' AND current_period_end > NOW())`.",
+          "When the period ends, the policy stops matching. INSERTs fail at the database. UPDATEs are blocked. SELECT is still allowed because the user can read their own data — they just can't change it.",
+          "The UI doesn't need a single line of subscription-checking code. If a write fails, it fails the same way any RLS violation fails, and the existing error handling shows \"your subscription has expired\" instead of \"you don't have permission.\"",
+        ],
+      },
+      {
+        heading: "Why this is more correct",
+        paragraphs: [
+          "The constraint is now adjacent to the data, not to the UI. Adding a new write endpoint doesn't risk forgetting the check.",
+          "There's no race condition. The policy is evaluated at every query, in the same transaction as the write. A direct API call bypassing the UI gets the same treatment. There's no privileged path.",
+        ],
+      },
+      {
+        heading: "The cron half",
+        paragraphs: [
+          "Subscription renewal happens through four Vercel cron endpoints — trial reminders, overdue invoices, recurring job generation, pre-job SMS. The operator never logs in to do admin. The crons run on a schedule; if they don't run, the database state stays correct anyway, because the RLS policy doesn't depend on a job firing.",
+          "LemonSqueezy webhooks update the `subscriptions` table when payments succeed. Telnyx sends SMS when the cron fires. Resend sends emails. The database is the source of truth; everything else is glue.",
+        ],
+      },
+      {
+        heading: "What this trades away",
+        paragraphs: [
+          "You're now committed to Postgres plus RLS. Switching to a NoSQL backend would be a rewrite. RLS policies are also harder to test in isolation than service-layer checks — Supabase has tools for it, but it's not as ergonomic as writing a unit test for a TypeScript function.",
+          "And if the policy is wrong, the failure mode is silent. A write just fails. There's no exception with a stack trace pointing at a missing check. You discover the bug when a user complains.",
+        ],
+      },
+      {
+        heading: "Discipline is the product",
+        paragraphs: [
+          "I built CleanSlate as a discipline product. Every architectural rule is enforced with no exceptions: route files dispatch to services, services own all data ops, components never touch Supabase, money is always cents, phones always E.164. RLS as a subscription gate is the same rule applied to time — the policy *is* the gate, not a UI check pretending to be one.",
+        ],
+      },
+    ],
+  },
 ];
 
 export function getNote(slug: string): Note | undefined {

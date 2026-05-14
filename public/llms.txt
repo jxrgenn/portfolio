@@ -24,6 +24,10 @@
 ## Notes (technical writeups)
 
 - [Two-layer reasoning for autonomous AI agents — how KeepItUp gates a fix before it PRs](https://jurgenhalili.dev/notes/keepitup-two-layer-reasoning): how the autonomous SRE agent runs two LLM passes against the same broken build — tree-sitter AST slicing for context, a separate Reviewer agent that scores the diff cold, ≥85% confidence to PR (or ≥70% with build verification), three providers (Anthropic / OpenAI / Gemini) behind one budget-gated client.
+- [Resumable pipelines: how Reel Farmer survives a crash mid-render](https://jurgenhalili.dev/notes/reel-farmer-resumable-pipelines): deterministic `data/runs/<run-id>/` file tree plus SQLite checkpoint database makes a six-stage Bun pipeline resumable from any failed step — paths as contracts, no queues, no event buses.
+- [Vector embeddings for job-matching — why pure cosine similarity isn't enough](https://jurgenhalili.dev/notes/advance-al-vector-embeddings-job-matching): how advance.al pairs OpenAI `text-embedding-3-small` cosine ranking with a 7-dimension explainable score (title, skills, experience, location, education, salary, availability) so the employer dashboard can show why a candidate scored 78.
+- [Same schema, different databases — the Prisma adapter swap in Pilates Studio](https://jurgenhalili.dev/notes/prisma-adapter-swap-dev-prod-parity): better-sqlite3 in dev, Turso (libsql) in prod, one Prisma schema, two-line adapter config. 21 models, 594 tests, same Express app shipping as Vercel catch-all in prod and long-lived server locally.
+- [RLS as a subscription gate — letting Postgres turn off trial accounts for you](https://jurgenhalili.dev/notes/rls-subscription-gate-cleanslate): CleanSlate moves the subscription expiry check into Supabase RLS policies. When the trial ends, INSERTs fail at the database; the UI doesn't run a check, the read-only state is automatic.
 
 ## Languages spoken
 - Albanian (native)
