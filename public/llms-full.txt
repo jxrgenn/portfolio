@@ -206,3 +206,74 @@ The constraint is now adjacent to the data, not to the UI. Adding a new write en
 Subscription renewal happens through four Vercel cron endpoints — trial reminders, overdue invoices, recurring job generation, pre-job SMS. The operator never logs in to do admin. The crons run on a schedule, but if they don't run, the database state stays correct anyway, because the RLS policy doesn't depend on a job firing. LemonSqueezy webhooks update the `subscriptions` table when payments succeed. Telnyx sends SMS, Resend sends email. The database is the source of truth; everything else is glue.
 
 The trade is commitment to Postgres plus RLS — switching to a NoSQL backend would be a rewrite, and RLS policies are harder to test in isolation than service-layer checks. The failure mode is also silent: if a policy is wrong, a write just fails, with no exception pointing at a missing check. I built CleanSlate as a discipline product. Every architectural rule is enforced with no exceptions, and RLS as a subscription gate is the same rule applied to time — the policy is the gate, not a UI check pretending to be one.
+
+### Hiring a freelance full-stack engineer in Germany — a 2026 evaluation checklist
+
+URL: https://jurgenhalili.dev/notes/hiring-freelance-full-stack-engineer-germany-2026-checklist
+Date: 2026-05-14. 9 min read.
+
+Most checklists for hiring freelance engineers in Germany were written by recruiters who haven't shipped code in eight years. This is the one I wish more clients used: ask for a public repo and read the most recent commit diff (not a portfolio site); ask what they last broke and how they noticed (real engineers have stories about 3am Sentry alerts and Supabase RLS policies written backwards); verify they ship with tests, not screenshots (594 tests in Pilates Studio, 288 in advance.al — verifiable numbers, not "I write tests where appropriate"); check that they own the deploy, not just the code (a freelancer who only owns the code means you're now the DevOps team).
+
+The two German-market specifics nobody warns clients about: Scheinselbständigkeit (disguised employment — the Deutsche Rentenversicherung can retroactively classify your freelancer as an employee if they work exclusively for you, on your premises, with your equipment, on your schedule — mitigate via multiple clients, deliverable-based contracts, freelancer's own equipment); Stundensatz vs Werkvertrag (hourly rate vs fixed-deliverable contract — pick the one that matches how clearly the work can be defined upfront).
+
+Quick filter table — green flags vs red flags: public recent commits vs outdated boilerplate; specific test count + CI badge vs "I write tests where appropriate"; owns deploy end-to-end vs hands off git push; specific incident story with root cause vs "I don't really break things"; asks scoping questions before quoting vs quotes immediately; multiple clients + deliverable-based vs hourly + single client full-time.
+
+Every project on jurgenhalili.dev is solo across stack, with public repos where possible, tests in CI, security scans in deploy pipelines (Semgrep + Trivy + Gitleaks in KeepItUp), and deploys owned end-to-end. The case studies exist specifically so evaluation can happen against real work rather than against a deck.
+
+### Hiring a freelance Next.js developer — 7 questions that filter the field
+
+URL: https://jurgenhalili.dev/notes/hiring-freelance-nextjs-developer-7-questions
+Date: 2026-05-14. 8 min read.
+
+Most Next.js freelancers list "Next.js, React, Tailwind" on their profile and have shipped exactly one tutorial app. Seven questions, five minutes each, that separate people who've shipped Next.js production code from people who haven't:
+
+(1) App Router vs Pages Router — which would you pick today and why? Real answer engages with trade-offs (App Router for nested layouts and Server Components but harder legacy migration; Pages Router for getServerSideProps semantics and a long stable surface). (2) When do you reach for a Client Component instead of a Server Component? Client for event handlers, browser APIs, hooks, third-party libs that touch window; Server for data-fetching, secrets, non-interactive rendering. (3) How do you handle data fetching at the edge? Should mention edge constraints, Fluid Compute, regional pinning, latency-to-user vs latency-to-database trade. (4) What's your CSP look like for a real app? Should mention blob: in script-src for Web Workers, connect-src for third-party APIs, worker-src for explicit worker permissions — these matter on any Three.js / R3F / Lottie app. (5) How do you ship a sitemap? Next 16 has a built-in sitemap.ts convention; a Next.js dev should mention MetadataRoute.Sitemap. (6) ISR vs SSG vs SSR vs Edge — when each? Sweet-spot recall: SSG for known build-time content, ISR for revalidation-on-write content, SSR for per-request personalized, Edge for latency-dominated routes. (7) Worst Next.js gotcha you've hit in production? Specific stories — hydration mismatch, Server Component pulling in client-only package, middleware redirect loop, CSP block on blob worker, image-optimization quota.
+
+The candidates worth hiring are the ones who push back on at least one question — they're engaging with the framework as a real tool, not as bullet points on their CV.
+
+### Hiring a freelance AI engineer in 2026 — portfolio red flags and green flags
+
+URL: https://jurgenhalili.dev/notes/hiring-freelance-ai-engineer-2026-portfolio-flags
+Date: 2026-05-14. 8 min read.
+
+Half the freelance "AI engineers" wrapped one OpenAI API call in a Streamlit app and called themselves senior. The portfolio tells you which half you're talking to in five minutes.
+
+Red flags: a single Streamlit/Gradio demo app with no production deployment (demos are easy; production AI is the code around the model call — validation, prompt versioning, retries, observability, budgeting); no mention of model failure modes (production engineers talk about hallucinations, prompt injection, output drift, model deprecation constantly); claims about AGI or "general intelligence" (anyone using those phrases is selling vibes — production AI work is small, specific, unglamorous); no cost telemetry or budget gates (a freelancer who hasn't tracked per-call cost hasn't shipped at scale).
+
+Green flags: multi-provider routing (Anthropic Claude for code reasoning, OpenAI GPT-4-class for different blind spots, Gemini for budget overflow — KeepItUp routes per-stage, not per-app); specific failure-mode storytelling ("my structured-extraction prompt worked on 99% of CVs until a one-page H1-only PDF, the model invented an entire work history, I added length check + confidence threshold + manual-review fallback"); evaluation framework not vibes (advance.al has held-out manually-labeled candidate/job pairs and 288 Jest tests with banned permissive matchers and tautological assertions); owns the model-failure recovery (when the model returns nonsense, what happens — retry, fallback, human-in-loop).
+
+Provider routing maturity table: single provider hardcoded (demo-tier) → single provider abstracted (beginning) → multi-provider per task (production-tier) → multi-provider plus budget gates (senior production-tier).
+
+The senior AI engineers are the ones who talk about what their AI can't do at least as much as what it can. They've felt the edges. They build for the failure mode, not the demo mode.
+
+### Tree-sitter AST slicing as a context-budget lever for AI agents
+
+URL: https://jurgenhalili.dev/notes/tree-sitter-ast-slicing-context-budget
+Date: 2026-05-14. 8 min read.
+
+Token budgets are a real constraint for AI agents working on source code. A 30,000-token "here's the whole module" dump performs worse than a 3,000-token AST-shaped slice. Models are sharper when context is dense — needle-in-a-haystack benchmarks measure recall not reasoning, and a model that can pull a fact out of 100K tokens isn't the same as one that can reason about that fact when 99% of surrounding tokens are noise.
+
+Naive regex-based slicing breaks down fast (nested closures with string-literal braces, indentation-based blocks, six languages with six different grammars). Tree-sitter parses source into a real concrete syntax tree — function definitions, class declarations, imports, control-flow blocks — all addressable as tree nodes with parent/sibling relationships intact. The same query API works across every grammar. One slicer, dozens of languages. Written in C, incremental, single-digit-millisecond parses on thousand-line files.
+
+KeepItUp targets 50-to-500-line slices. Below 50, the model starts inferring; above 500, noise-to-signal ratio hurts. The slice grows from the failing function outward — enclosing function plus the imports it references, type declarations the signature uses, sibling methods called from the failing function, the module-level docstring. Deliberate exclusions: other-file code (separate concern), commented-out code, generated boilerplate (file-header heuristics), unrelated code.
+
+The slice interacts with the confidence gate: if context is missing, the Generator's diff references the missing function as if it doesn't exist, the Reviewer scores low, the diff doesn't open a PR. The system fails closed — wrong slice means low confidence means no action. The slice is part of the safety story, not just an optimization.
+
+The pattern generalizes: if the input has a grammar, use the grammar. Markdown agents slice by heading; Kubernetes-manifest agents slice by resource; HCL-config agents slice by block. The amount of context an LLM can use effectively is bounded; the grammar tells you which bounded slice to pick.
+
+### Three-model atomic content pipelines — text, image, and audio without orphans
+
+URL: https://jurgenhalili.dev/notes/three-model-atomic-content-pipelines
+Date: 2026-05-14. 8 min read.
+
+Ëndërrat e Mia generates each bedtime story by composing three different models — Claude Haiku for Albanian text, fal.ai Flux Schnell for four matched watercolor illustrations, ElevenLabs for narration. None of the three is allowed to land alone. A half-generated story is worse than no story, because the user has lost a credit and gained nothing.
+
+Pipeline shape: Step 1 — Claude Haiku writes title + 10-paragraph narrative in Albanian + 4 illustration scene descriptions. Step 2 — pipeline sends those 4 descriptions to Flux Schnell with a fixed watercolor-style prefix and the same character description (visual consistency). Step 3 — ElevenLabs narrates the full text; pipeline checks audio duration against expected reading time (~150 words/minute Albanian) and rejects out-of-range output. Only after all three pass validation does the pipeline commit the story to the user's library.
+
+Why three different providers: no single one does all three best. Albanian text on Anthropic Haiku (strong on low-resource languages, noticeably better than equivalent-price OpenAI / Gemini output); watercolor-style image consistency on Flux Schnell (cheap, fast, style consistency across multi-image generation holds up under the character-continuity constraint); Albanian TTS on ElevenLabs (voice quality meaningfully ahead of competitors for Albanian at the time of build). Three providers means three rate limits, three pricing curves, three failure modes — but the alternative is accepting weaker output on at least one stage.
+
+Transaction ledger underneath: free credits from ads, RevenueCat subscription credits, AdMob rewards, one-off purchases all write to the same `transactions` table. Balance is a single SUM query; refunds are positive-amount rows referencing the original debit. The pipeline's atomic commit shows up here too — if the story commits, the debit stays; if any stage fails, a refund row writes immediately. User never sees a debit without either a story or a refund.
+
+Failure recovery: each stage has up to three retries with slightly modified prompts before the pipeline gives up. Failures aren't logged as user-facing problems until retries exhaust. Result: roughly 99% of attempts succeed; the 1% that don't are auto-refunded and surface as ops alerts, not customer-support tickets.
+
+Pattern generalizes to any multi-model AI feature: orchestrate stages, validate every output, refuse to commit unless all pass, refund automatically on failure. Pipeline owns the transaction; models don't have to know about each other.
