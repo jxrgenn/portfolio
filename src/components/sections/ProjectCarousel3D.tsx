@@ -19,6 +19,11 @@ const SelectedWorkFallback = dynamic(
   { ssr: false },
 );
 
+const MobileCarousel = dynamic(
+  () => import("./MobileCarousel").then((m) => m.MobileCarousel),
+  { ssr: false },
+);
+
 // All projects, in order. CarouselScene also reads from projects.ts so the
 // two stay in lockstep — any new project automatically gets a panel.
 const FEATURED = projects;
@@ -44,9 +49,9 @@ const CAROUSEL_META_VARIANTS = {
 };
 
 export function ProjectCarousel3D() {
-  const [mode, setMode] = useState<"loading" | "carousel" | "fallback">(
-    "loading",
-  );
+  const [mode, setMode] = useState<
+    "loading" | "carousel" | "mobile" | "reduce"
+  >("loading");
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -57,7 +62,7 @@ export function ProjectCarousel3D() {
       const reduce = reduceQuery.matches;
       const small = window.innerWidth < 768;
       setMode((prev) => {
-        const next = reduce || small ? "fallback" : "carousel";
+        const next = reduce ? "reduce" : small ? "mobile" : "carousel";
         return prev === next ? prev : next;
       });
     };
@@ -84,7 +89,8 @@ export function ProjectCarousel3D() {
     };
   }, []);
 
-  if (mode === "fallback") return <SelectedWorkFallback />;
+  if (mode === "reduce") return <SelectedWorkFallback />;
+  if (mode === "mobile") return <MobileCarousel />;
   if (mode === "loading") {
     return <div id="work" style={{ minHeight: "100svh" }} aria-hidden />;
   }
