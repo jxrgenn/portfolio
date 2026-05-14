@@ -12,7 +12,7 @@ import { IdentityMark } from "@/components/IdentityMark";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Jurgen Halili — Kiel-based full-stack engineer with AI focus. MERN, Next.js, Anthropic + OpenAI + Gemini SDKs, Microsoft Business Central / AL.",
+    "Jurgen Halili — freelance full-stack engineer in Kiel, Germany, AI focus. MERN, Next.js, Anthropic + OpenAI + Gemini SDKs, Microsoft Business Central / AL. Available for contracts in Germany and remote-EU.",
   alternates: { canonical: "/about" },
 };
 
@@ -29,13 +29,14 @@ const personJsonLd = {
   mainEntityOfPage: `${SITE_URL}/about`,
   email: "mailto:jurgenhalili1142@gmail.com",
   telephone: "+355685833333",
-  jobTitle: "Full-stack engineer with AI focus",
+  jobTitle: "Freelance Full-stack Software Engineer",
   description:
-    "Solo full-stack engineer building AI-driven products end-to-end — agent runtimes, multi-LLM pipelines, React Native, Postgres, deploy. Microsoft Dynamics 365 / Business Central on the other rail.",
+    "Solo full-stack engineer in Kiel, Germany, building AI-driven products end-to-end — agent runtimes, multi-LLM pipelines, React Native, Postgres, deploy. Microsoft Dynamics 365 / Business Central on the other rail. Available for freelance contracts in Germany and remote-EU.",
   worksFor: {
     "@type": "Organization",
     name: "Independent / Freelance",
   },
+  workLocation: { "@type": "Place", name: "Kiel, Germany (remote-friendly across EU)" },
   address: {
     "@type": "PostalAddress",
     addressLocality: "Kiel",
@@ -78,9 +79,121 @@ const personJsonLd = {
   },
   seeks: {
     "@type": "Demand",
-    name: "Full-stack engineering roles with AI focus",
+    name: "Freelance full-stack and AI engineering contracts in Germany and remote-EU",
   },
-  sameAs: ["https://www.linkedin.com/in/jurgen-halili-b227a6255"],
+  sameAs: [
+    "https://www.linkedin.com/in/jurgen-halili-b227a6255",
+    "https://github.com/jxrgenn",
+    "https://instagram.com/jxrgenn",
+  ],
+};
+
+const professionalServiceJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "@id": `${SITE_URL}/about#service`,
+  name: "Jurgen Halili — Freelance Software Engineering",
+  url: SITE_URL,
+  provider: { "@id": `${SITE_URL}/about#person` },
+  areaServed: [
+    { "@type": "Country", name: "Germany" },
+    { "@type": "Country", name: "European Union" },
+  ],
+  serviceType: [
+    "Full-stack web development",
+    "AI integration and agent runtimes",
+    "React Native mobile apps",
+    "Microsoft Dynamics 365 Business Central",
+  ],
+  hasOfferCatalog: {
+    "@type": "OfferCatalog",
+    name: "Engineering services",
+    itemListElement: [
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: "AI-driven full-stack web app (Next.js + LLM agents)",
+        },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: "React Native cross-platform app (Expo + Supabase)",
+        },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: "Microsoft Dynamics 365 / Business Central customization (AL, REST + OAuth2)",
+        },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: "Solo product MVP — problem to production",
+        },
+      },
+    ],
+  },
+};
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "Where is Jurgen Halili based?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Kiel, Schleswig-Holstein, Germany. Available for freelance contracts in Germany and remote-EU.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is Jurgen Halili available for freelance work?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes — taking new contracts in 2026. Full-stack web (Next.js + Express + Postgres), AI integration (Anthropic / OpenAI / Gemini SDKs, vector embeddings, agent runtimes), React Native, and Microsoft Dynamics 365 Business Central.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What is Jurgen Halili's technology stack?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Next.js 16, React 19, React Native 0.83, Node.js + Express, Anthropic + OpenAI + Google Gemini SDKs, PostgreSQL + Supabase + RLS, Prisma + Turso, MongoDB, BullMQ, Redis, Docker, Vercel. AL language and REST/OAuth2 for Microsoft Business Central.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What languages does Jurgen Halili speak?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "English (fluent), Albanian (native), German (B1, A2 100/100 at CASA Bremen Sprachschule).",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How experienced is Jurgen Halili?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Five years engineering. BSc Software Engineering from Epoka University (Tirana, 2024). Currently shipping ten production projects solo — autonomous AI agents, multi-LLM pipelines, native mobile apps, and a job marketplace with paying users.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How can someone hire Jurgen Halili?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Email jurgenhalili1142@gmail.com or message on LinkedIn (linkedin.com/in/jurgen-halili-b227a6255). Typical first reply inside 24 hours.",
+      },
+    },
+  ],
 };
 
 const profilePageJsonLd = {
@@ -278,6 +391,16 @@ export default function AboutPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(profilePageJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(professionalServiceJsonLd),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
       {/* HERO with identity mark + bio */}

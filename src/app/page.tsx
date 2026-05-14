@@ -20,7 +20,7 @@ const websiteJsonLd = {
   datePublished: "2026-04-29",
   dateModified: NOW_ISO,
   description:
-    "Solo full-stack engineer with AI focus, based in Kiel. Builds AI-driven products end-to-end — agent runtimes, multi-LLM pipelines, native apps. Microsoft Dynamics 365 / Business Central on the other rail.",
+    "Freelance full-stack software engineer in Kiel, Germany. Builds AI-driven products end-to-end — agent runtimes, multi-LLM pipelines, native apps. Microsoft Dynamics 365 / Business Central on the other rail. Available for contracts in Germany and remote-EU.",
   author: {
     "@type": "Person",
     name: "Jurgen Halili",

@@ -33,11 +33,11 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://jurgenhalili.dev";
 
 export const metadata: Metadata = {
   title: {
-    default: "Jurgen Halili — full-stack engineer with AI focus",
+    default: "Jurgen Halili — freelance full-stack engineer in Kiel, AI focus",
     template: "%s — Jurgen Halili",
   },
   description:
-    "Full-stack engineer building AI-driven products end-to-end — agent runtimes, multi-LLM pipelines, native apps. Kiel, Germany.",
+    "Freelance full-stack software engineer in Kiel, Germany. AI-driven products end-to-end — agent runtimes, multi-LLM pipelines, native apps. Available for contracts in Germany and remote-EU.",
   metadataBase: new URL(SITE_URL),
   openGraph: {
     type: "website",

@@ -20,7 +20,7 @@ const AI_CRAWLERS = [
   "Meta-ExternalAgent", // Meta AI
 ];
 
-const DISALLOW = ["/api/", "/cv.pdf"];
+const DISALLOW = ["/cv.pdf"];
 
 export default function robots(): MetadataRoute.Robots {
   return {

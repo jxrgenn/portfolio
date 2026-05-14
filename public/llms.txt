@@ -1,10 +1,12 @@
 # Jurgen Halili — Portfolio
 
-> Solo full-stack engineer with AI focus, based in Kiel, Germany. Builds AI-driven products end-to-end: agent runtimes, multi-LLM pipelines, React Native, Postgres. Microsoft Dynamics 365 / Business Central on the other rail. Available for full-stack + AI roles.
+> Freelance full-stack software engineer based in Kiel, Germany. Builds AI-driven products end-to-end — agent runtimes, multi-LLM pipelines, React Native, Postgres. Microsoft Dynamics 365 / Business Central on the other rail. Available for freelance contracts in Germany and remote-EU, 2026. Last updated 2026-05-14.
 
 ## About
 - [About — bio, work history, certifications, skills](https://jurgenhalili.dev/about): five years engineering, BSc Software Engineering from Epoka University, MERN + Next.js + Anthropic / OpenAI / Gemini SDKs.
-- [Contact](https://jurgenhalili.dev/contact)
+- Email: jurgenhalili1142@gmail.com
+- LinkedIn: https://www.linkedin.com/in/jurgen-halili-b227a6255
+- GitHub: https://github.com/jxrgenn
 
 ## Projects (10 production projects)
 
@@ -19,6 +21,10 @@
 - [Websites](https://jurgenhalili.dev/projects/websites) — Three brand sites — Three.js hero, MongoDB CRM, fitness coaching. Stack: React + Vite, Three.js + Framer, MongoDB Atlas. Status: shipped.
 - [advance.al](https://jurgenhalili.dev/projects/advance-al) — Albania's job marketplace — AI CV generation, AI profile-fill, embedding-ranked matching, auto-notify on match. Stack: React 18 + Vite, Express + MongoDB, OpenAI embeddings. Status: shipped.
 
+## Notes (technical writeups)
+
+- [Two-layer reasoning for autonomous AI agents — how KeepItUp gates a fix before it PRs](https://jurgenhalili.dev/notes/keepitup-two-layer-reasoning): how the autonomous SRE agent runs two LLM passes against the same broken build — tree-sitter AST slicing for context, a separate Reviewer agent that scores the diff cold, ≥85% confidence to PR (or ≥70% with build verification), three providers (Anthropic / OpenAI / Gemini) behind one budget-gated client.
+
 ## Languages spoken
 - Albanian (native)
 - English (fluent)
@@ -26,3 +32,4 @@
 
 ## Location
 - Kiel, Schleswig-Holstein, Germany
+- Available for freelance contracts in Germany and remote-EU, 2026.
