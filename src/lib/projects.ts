@@ -872,63 +872,63 @@ export const projects = [
   },
 
   // ---------------------------------------------------------------------------
-  // 8. Bohesh
+  // 8. Dabei
   // ---------------------------------------------------------------------------
   {
-    slug: "bohesh",
+    slug: "dabei",
     order: 8,
-    title: "Bohesh",
-    tagline: "Tirana's social pulse — find or start hangouts on a live map.",
+    title: "Dabei",
+    tagline: "Kiel's social pulse — find or start hangouts on a live map.",
     year: 2026,
     status: "in-progress",
-    hero: "/captures/bohesh/icon.png",
-    heroAlt: "Bohesh app icon",
+    hero: "/captures/dabei/icon.png",
+    heroAlt: "Dabei app icon",
     stack: ["Expo + RN 0.83", "Supabase + Realtime", "react-native-maps"],
     imageMode: "contain",
     shots: [
       {
-        src: "/captures/bohesh/mockup_welcome.jpg",
-        alt: "Bohesh welcome screen — design mockup",
+        src: "/captures/dabei/mockup_welcome.jpg",
+        alt: "Dabei welcome screen — design mockup",
         caption: "Welcome — minimal, photo-led entry. Design mockup; in-progress build.",
       },
       {
-        src: "/captures/bohesh/mockup_home_map.jpg",
+        src: "/captures/dabei/mockup_home_map.jpg",
         alt: "Live map of pinned hangouts — design mockup",
-        caption: "Home — live map of pinned hangouts, split with the feed. Design mockup.",
+        caption: "Home — live map of Kiel hangouts, split with the feed. Design mockup.",
       },
       {
-        src: "/captures/bohesh/mockup_onboarding.jpg",
+        src: "/captures/dabei/mockup_onboarding.jpg",
         alt: "Onboarding flow — design mockup",
-        caption: "Onboarding — name, hometown, vibe preferences. Design mockup.",
+        caption: "Onboarding — name, neighbourhood, vibe preferences. Design mockup.",
       },
       {
-        src: "/captures/bohesh/mockup_create_hangout.jpg",
+        src: "/captures/dabei/mockup_create_hangout.jpg",
         alt: "Create hangout sheet — design mockup",
         caption: "Create — pin a hangout in seconds: where, when, vibe, who's invited. Design mockup.",
       },
       {
-        src: "/captures/bohesh/mockup_hangout_detail.jpg",
+        src: "/captures/dabei/mockup_hangout_detail.jpg",
         alt: "Hangout detail with vibe checks — design mockup",
         caption: "Detail — RSVPs, photos, live vibe checks once the hangout starts. Design mockup.",
       },
       {
-        src: "/captures/bohesh/mockup_activity.jpg",
+        src: "/captures/dabei/mockup_activity.jpg",
         alt: "Activity feed — design mockup",
         caption: "Activity — vibe checks, RSVPs, and crew nudges from the people you trust. Design mockup.",
       },
       {
-        src: "/captures/bohesh/mockup_profile.jpg",
+        src: "/captures/dabei/mockup_profile.jpg",
         alt: "Profile + reputation — design mockup",
         caption: "Profile — vibe-check-earned trust, hangouts hosted, crews. Design mockup.",
       },
     ],
     pitch:
-      "Tirana's social pulse — a live map of who's hanging out where, tonight. Expo + Supabase Realtime + react-native-maps. Vibe-checks let any hangout get live-rated mid-event. MMKV for hot-path caching, OTP auth, deep-link invites, persistent crews for repeat plans.",
+      "Kiel's social pulse — a live map of who's hanging out where, tonight. Expo + Supabase Realtime + react-native-maps. Vibe-checks let any hangout get live-rated mid-event. MMKV for hot-path caching, OTP auth, deep-link invites, persistent crews for repeat plans.",
     essay:
-      "Bohesh is a live social-pulse map of Tirana — a discovery layer for organic, in-person plans, not a Meetup clone and not a dating app. The thing I'm most proud of is Vibe Checks as a first-class entity: a hangout can be live-rated mid-event, and the `submit_vibe_check` RPC enforces attendance proof and a 48-hour rating window before counting. Earn fifteen vibe checks from ten unique people and `profiles.is_trusted` flips automatically — reputation is built from shared experiences, not follower counts, so trust actually means something. The data layer is split into three services (`hangout-crud`, `hangout-queries`, `hangout-actions`) so reads, writes, and orchestrated business logic each have a clean boundary, which makes RLS reasoning local and testing actually targeted. MMKV replaces AsyncStorage on the cold-start hot path — synchronous and encrypted — so auth state and draft hangouts don't add async hops to first-launch time. I built it because Tirana's social life lives in WhatsApp groups and Instagram DMs, and visitors and new residents have no way in.",
+      "Dabei is a live social-pulse map of Kiel — a discovery layer for organic, in-person plans for the whole city, not a Meetup clone and not a dating app. The thing I'm most proud of is Vibe Checks as a first-class entity: a hangout can be live-rated mid-event, and the `submit_vibe_check` RPC enforces attendance proof and a 48-hour rating window before counting. Earn fifteen vibe checks from ten unique people and `profiles.is_trusted` flips automatically — reputation is built from shared experiences, not follower counts, so trust actually means something. The data layer is split into three services (`hangout-crud`, `hangout-queries`, `hangout-actions`) so reads, writes, and orchestrated business logic each have a clean boundary, which makes RLS reasoning local and testing actually targeted. MMKV replaces AsyncStorage on the cold-start hot path — synchronous and encrypted — so auth state and draft hangouts don't add async hops to first-launch time. I built it because Kiel's social life lives scattered across WhatsApp groups, Instagram DMs, and the StadtRadio bulletin — locals lose track of their own crews and newcomers have no way in.",
     problem: [
-      "Tirana's social life happens in WhatsApp groups and Instagram DMs. New residents, students, and visitors can't see what's happening tonight; locals lose track of their own crews.",
-      "I built bohesh as a discovery layer for organic, in-person plans — not a Meetup.com clone, not a dating app, just \"what's happening near me right now and can I join?\"",
+      "Kiel's social life is fragmented across WhatsApp groups, Instagram DMs, and bulletin boards. Locals lose track of their own crews, and anyone new to the city — whether they moved in last week or last year — has no way to see what's happening tonight.",
+      "I built Dabei as a discovery layer for organic, in-person plans across the whole city — not a Meetup.com clone, not a dating app, just \"what's happening near me right now and can I join?\"",
     ],
     approach: [
       "I built an Expo Router 5 app on RN 0.83 backed by Supabase (Postgres + RLS + storage + realtime). Auth is OTP-based; the home tab is a live map of pinned hangouts; users can join, RSVP, post stories with 24h expiry, and run \"vibe checks\" mid-event so a hangout can be live-rated. Crews are persistent groups for repeat plans.",
@@ -999,7 +999,7 @@ export const projects = [
       "First and last commits both 2026-03-24 — bulk-imported then iterated, with continued work visible in mtimes. In-progress: EAS configured, deployment guides present, final-state docs in repo, but no released build link yet.",
     role: "Solo across mobile, services, Supabase schema, and docs.",
     liftQuote:
-      "\"Not a Meetup clone, not a dating app — just a live map of what's actually happening in Tirana tonight, and whether your crew is already there.\"",
+      "\"Not a Meetup clone, not a dating app — just a live map of what's actually happening in Kiel tonight, and whether your crew is already there.\"",
     links: [
       { label: "Code", href: "private — available on request" },
       { label: "License", href: "proprietary" },

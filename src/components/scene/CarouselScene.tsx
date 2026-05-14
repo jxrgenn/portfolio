@@ -22,7 +22,7 @@ const DEVICE_MOCKUPS: Record<string, string> = {
   "enderrat-e-mia": "/scenes/devices/enderrat.png",
   "social-command-center": "/scenes/devices/socialcommand.png",
   "reel-farmer": "/scenes/devices/reelfarmer.png",
-  bohesh: "/scenes/devices/bohesh.png",
+  dabei: "/scenes/devices/dabei.png",
   websites: "/scenes/devices/websites.png",
   "advance-al": "/scenes/devices/advanceal.png",
 };
@@ -79,7 +79,7 @@ vec3 paletteAt(int i) {
   if (i == 4) return vec3(0.42, 0.26, 0.20);  // cleanslate — terracotta
   if (i == 5) return vec3(0.34, 0.22, 0.40);  // social-cmd — magenta
   if (i == 6) return vec3(0.16, 0.34, 0.32);  // reel-farmer — deep teal
-  if (i == 7) return vec3(0.20, 0.22, 0.40);  // bohesh — indigo
+  if (i == 7) return vec3(0.20, 0.22, 0.40);  // dabei — Kiel blue-hour indigo
   if (i == 8) return vec3(0.38, 0.30, 0.18);  // websites — olive
   return vec3(0.18, 0.32, 0.46);              // advance.al — cool blue
 }

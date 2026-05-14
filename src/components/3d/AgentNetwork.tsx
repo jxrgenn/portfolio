@@ -18,7 +18,7 @@ const ACCENT_COLORS = [
   "#34d399", // cleanslate — emerald
   "#818cf8", // social — indigo
   "#f472b6", // jiang — magenta
-  "#a78bfa", // bohesh — violet
+  "#a78bfa", // dabei — violet
   "#fb923c", // kercishta — orange
 ];
 

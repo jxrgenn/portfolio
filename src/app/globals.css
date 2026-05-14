@@ -69,7 +69,7 @@
   --accent-cleanslate: oklch(0.55 0.18 160);
   --accent-social: oklch(0.55 0.18 270);
   --accent-jiang: oklch(0.62 0.22 340);
-  --accent-bohesh: oklch(0.55 0.20 290);
+  --accent-dabei: oklch(0.55 0.20 290);
   --accent-kercishta: oklch(0.65 0.20 50);
 
   --project-accent: var(--color-accent);
@@ -82,7 +82,7 @@
 [data-accent="cleanslate"] { --project-accent: var(--accent-cleanslate); }
 [data-accent="social-command-center"] { --project-accent: var(--accent-social); }
 [data-accent="reel-farmer"] { --project-accent: var(--accent-jiang); }
-[data-accent="bohesh"] { --project-accent: var(--accent-bohesh); }
+[data-accent="dabei"] { --project-accent: var(--accent-dabei); }
 [data-accent="websites"] { --project-accent: var(--accent-kercishta); }
 
 /* ───────────────────────────────────────────────────────────────────────────

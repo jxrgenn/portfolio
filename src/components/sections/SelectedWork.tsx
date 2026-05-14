@@ -64,7 +64,7 @@ const DEVICE_MOCKUPS: Record<string, string> = {
   "enderrat-e-mia": "/scenes/devices/enderrat.png",
   "social-command-center": "/scenes/devices/socialcommand.png",
   "reel-farmer": "/scenes/devices/reelfarmer.png",
-  bohesh: "/scenes/devices/bohesh.png",
+  dabei: "/scenes/devices/dabei.png",
   websites: "/scenes/devices/websites.png",
   "advance-al": "/scenes/devices/advanceal.png",
 };

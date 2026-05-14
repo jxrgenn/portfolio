@@ -15,7 +15,7 @@
 - [CleanSlate](https://jurgenhalili.dev/projects/cleanslate) — $20/month operating system for cleaning businesses. Stack: Next.js 16, Supabase + RLS, Telnyx + LemonSqueezy. Status: shipped.
 - [Social Command Center](https://jurgenhalili.dev/projects/social-command-center) — Industrial Instagram content for any brand — autonomous, multi-tenant. Stack: Next.js 16, BullMQ + Drizzle, OpenAI + Postiz. Status: in-progress.
 - [Reel Farmer](https://jurgenhalili.dev/projects/reel-farmer) — Self-hosted YouTube → TikTok pipeline. One command, multi-account. Stack: Bun + TS, Whisper + Gemini, Remotion + Puppeteer. Status: shipped.
-- [Bohesh](https://jurgenhalili.dev/projects/bohesh) — Tirana's social pulse — find or start hangouts on a live map. Stack: Expo + RN 0.83, Supabase + Realtime, react-native-maps. Status: in-progress.
+- [Dabei](https://jurgenhalili.dev/projects/dabei) — Kiel's social pulse — find or start hangouts on a live map. Stack: Expo + RN 0.83, Supabase + Realtime, react-native-maps. Status: in-progress.
 - [Websites](https://jurgenhalili.dev/projects/websites) — Three brand sites — Three.js hero, MongoDB CRM, fitness coaching. Stack: React + Vite, Three.js + Framer, MongoDB Atlas. Status: shipped.
 - [advance.al](https://jurgenhalili.dev/projects/advance-al) — Albania's job marketplace — AI CV generation, AI profile-fill, embedding-ranked matching, auto-notify on match. Stack: React 18 + Vite, Express + MongoDB, OpenAI embeddings. Status: shipped.
 
