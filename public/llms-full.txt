@@ -411,3 +411,104 @@ Webhooks first (GitHub Actions, Vercel, most production CI/CD platforms). Thin N
 Exponential backoff on 429 and 5xx — double interval up to cap, single probe after backoff, double again if still failing. Cache deploy-status responses with platform-tuned TTLs (Vercel 30s, Render 1-3min). Share a global token bucket across worker processes via Redis-backed counter (single Redis instance serves bucket + cache + pub/sub queue). If a platform rate-limits anyway, the right response is poll less, not switch IPs — the agent works around rate limits, doesn't fight them.
 
 The number of AI agent projects retrying on 1-second loops until success is too many. Tight retry loops are how you get IP-banned by a deploy platform.
+
+### Stealth puppeteer and multi-account uploaders — the TikTok compliance-flag dance
+
+URL: https://jurgenhalili.dev/notes/stealth-puppeteer-multi-account-tiktok-compliance
+Date: 2026-05-14. 7 min read.
+
+TikTok bot detection looks at three categories — browser fingerprint (user agent, WebGL signatures, navigator properties, fonts), behavioral patterns (mouse movement, typing cadence, time-on-page), session signals (cookie age, IP reputation, time-of-day, request frequency). Vanilla puppeteer fails on fingerprint immediately (`navigator.webdriver = true`, "HeadlessChrome" UA, default WebGL signature). puppeteer-extra-plugin-stealth patches the obvious tells.
+
+Cookie management per account — never share jars, never reuse after fingerprint change, refresh on every successful upload. account-manager.ts API: `accountManager.upload(accountSlug, file, metadata)` hides cookie load + puppeteer launch + behavioral interaction + upload + cookie persist + browser close. Behavioral patterns matter as much as fingerprint — humanize() helper wrapping clicks (50-200ms randomized delays), scrolls, typing (variable cadence, bursty not 5 chars/second exact). Residential proxies only needed for high-volume or flagged-account recovery scenarios. Never automate a personal account you care about.
+
+### Remotion video rendering with the same components as the app — brand consistency without two codebases
+
+URL: https://jurgenhalili.dev/notes/remotion-programmatic-video-rendering-app-components
+Date: 2026-05-14. 7 min read.
+
+Remotion is React-based offline video rendering — components describe each frame, composition has duration + frame rate, headless Chromium renders MP4/WebM. The trick: import components from `packages/ui` in both your app workspace and your `apps/ads` workspace. A button rendered in the app and a button rendered in an ad share one source of truth.
+
+Where Remotion shines: 15-90 second social-media clips, programmatic carousels, data-driven explainers, ad creative regenerated weekly with different content. Where it struggles: interactivity, very long durations, sub-frame audio sync. Reel Farmer's slideshow composer + captioned-clip renderer share visual language. Ëndërrat ad pipeline renders TikTok ad frames using the same children's-book watercolor styling as in-app illustrations.
+
+Right call: After Effects for hero-level brand films; Remotion for everyday ad creative where consistency-with-the-app matters more than animation richness.
+
+### Whisper model size — when bigger isn't worth the GPU
+
+URL: https://jurgenhalili.dev/notes/whisper-model-size-when-bigger-isnt-worth-it
+Date: 2026-05-14. 6 min read.
+
+Six Whisper sizes — tiny (39M), base (74M), small (244M), medium (769M), large-v3 (1550M), large-v3-turbo. Quality gap isn't linear: tiny→base is big, base→small meaningful, small→medium smaller, medium→large incremental. For transcript-as-input-to-LLM (Reel Farmer's clip-selection use case), base or small is usually right — 80-90% as accurate as large at 10-30x speed. The downstream clip-selection LLM is robust to minor transcription errors.
+
+User-facing transcripts (captions, legal review) need medium/large because every word matters. Multilingual content needs medium minimum — Whisper's accuracy on non-English drops faster with smaller models. OpenAI Whisper API: ~$0.006/minute regardless of size; self-hosted on $0.50/hour cloud GPU: large transcribes one hour of audio in ~6 minutes ($0.05); tiny in ~30 seconds ($0.004). Crossover for API vs self-host: ~100 hours/month. Reel Farmer's default: base for English, medium for non-English, large-v3 on explicit request.
+
+### Gemini clip selection — getting an LLM to pick highlights with the transcript in context
+
+URL: https://jurgenhalili.dev/notes/gemini-clip-selection-transcript-context
+Date: 2026-05-14. 6 min read.
+
+Gemini's long context window (1M+ tokens) makes it the right model for clip selection from full podcast transcripts. Prompt structure: (1) full transcript with timestamps, (2) criteria for what makes a good clip (surprising claims, complete arguments, sharp one-liners, anything that holds attention without context), (3) output schema (JSON array of `{ startSec, endSec, summary, confidence }`). `responseMimeType: 'application/json'` enforces structure; schema-validation failures get one retry with stricter framing.
+
+Heuristics filter bad picks — length bounds (15-60s), confidence threshold (deprioritize <0.7), overlap merging (clips overlapping >50% become one), total cap (top 7 per run). Operator reviews dashboard, marks approved clips for render. Selection review is the one intentional human-in-loop step because difference between "AI thinks this is good" and "this is actually good" is real, and 30s per clip is cheap insurance against bad picks training the algorithm against the channel.
+
+Empirically Gemini and Claude perform similarly on this task, both beat GPT-4 by a meaningful margin (rankings shift with each model release; benchmark for your use case).
+
+### The transaction ledger — unifying ads, subscriptions, and purchases into one accounting story
+
+URL: https://jurgenhalili.dev/notes/transaction-ledger-unified-credits-mobile-app
+Date: 2026-05-14. 7 min read.
+
+Ëndërrat e Mia's billing has four sources — RevenueCat subscriptions, AdMob rewards, in-app purchases, free trial — all writing to one Transaction table. Columns: id, user_id, amount (positive credit, negative debit), source (revenuecat / admob / iap / story_render / refund / promo), external_id (subscription ID, reward ID, purchase token, or null for system-internal), created_at, notes. Balance = `SELECT SUM(amount) FROM transactions WHERE user_id = ?`. No state machine. No reconciliation. The balance is whatever the rows say it is.
+
+When a story is requested, the pipeline writes a debit row before generation starts. If any stage fails, a refund row writes (referencing the debit). The user's net balance is restored automatically — no race conditions, no orphaned debits. Webhook handlers per source validate signatures + insert one row each (external_id uniqueness enforced at DB level so replayed webhooks are no-op, not duplicate credit).
+
+Fraud queries become single queries: "users who got unusual admob credit in 24h" = one SELECT against one table. Compare to four-tables-stitched-together version with three joins + edge cases per source. Table is append-only — cancellations and refunds are new rows, not deletions (same discipline as double-entry bookkeeping). At very high volume, partition by month; Postgres handles natively, query API unchanged.
+
+### Embedding worker on a heartbeat process — the pattern that keeps a matching engine honest
+
+URL: https://jurgenhalili.dev/notes/embedding-worker-heartbeat-process-pattern
+Date: 2026-05-14. 6 min read.
+
+advance.al's embedding worker runs on its own PM2 process (cluster mode runs N web workers + 1 embedding worker). Every 60s the worker pings a heartbeat endpoint with timestamp + identity; cron job every 5min checks recency; >10min silent triggers alert email + Slack. The whole monitoring layer is ~30 lines of code and catches the silent-stop failure mode where the platform appears working but matches stop updating.
+
+PM2's `online` status catches crashes but not hangs (process running and not making progress — blocked on network call, stuck on lock, pegged on CPU without useful work). Heartbeat catches hangs. Both signals together cover the failure surface. Worker pops jobs from Redis queue: fetch entity, generate embedding via `text-embedding-3-small`, store via pgvector, recompute downstream matches if significant change. Failure handling: retry counter, dead-letter after 3 retries + alert. Common modes: OpenAI rate limits (backoff recover), Postgres connection drops (reconnect), validation errors (log + skip).
+
+Pattern generalizes to any background worker critical to product function — notification fanouts, image processors, index rebuilders. Cost: 30 lines + one cron + one alert channel. Benefit: 10-minute detection vs days-later user complaints.
+
+### OpenAI structured extraction — auto-filling profiles from any CV format
+
+URL: https://jurgenhalili.dev/notes/openai-structured-extraction-profile-autofill
+Date: 2026-05-14. 7 min read.
+
+Three pieces stitched together: (1) text extraction (pdfjs-dist for PDFs, mammoth for DOCX — returns single long string of CV content); (2) structured LLM extraction (OpenAI Chat API + `responseMimeType: 'application/json'` + explicit schema describing fields — name, email, phone, skills, work_history, education, summary, all with per-field confidence); (3) confidence routing (fields above 0.7 silently auto-fill, below trigger manual-review UI).
+
+Structured output is categorical, not incremental. Free-form parsing of "extract this person's skills" returns inconsistent shapes (comma-separated, bulleted, sentence describing). Structured output returns guaranteed-valid JSON every time. The feature is feasible because the API exists; without it, validation + retry would be most of the code.
+
+Image-only PDF handling: pdfjs-dist returns empty strings on rasterized pages. Detection: <100 chars total = treat as image-PDF. Fallback: OCR via Tesseract or OpenAI vision (more expensive but handles edge case; <5% of uploads). Edge case fix: one-page PDF with single H1 made the model invent an entire work history; length check at start of pipeline now refuses uploads under 100 chars.
+
+Pattern generalizes to any user-facing form where input is unstructured and destination is typed — receipt scanning, invoice extraction, lease-agreement parsing.
+
+### Bilingual embeddings and the category boost — when one vector space isn't enough
+
+URL: https://jurgenhalili.dev/notes/bilingual-embedding-category-boost
+Date: 2026-05-14. 6 min read.
+
+Modern OpenAI embeddings handle multilingual content in one shared 1536-dim vector space. But vocabulary depth differs by language — model has seen orders of magnitude more English technical writing than Albanian technical writing. Result: an Albanian-only profile matching an English-only job scores lower than the candidate's qualifications justify, because Albanian semantic neighborhoods are thinner.
+
+Observed bias (held-out matched pair set): English-mixed profile vs English job 0.78 cosine baseline; Albanian-only vs English 0.62 (23% application rate lower); Albanian-only vs Albanian 0.79 baseline; English-mixed vs Albanian 0.68 (12% lower). Fix: coarse-category tag on every profile and job (Software Engineering, Marketing, Sales, etc., mutually exclusive at top level). When candidate + job share top-level category, cosine gets small additive boost (+0.05 to +0.08). Same category in different languages now ranks closer to same category in same language; cross-category matches unaffected.
+
+Why categories not language detection: stable signal regardless of bilingual content classification ambiguity; doesn't require per-language scaling factors to retune on every OpenAI model release. Result after shipping: Albanian-only application rates against English-language listings up ~18% in first month; employer-reported candidate quality unchanged.
+
+Pattern generalizes to any multilingual matching engine where one language has shallower training data, or any cross-domain matching where same-domain matches deserve a boost.
+
+### Drift detection in a vector matching engine — when the model has changed
+
+URL: https://jurgenhalili.dev/notes/drift-detection-vector-matching-engine
+Date: 2026-05-14. 6 min read.
+
+OpenAI deprecates embedding models. ada-002 → 3-small → 3-large. Every migration is a re-embedding pass + cosine number shift. A matching engine without drift detection discovers the change when employers complain about new candidates appearing in their dashboard.
+
+Drift signal: per-candidate top-N match-list stability. Daily job picks stratified sample of 200 candidates; computes top-5 matches; compares against last week's top-5; computes Jaccard turnover. Baseline: trailing 30-day average. Threshold: anything >2× baseline triggers alert with affected candidates + change pattern + investigation dashboard link. First action: check OpenAI version. Second: verify embedding worker. Third: look for content shifts (new categories, new geographies).
+
+The 7-dimension explainable score on top of cosine (title, skills, experience, location, education, salary, availability) protects dashboard UX — dimension formulas don't depend on embedding model. Cosine numbers shift after migration; dimension breakdowns stay stable; user-visible "candidate scored 78" doesn't make employers think the platform broke.
+
+Re-embedding pass: two-phase migration. Phase 1: write `embedding_v2` alongside `embedding` over time. Phase 2: at 95% coverage, switch read traffic + keep old column for 1 week rollback option. Cost: ~$20-50 for 10K profiles + 5K jobs at current pricing. Cheap relative to getting it wrong. Next maturity step: pre-deployment shadow comparison — run both versions in parallel for a week before flipping read traffic.

@@ -3122,6 +3122,1136 @@ export const notes: readonly Note[] = [
       },
     ],
   },
+
+  // -------------------------------------------------------------------------
+  // Cluster B — Reel Farmer technical deep cuts
+  // -------------------------------------------------------------------------
+  {
+    slug: "stealth-puppeteer-multi-account-tiktok-compliance",
+    title:
+      "Stealth puppeteer and multi-account uploaders — the TikTok compliance-flag dance",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 7,
+    description:
+      "Uploading to TikTok across multiple authenticated accounts without getting flagged requires understanding what their bot-detection layer actually looks for. Cookie persistence, request patterns, browser fingerprint stability — the patterns that keep account-manager.ts producing successful uploads.",
+    keywords: [
+      "stealth puppeteer",
+      "TikTok automation",
+      "multi-account uploader",
+      "browser fingerprint",
+      "puppeteer-extra",
+      "bot detection avoidance",
+      "social media automation",
+    ],
+    relatedProject: "reel-farmer",
+    answerBox:
+      "Multi-account uploaders survive TikTok's bot detection by hiding the automation signals: puppeteer-extra-plugin-stealth for fingerprint normalization, persistent cookie jars per account, realistic typing/clicking cadence, residential-grade IP rotation if needed. The hard work is per-account cookie/session management — account-manager.ts hides all of it behind one upload(account, file, metadata) API.",
+    lede:
+      "Uploading to TikTok across multiple authenticated accounts is one of the parts of Reel Farmer that sounds simple until you actually try it. TikTok's bot detection layer is sophisticated, and the difference between \"upload works\" and \"account permanently flagged\" comes down to a handful of patterns that aren't documented anywhere.",
+    sections: [
+      {
+        heading: "What does TikTok's bot detection actually look at?",
+        paragraphs: [
+          "Three categories. Browser fingerprint (user agent, screen dimensions, WebGL signatures, navigator properties, fonts list). Behavioral patterns (mouse movement, typing cadence, time-on-page before interaction, navigation paths). Session signals (cookie age, IP reputation, time-of-day patterns, request frequency).",
+          "Any one of these by itself isn't disqualifying, but the combined signal is what triggers automation detection. Vanilla puppeteer fails on the fingerprint axis immediately — `navigator.webdriver` is `true`, the user agent says \"HeadlessChrome,\" and the WebGL signature is the headless-Chrome default.",
+        ],
+      },
+      {
+        heading: "Why puppeteer-extra-plugin-stealth exists",
+        paragraphs: [
+          "puppeteer-extra-plugin-stealth is a community-maintained set of patches that hide the automation tells from common detection methods. It overrides `navigator.webdriver`, fixes Chrome runtime properties, normalizes the user agent, masks the WebGL vendor/renderer string, and patches a dozen other browser-side flags that fingerprinting libraries probe.",
+          "It's not magic. Sites running active bot detection (Datadome, Cloudflare Turnstile, etc.) can still detect it. But for the moderately-sophisticated detection most upload endpoints use, stealth plus reasonable behavioral patterns is enough.",
+        ],
+        table: {
+          caption: "Stealth-plugin coverage",
+          headers: ["Detection vector", "Stealth-plugin patch", "Sufficient?"],
+          rows: [
+            ["navigator.webdriver", "Set to undefined", "Yes"],
+            ["User agent", "Override to real Chrome UA", "Yes"],
+            ["WebGL vendor/renderer", "Mask headless signature", "Yes"],
+            ["Browser fingerprint hash", "Partial normalization", "Mostly"],
+            ["Behavioral patterns", "Not addressed (your code's job)", "No"],
+            ["IP reputation", "Not addressed", "No (use residential proxies if flagged)"],
+          ],
+        },
+      },
+      {
+        heading: "Cookie and session management per account",
+        paragraphs: [
+          "Each TikTok account has its own cookie jar persisted to disk. Loading the cookies into a fresh puppeteer session lets the upload happen as that account without re-authenticating.",
+          "The discipline: never share cookie jars between accounts. Never reuse a cookie jar after a fingerprint change. Refresh cookies on every successful upload (TikTok rotates session tokens).",
+          "account-manager.ts owns this. The public API is `accountManager.upload(accountSlug, file, metadata)` — internally it loads the cookie jar, spins up a stealth-patched puppeteer instance, performs the upload, persists the updated cookies, closes the browser. The pipeline above doesn't know any of this happens.",
+        ],
+      },
+      {
+        heading: "Behavioral patterns matter as much as fingerprint",
+        paragraphs: [
+          "A perfect fingerprint with bot-shaped behavior gets flagged. Bot-shaped behavior: clicks happening with zero delay between, navigation paths that skip standard pre-action UI, no scroll events, typing at fixed intervals.",
+          "Real behavioral patterns: 50-200ms randomized delays between clicks, a few hundred ms of mouse movement before clicking, occasional pauses (200-800ms) on screens before taking action, scroll events on long pages, typing at variable cadence (humans type bursty, not at 5 chars/second exact).",
+          "The library `puppeteer-extra-plugin-stealth` doesn't help with this — you have to add the patterns yourself, ideally factored into a `humanize()` helper that wraps clicks, scrolls, and typing actions.",
+        ],
+      },
+      {
+        heading: "When you need residential proxies",
+        paragraphs: [
+          "Datacenter IPs have known ranges. Running uploads from a Vercel function or an AWS EC2 instance leaves an IP fingerprint that TikTok can match against datacenter ranges. For most use cases this is fine; for an account that has been flagged or for high-volume operations, you may need residential proxies.",
+          "Residential proxies route traffic through real residential IP addresses (rented from real consumer connections). They're significantly more expensive ($10-100/GB depending on provider) but they look like normal user traffic. For Reel Farmer's volume, this isn't necessary; for an account that's been flagged once, switching to residential is sometimes the recovery move.",
+        ],
+      },
+      {
+        heading: "Account-manager.ts hides all of this",
+        paragraphs: [
+          "The pipeline calls `accountManager.upload(accountSlug, file, metadata)`. Internally that means: load cookie jar from disk; launch puppeteer with stealth-patched profile; navigate to TikTok upload URL; perform behavioral-realistic interactions; upload file; fill metadata (title, hashtags, caption) with humanize'd typing; submit; persist updated cookies; close browser. None of that is the pipeline's concern.",
+          "The benefit: changes to TikTok's UI, detection patches, behavioral tuning, or proxy configuration all stay in `account-manager.ts`. The pipeline doesn't know about them and doesn't need to. The interface is `upload()` and it returns success or failure.",
+        ],
+      },
+      {
+        heading: "What I'd repeat in any social-media automation project",
+        paragraphs: [
+          "Hide automation tells, randomize behavioral patterns, persist cookies per account, encapsulate it all behind one interface. The hard part isn't any single technique — it's the discipline of putting all of it together and not leaking the abstraction up to the pipeline layer.",
+          "And: never automate a personal account you care about. Automation accounts are disposable; if they get flagged, you lose minimal context. Personal accounts are not disposable.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "A perfect fingerprint with bot-shaped behavior gets flagged. Bot-shaped behavior: clicks with zero delay, navigation paths that skip standard UI, no scroll events.",
+      },
+      {
+        quote:
+          "Never automate a personal account you care about. Automation accounts are disposable; personal accounts are not.",
+      },
+    ],
+    citations: [
+      {
+        label: "puppeteer-extra-plugin-stealth on GitHub",
+        url: "https://github.com/berstend/puppeteer-extra/tree/master/packages/puppeteer-extra-plugin-stealth",
+        relevance: "The community library that handles fingerprint normalization",
+      },
+      {
+        label: "Puppeteer — official documentation",
+        url: "https://pptr.dev/",
+        relevance: "Headless Chrome control API the stealth plugin extends",
+      },
+      {
+        label: "TikTok Developer Platform",
+        url: "https://developers.tiktok.com/",
+        relevance: "Official API (where applicable; not all upload flows are exposed)",
+      },
+    ],
+    faq: [
+      {
+        q: "Is stealth puppeteer the same as a regular puppeteer?",
+        a: "No. Regular puppeteer leaks automation signals (navigator.webdriver = true, headless user agent, default WebGL signatures) that any moderately-good bot detection catches immediately. Stealth puppeteer is puppeteer plus a stealth plugin that patches those signals.",
+      },
+      {
+        q: "Can I use stealth puppeteer to automate any site?",
+        a: "Functionally yes, ethically and legally maybe. Most platforms have terms of service that prohibit automation. The reality is some platforms tolerate good-citizen automation (low volume, slow pace, honest content) while others are aggressive about blocking it. Read the ToS, weigh the risk.",
+      },
+      {
+        q: "Do I need residential proxies for social-media automation?",
+        a: "Usually not for low-volume use. Most flagged accounts on standard datacenter IPs are flagged because of behavioral or content patterns, not the IP itself. Residential proxies are a tool for specific recovery scenarios, not a default requirement.",
+      },
+      {
+        q: "How do you persist puppeteer cookies across runs?",
+        a: "Save the cookie jar to disk (page.cookies() returns the array; serialize as JSON). Load on the next run with page.setCookie(). Refresh after every successful action because session tokens rotate.",
+      },
+    ],
+  },
+
+  {
+    slug: "remotion-programmatic-video-rendering-app-components",
+    title:
+      "Remotion video rendering with the same components as the app — brand consistency without two codebases",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 7,
+    description:
+      "Most marketing pipelines rebuild ad creative in After Effects, drifting from the app's actual visual language within months. Remotion lets you render programmatic video using the exact same React components as the production app. Brand consistency is structural, not procedural.",
+    keywords: [
+      "Remotion video",
+      "programmatic ad creative",
+      "TikTok ad rendering",
+      "React video rendering",
+      "brand consistency video",
+      "Remotion + React Native",
+      "ad creative pipeline",
+    ],
+    relatedProject: "reel-farmer",
+    answerBox:
+      "Remotion renders programmatic video from React components. The trick: use the same components that ship in your app to render your ads. A button rendered in the app and a button rendered in an ad share one source of truth. Marketing creative and product UI cannot drift, because they are literally the same code.",
+    lede:
+      "Most marketing pipelines rebuild ad creative in After Effects or Premiere — separate from the app's actual visual language. Six months in, the marketing assets feel like a different product than the app, because they are. Remotion lets you skip that drift entirely by rendering video using the same React components your app already ships.",
+    sections: [
+      {
+        heading: "What is Remotion?",
+        paragraphs: [
+          "Remotion is a React-based video rendering framework. You write components that describe what each frame should show, define a composition with a duration and frame rate, and Remotion renders MP4 or WebM output frame-by-frame using a headless Chromium instance.",
+          "It's not real-time playback (you're not building a video player). It's offline rendering — you describe the video in code, run a build, get a finished MP4. This is the same shape as Figma-to-asset or Photoshop-to-image workflows, except the source is React code.",
+        ],
+      },
+      {
+        heading: "Why use the app's components in the renderer?",
+        paragraphs: [
+          "Because brand consistency drifts whenever marketing creative and product UI diverge. A button that's `bg-primary-600 rounded-xl py-3 px-6` in the app needs to be the same button in the ad. Re-creating it in After Effects with a hex code that's close-but-not-exact is how brand drift happens.",
+          "If the button component is imported into the Remotion composition the same way it's imported into the app, the colors, type, and proportions are the same by construction. Updating the app's button automatically updates the ad's button. There's nothing to maintain in two places.",
+        ],
+      },
+      {
+        heading: "What does the setup look like in a monorepo?",
+        paragraphs: [
+          "Two workspaces in the same monorepo: `apps/web` (or `apps/mobile`) and `apps/ads`. Both import shared components from `packages/ui`. The ad workspace's Remotion compositions import buttons, cards, type styles, and brand colors from the same package the app uses.",
+          "Reel Farmer uses this exact pattern. The slideshow composer and the captioned-clips renderer both compose UI elements that match Reel Farmer's app — same fonts, same color palette, same animation curves. The Pinterest-sourced slideshows and YouTube clips share a visual language because they share a code path.",
+        ],
+        table: {
+          caption: "What lives where in a Remotion-on-monorepo setup",
+          headers: ["Location", "Contents", "Imported by"],
+          rows: [
+            ["packages/ui", "Buttons, cards, type, colors, animation curves", "App + Ads"],
+            ["apps/web", "Routes, pages, app-specific layout", "—"],
+            ["apps/ads", "Remotion compositions, scene templates, ad scripts", "—"],
+            ["packages/ui/animations", "Reusable animation curves (easing, spring presets)", "Both — keeps motion language consistent"],
+          ],
+        },
+      },
+      {
+        heading: "What animations work well in Remotion?",
+        paragraphs: [
+          "Anything you can express as a function of frame number. `interpolate(frame, [0, 30], [0, 1])` smoothly transitions from 0 to 1 over 30 frames. Combined with React's compositional patterns, this is powerful — but it's a different mental model than CSS animations.",
+          "Where Remotion struggles: anything that depends on runtime user interaction (it's not interactive), anything that needs precise audio sync at sub-frame level (possible but fiddly), anything with very long durations (60-second renders are fine; 10-minute renders take 10x longer).",
+          "Where it shines: 15-90 second social-media clips, programmatic carousels, data-driven explainers, ad creative that needs to be regenerated weekly with different content.",
+        ],
+      },
+      {
+        heading: "Programmatic creative at scale",
+        paragraphs: [
+          "Once the rendering pipeline exists, generating many variants is cheap. Different copy, different colors, different starting frames — all programmatic. A single command renders 10 ad variations for A/B testing.",
+          "Ëndërrat e Mia has a similar pipeline (`videos/generateAdImages*.js`) for static ad images, using the same children's-book watercolor styling as the in-app illustrations. Five scripts render TikTok ad frames; brand consistency is structural, not procedural.",
+          "Combined with stealth puppeteer for upload, this gets you: app components shared with ad components, ads rendered programmatically, ads uploaded automatically. The whole content-marketing loop runs without a designer in the critical path.",
+        ],
+      },
+      {
+        heading: "What this trades away",
+        paragraphs: [
+          "Some video effects are easier in After Effects than in Remotion. Anything that benefits from a frame-by-frame timeline editor — complex character animation, advanced motion graphics, sound design with visual sync — is more painful in code.",
+          "The right call: use After Effects for hero-level brand films. Use Remotion for the everyday ad creative pipeline where consistency-with-the-app matters more than animation richness.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "If the button is imported into the Remotion composition the same way it's imported into the app, the colors, type, and proportions are the same by construction.",
+      },
+      {
+        quote:
+          "Use After Effects for hero-level brand films. Use Remotion for the everyday ad creative pipeline where consistency-with-the-app matters more than animation richness.",
+      },
+    ],
+    citations: [
+      {
+        label: "Remotion — official documentation",
+        url: "https://www.remotion.dev/docs",
+        relevance: "The React-based video rendering framework",
+      },
+      {
+        label: "Remotion GitHub repository",
+        url: "https://github.com/remotion-dev/remotion",
+        relevance: "Source code and examples",
+      },
+      {
+        label: "Remotion + monorepo patterns",
+        url: "https://www.remotion.dev/docs/recipes",
+        relevance: "Official guidance on integrating Remotion into a workspace",
+      },
+    ],
+    faq: [
+      {
+        q: "Can you render video using React components?",
+        a: "Yes — Remotion is built for exactly that. You describe the video frame by frame using React, define a composition with duration and frame rate, run a build, get an MP4. Headless Chromium does the actual rendering offline.",
+      },
+      {
+        q: "Is Remotion fast enough for production ad pipelines?",
+        a: "Yes for short clips. A 30-second 1080×1920 render at 30fps takes a few minutes on modest hardware. For higher volumes, Remotion Lambda runs renders on AWS Lambda — cheaper than spinning up dedicated render boxes.",
+      },
+      {
+        q: "Should I use Remotion or After Effects?",
+        a: "Both, for different purposes. After Effects for hero brand films where animation richness is the point. Remotion for everyday programmatic creative where keeping the ads consistent with the app matters most.",
+      },
+      {
+        q: "How do you share components between an app and a Remotion renderer?",
+        a: "Monorepo with a shared ui package. Both the app and the ads workspace import from the same package. Updating a button in the package updates it in both places automatically.",
+      },
+    ],
+  },
+
+  {
+    slug: "whisper-model-size-when-bigger-isnt-worth-it",
+    title:
+      "Whisper model size — when bigger isn't worth the GPU",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 6,
+    description:
+      "Whisper ships in six sizes, from tiny to large-v3. Bigger models transcribe better — but for transcript-as-input-to-LLM workflows, the quality gap closes much faster than the cost gap opens. Here's the sizing decision Reel Farmer uses.",
+    keywords: [
+      "OpenAI Whisper model sizes",
+      "Whisper tiny vs base vs large",
+      "speech-to-text model selection",
+      "Whisper GPU cost",
+      "Whisper transcription pipeline",
+    ],
+    relatedProject: "reel-farmer",
+    answerBox:
+      "For transcript-as-input-to-LLM use cases, Whisper `base` or `small` is usually the right call — they're 80-90% as accurate as `large-v3` at 10-30x the speed. The clip-selection LLM downstream is robust to minor transcription errors. Use `large-v3` only when transcript quality is the user-facing output, not an intermediate signal.",
+    lede:
+      "Whisper, OpenAI's speech-to-text model, ships in six sizes. The instinct is to use the largest available model because better transcripts seem obviously better. But for many production use cases, especially when the transcript feeds into another model rather than into a human reader, that instinct is wrong.",
+    sections: [
+      {
+        heading: "The six Whisper sizes",
+        paragraphs: [
+          "Tiny (39M parameters), base (74M), small (244M), medium (769M), large-v3 (1550M), and large-v3-turbo (faster variant of large-v3). Bigger models produce more accurate transcripts; smaller models run faster and on smaller GPUs.",
+          "The accuracy gap between sizes isn't linear. Going from tiny to base is a big jump. Going from base to small is meaningful. Going from small to medium is smaller. Going from medium to large is incremental for most content.",
+        ],
+        table: {
+          caption: "Whisper model sizing trade-offs",
+          headers: ["Model", "Parameters", "Speed (relative)", "Quality (English)"],
+          rows: [
+            ["tiny", "39M", "~30x large", "Acceptable for clear audio"],
+            ["base", "74M", "~15x large", "Good for most podcasts/clean speech"],
+            ["small", "244M", "~6x large", "Very good"],
+            ["medium", "769M", "~2x large", "Excellent"],
+            ["large-v3", "1550M", "1x", "Best in class"],
+            ["large-v3-turbo", "~800M effective", "~3-4x large-v3", "~95% of large-v3 quality"],
+          ],
+        },
+      },
+      {
+        heading: "Why pipeline use cases tolerate smaller models",
+        paragraphs: [
+          "Reel Farmer transcribes a YouTube video and feeds the transcript to Gemini for clip selection. The Gemini prompt asks \"which 30-second segments would make compelling shorts?\" Minor transcription errors don't change the answer much. A word misheard once or twice doesn't shift which segments are interesting.",
+          "Compare that to a transcript that ships to a human user — captions on a deaf-viewer accessibility feature, or transcripts for legal review. There, every word matters and you want the best model available.",
+          "Pipeline contexts: tolerant of small transcription errors. User-facing contexts: not tolerant. Pick the model size accordingly.",
+        ],
+      },
+      {
+        heading: "What does the cost-vs-quality calculation actually look like?",
+        paragraphs: [
+          "Self-hosting tiny on a CPU: roughly real-time for English. Self-hosting large-v3 on a CPU: 5-10x slower than real-time. Self-hosting large-v3 on a consumer GPU (RTX 4090, M2 Ultra): real-time. On a datacenter GPU: faster than real-time.",
+          "Cost per hour of transcription on cloud GPUs: tiny via OpenAI API ~$0.006 per minute; large-v3 via OpenAI API $0.006 per minute (same pricing tier). Self-hosted on a $0.50/hour cloud GPU: large-v3 transcribes one hour of audio in ~6 minutes = $0.05. Tiny on the same GPU: ~30 seconds = $0.004.",
+          "For a high-volume pipeline, the cost gap is real. For low-volume work, the absolute cost is negligible and you might as well use the better model.",
+        ],
+      },
+      {
+        heading: "Multilingual content changes the calculation",
+        paragraphs: [
+          "Whisper's accuracy on languages other than English drops faster with smaller models. Small or base might be fine for English podcasts and unusable for Albanian or Mandarin content.",
+          "For multilingual pipelines, the safe default is medium or large. The accuracy gain on non-English content is more meaningful than on English, where smaller models are already pretty good.",
+        ],
+      },
+      {
+        heading: "Reel Farmer's actual sizing",
+        paragraphs: [
+          "Configurable per run. The default is base for English content (fast, accurate enough for clip selection); medium for non-English content; large-v3 available for any run where the user explicitly requests highest quality.",
+          "The model choice is exposed at run-creation time, not hidden in config. A user transcribing a long Albanian podcast picks medium; a user batch-processing English creator videos picks base.",
+        ],
+      },
+      {
+        heading: "When to use the API vs self-host",
+        paragraphs: [
+          "OpenAI's Whisper API: simple, ~$0.006/minute, no infrastructure. Right answer for low-to-moderate volume. Self-hosting: requires GPU access (cloud GPU or local), more setup, but ~10-100x cheaper per minute at scale, and you own the model versioning.",
+          "Crossover point: roughly 100 hours of transcription per month. Below that, API is cheaper after factoring infrastructure. Above that, self-hosting starts paying back.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "Pipeline contexts: tolerant of small transcription errors. User-facing contexts: not tolerant. Pick the model size accordingly.",
+      },
+      {
+        quote:
+          "Going from base to small is meaningful. Going from small to medium is smaller. Going from medium to large is incremental for most content.",
+      },
+    ],
+    citations: [
+      {
+        label: "OpenAI Whisper — official repository",
+        url: "https://github.com/openai/whisper",
+        relevance: "Source code and model documentation",
+      },
+      {
+        label: "Whisper API pricing",
+        url: "https://openai.com/pricing",
+        relevance: "OpenAI hosted Whisper pricing reference",
+      },
+      {
+        label: "faster-whisper — optimized inference",
+        url: "https://github.com/SYSTRAN/faster-whisper",
+        relevance: "CTranslate2-based reimplementation for faster self-hosting",
+      },
+    ],
+    faq: [
+      {
+        q: "Which Whisper model size should I use?",
+        a: "For transcript-feeding-into-LLM pipelines, base or small is usually the right call. For user-facing captions or legal transcripts, medium or large. For multilingual content, medium minimum.",
+      },
+      {
+        q: "Is the OpenAI Whisper API cheaper than self-hosting?",
+        a: "Below ~100 hours/month, yes — the API is cheap and there's no infrastructure overhead. Above that volume, self-hosting on cloud GPUs starts paying back. The crossover depends on your hourly GPU rate.",
+      },
+      {
+        q: "Does Whisper handle non-English languages well?",
+        a: "Large-v3 yes, smaller sizes meaningfully worse. For Albanian, Mandarin, Arabic, and other non-English content, default to medium or large unless you've validated smaller works for your specific content.",
+      },
+      {
+        q: "What's the latency impact of Whisper model size?",
+        a: "Large is 5-10x slower than base on CPU. On GPU, large is faster than real-time. For a transcription stage that doesn't block the user, latency matters less; for live transcription, the smaller model is necessary.",
+      },
+    ],
+  },
+
+  {
+    slug: "gemini-clip-selection-transcript-context",
+    title:
+      "Gemini clip selection — getting an LLM to pick highlights with the transcript in context",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 6,
+    description:
+      "Reel Farmer's clip-selection stage asks Gemini to read a podcast transcript and pick the 30-second highlights that would work as TikTok shorts. The prompt structure that gets good answers — and the heuristics that filter the AI's bad picks.",
+    keywords: [
+      "AI highlight detection",
+      "Gemini long context",
+      "video clip selection",
+      "transcript-aware LLM",
+      "AI content discovery",
+      "YouTube to TikTok",
+    ],
+    relatedProject: "reel-farmer",
+    answerBox:
+      "Gemini's long context window (1M+ tokens) makes it the right model for clip selection from full podcast transcripts. The prompt asks for 3-7 candidate segments with start/end timestamps, a one-line summary, and a confidence score. Heuristics filter results that are too short, too long, or have low LLM confidence; the human picks from what's left.",
+    lede:
+      "The last interesting AI stage in Reel Farmer is clip selection. Given a 90-minute podcast transcript, pick the 30-second segments that would work as TikTok shorts. This sounds like a recommender problem but it's actually a long-context reasoning problem, and Gemini's context window is built for it.",
+    sections: [
+      {
+        heading: "Why Gemini over Claude or GPT-4 for this stage?",
+        paragraphs: [
+          "Long context. A 90-minute podcast transcript is roughly 14,000 words or ~20,000 tokens. Claude and GPT-4-class models handle that just fine, but Gemini's larger context window (up to 1M tokens) leaves room for richer prompting — past episodes' picks for the same show, audience-niche guidance, previously-rejected segments to avoid.",
+          "Cost. Gemini's pricing for long-context tasks is lower than Claude's or GPT-4's. For a pipeline that runs the clip-selection stage on every video, that adds up.",
+          "Quality on this specific task. Empirically, after testing all three on a held-out set of podcasts with manually-labeled \"good clip\" segments, Gemini and Claude were roughly equivalent and both beat GPT-4 by a meaningful margin. The exact ranking changes per model release; benchmark for your own use case.",
+        ],
+      },
+      {
+        heading: "What does the prompt actually look like?",
+        paragraphs: [
+          "Three parts: (1) the full transcript with timestamps; (2) the criteria for what makes a good clip (\"surprising claims, complete arguments, sharp one-liners, anything that holds attention without context\"); (3) the output schema (JSON array of `{ startSec, endSec, summary, confidence }`).",
+          "The output schema is enforced — Gemini's `responseMimeType: 'application/json'` plus an explicit schema in the prompt. Responses that fail schema validation get retried once with stricter framing; if validation still fails, the run is marked failed.",
+          "The confidence score is the LLM's self-rated likelihood that this segment would work as a short. It's imperfect, but it's a useful filter for the downstream heuristics.",
+        ],
+        table: {
+          caption: "Clip-selection output schema",
+          headers: ["Field", "Type", "Used for"],
+          rows: [
+            ["startSec", "number", "Where to slice the source video"],
+            ["endSec", "number", "Where to end the slice"],
+            ["summary", "string (one line)", "Caption suggestion + dashboard preview"],
+            ["confidence", "number (0-1)", "Filter heuristic + sort order"],
+          ],
+        },
+      },
+      {
+        heading: "Heuristics that filter bad picks",
+        paragraphs: [
+          "Length: clips shorter than 15 seconds or longer than 60 seconds get rejected. Too short doesn't have room to land; too long doesn't fit the TikTok format. The exact bounds are configurable per pipeline run.",
+          "Confidence: clips below 0.7 confidence get deprioritized. Not rejected — sometimes the LLM is appropriately uncertain about an unusual angle. But the operator sees them after the high-confidence picks.",
+          "Overlap: clips that overlap with each other by more than 50% get merged. The LLM sometimes proposes two slightly-different segments of the same moment; the heuristic picks the higher-confidence one.",
+          "Total count: a 90-minute podcast doesn't have 30 highlight-worthy moments. The pipeline caps at 7 candidates per run; if the LLM proposes more, only the top 7 by confidence are kept.",
+        ],
+      },
+      {
+        heading: "What the operator does with the output",
+        paragraphs: [
+          "The dashboard shows the candidate clips with their summaries and confidence scores. The operator reviews, marks the ones they want to render, and clicks render. The pipeline produces 1080×1920 vertical renders for each approved clip and queues them for upload.",
+          "This is the only stage with a human in the loop. The transcription, clip-selection, render, and upload stages are all automated. The selection review is the one place I intentionally kept manual — because the difference between \"AI thinks this is good\" and \"this is actually good\" is real, and it takes 30 seconds per clip to make the call.",
+        ],
+      },
+      {
+        heading: "What I'd improve next",
+        paragraphs: [
+          "Per-show learning: track which AI-picked clips the operator approves vs rejects, feed that signal back as part of the prompt for future runs of the same show. Currently every run is a cold prompt.",
+          "Audience-niche tuning: a podcast about software engineering wants different clip characteristics than a podcast about cooking. The prompt criteria should adjust per show. This is currently in the prompt as a free-text field; making it structured would help.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "A 90-minute podcast doesn't have 30 highlight-worthy moments. The pipeline caps at 7 candidates per run.",
+      },
+      {
+        quote:
+          "The selection review is the one place I intentionally kept manual — because the difference between \"AI thinks this is good\" and \"this is actually good\" is real.",
+      },
+    ],
+    citations: [
+      {
+        label: "Google Gemini API documentation",
+        url: "https://ai.google.dev/gemini-api/docs",
+        relevance: "The long-context model used for clip selection",
+      },
+      {
+        label: "Gemini structured output (JSON mode)",
+        url: "https://ai.google.dev/gemini-api/docs/structured-output",
+        relevance: "Schema-enforced JSON responses for the clip-selection stage",
+      },
+    ],
+    faq: [
+      {
+        q: "Why is Gemini better than GPT-4 for long-context clip selection?",
+        a: "Gemini's context window is larger and its pricing for long-context tasks is lower. On the specific task of clip selection from podcast transcripts, empirically Gemini and Claude perform similarly and both beat GPT-4 by a meaningful margin. Benchmark for your use case; rankings shift with each model release.",
+      },
+      {
+        q: "Should AI clip selection be fully automated?",
+        a: "Not in my pipeline. The selection review is the human-in-the-loop step. The cost of fully automating bad picks (TikTok engagement on weak content trains the algorithm against the channel) outweighs the 30 seconds per clip the operator spends.",
+      },
+      {
+        q: "How long should an AI-picked clip be?",
+        a: "15-60 seconds for TikTok. Shorter doesn't have room to land; longer doesn't fit the format. The exact bounds are configurable; the LLM proposals get filtered against them.",
+      },
+      {
+        q: "Can the LLM identify good clips without the transcript?",
+        a: "No — at least not with current models. Audio understanding + temporal reasoning is much harder than text reasoning over a transcript. Transcribe first, reason about text, then slice the original audio/video at the chosen timestamps.",
+      },
+    ],
+  },
+
+  {
+    slug: "transaction-ledger-unified-credits-mobile-app",
+    title:
+      "The transaction ledger — unifying ads, subscriptions, and purchases into one accounting story",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 7,
+    description:
+      "Ëndërrat e Mia has four sources of credits — RevenueCat subscriptions, AdMob rewards, in-app purchases, free trial. They all write to one Transaction table. Balance is a single SUM query. Refunds are positive-amount rows referencing the debit. Three accounting systems become one.",
+    keywords: [
+      "transaction ledger pattern",
+      "unified credits database",
+      "RevenueCat AdMob in-app purchase",
+      "mobile app billing",
+      "credit balance pattern",
+      "double-entry adjacent",
+    ],
+    relatedProject: "enderrat-e-mia",
+    answerBox:
+      "Ëndërrat e Mia's billing has four sources — RevenueCat subscriptions, AdMob rewards, in-app purchases, free trial — all writing to one Transaction table. Balance is `SUM(amount)`. Refunds are positive rows referencing the original debit. Three accounting systems become one. Fraud and churn queries become single queries instead of joins across silos.",
+    lede:
+      "Most mobile apps with multiple monetization paths end up with multiple accounting systems. Subscription state in one table, ad rewards in another, in-app purchases in a third. Reconciliation across them is a nightmare and fraud detection becomes impossible. The transaction ledger pattern collapses all of this into one table — and the simplicity it buys is worth the upfront design.",
+    sections: [
+      {
+        heading: "Why multiple sources of credits create multiple accounting problems",
+        paragraphs: [
+          "RevenueCat tracks subscriptions with its own state machine. AdMob fires reward events through a callback URL. In-app purchases (App Store / Play) fire their own webhooks. A user's available credit might be 3 (from subscription) + 2 (from ads watched today) + 5 (from a one-off purchase) - 4 (already spent) = 6.",
+          "Stored as four separate counters in four separate tables, this is fragile. Any one source could become inconsistent. A user complaint about \"I should have credits\" requires checking four places. A fraud investigation requires joining four tables on timestamp.",
+        ],
+      },
+      {
+        heading: "What the unified ledger looks like",
+        paragraphs: [
+          "One Transaction table. Columns: `id`, `user_id`, `amount` (positive credit, negative debit), `source` (revenuecat / admob / iap / story_render / refund / promo), `external_id` (subscription ID, reward ID, purchase token, or null for system-internal events), `created_at`, `notes`.",
+          "Balance = `SELECT SUM(amount) FROM transactions WHERE user_id = ?`. That's it. No state machine. No reconciliation. The balance is whatever the rows say it is.",
+        ],
+        table: {
+          caption: "Example transaction rows",
+          headers: ["source", "amount", "external_id", "notes"],
+          rows: [
+            ["revenuecat", "+10", "sub_abc123", "Monthly subscription credit"],
+            ["admob", "+1", "ad_xyz789", "Rewarded ad watched"],
+            ["story_render", "-1", "story_def456", "Story \"The Brave Bear\" generated"],
+            ["story_render", "-1", "story_ghi789", "Story \"The Lost Star\" generated"],
+            ["refund", "+1", "story_ghi789", "Pipeline failure refund — image stage"],
+            ["iap", "+5", "purchase_jkl012", "One-time 5-story pack"],
+          ],
+        },
+      },
+      {
+        heading: "How does the pipeline integrate?",
+        paragraphs: [
+          "When a story is requested, the pipeline first checks balance. If balance is zero, the request is refused with a polite \"top up\" message. If balance is positive, the pipeline writes a debit row immediately (the user is now spending the credit) before the generation starts.",
+          "If the generation succeeds, the debit stays. If any stage fails, the pipeline writes a refund row referencing the original debit. The user's net balance is restored automatically. No race conditions, no orphaned debits.",
+          "The atomic-commit semantics of the multi-model pipeline (Claude text → Flux images → ElevenLabs audio) integrate with the ledger at this boundary. The ledger doesn't care which stage failed; it just sees a refund event.",
+        ],
+      },
+      {
+        heading: "Webhook handling per source",
+        paragraphs: [
+          "RevenueCat webhooks for purchase / renewal / cancellation events write `revenuecat` rows. AdMob's S2S (server-to-server) reward callback writes `admob` rows. Apple's StoreKit notifications and Google Play Developer Notifications write `iap` rows. Each webhook handler is small — validate the source signature, write one row, return 200.",
+          "External_id uniqueness is enforced at the source-table level. Replaying a webhook (which all three sources do for reliability) results in a no-op insert, not a duplicate credit. This is the most common subtle bug in mobile billing and getting it right early saves real money.",
+        ],
+      },
+      {
+        heading: "Fraud and churn queries become simple",
+        paragraphs: [
+          "Fraud: \"users who got an unusual amount of admob credit in a 24-hour window\" = `SELECT user_id, COUNT(*) FROM transactions WHERE source = 'admob' AND created_at > NOW() - INTERVAL '24 hours' GROUP BY user_id HAVING COUNT(*) > 100`. One query against one table.",
+          "Churn: \"users who stopped writing transactions for 14+ days\" = comparison query against the same table. Cohort analysis: ditto. All the questions you'd want to ask about user behavior live in the same place.",
+          "Compare to the four-tables-stitched-together version, where this is a 50-line query with three joins and edge cases for missing rows in each source.",
+        ],
+      },
+      {
+        heading: "What this pattern trades away",
+        paragraphs: [
+          "You're now committed to keeping all credit events in this one table. Adding a fifth source means writing a webhook handler that writes the same shape. Easy.",
+          "You also need to be careful with deletion. Hard-deleting transaction rows breaks the ledger; the table needs to be append-only. Cancellations and refunds are new rows, not deletions of existing ones. This is the same discipline as double-entry bookkeeping, and the reason is the same: an audit trail.",
+          "And: scaling. At very high volume the table grows fast. Partitioning by month is the obvious answer, and Postgres handles this natively. The query patterns don't change.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "Balance is SUM(amount). That's it. No state machine. No reconciliation. The balance is whatever the rows say it is.",
+      },
+      {
+        quote:
+          "Hard-deleting transaction rows breaks the ledger; the table is append-only. Cancellations and refunds are new rows, not deletions.",
+      },
+    ],
+    citations: [
+      {
+        label: "RevenueCat — official documentation",
+        url: "https://www.revenuecat.com/docs",
+        relevance: "Subscription management with webhook delivery",
+      },
+      {
+        label: "Google AdMob rewarded ads (server-side verification)",
+        url: "https://developers.google.com/admob/android/ssv",
+        relevance: "S2S callback for ad-reward events",
+      },
+      {
+        label: "Apple App Store Server Notifications v2",
+        url: "https://developer.apple.com/documentation/appstoreservernotifications",
+        relevance: "Apple's webhook system for in-app purchase events",
+      },
+      {
+        label: "Google Play Developer Notifications",
+        url: "https://developer.android.com/google/play/billing/getting-ready",
+        relevance: "Google Play's equivalent webhook system",
+      },
+    ],
+    faq: [
+      {
+        q: "What is a transaction ledger pattern?",
+        a: "An append-only table where every credit and debit lands as a row. Balance is a SUM query. Refunds and cancellations are new rows referencing the original transactions. Inspired by double-entry bookkeeping; collapses many small accounting subsystems into one source of truth.",
+      },
+      {
+        q: "Why not use multiple tables for different revenue sources?",
+        a: "Because every query that needs the full picture (balance, fraud detection, churn analysis) becomes a multi-join across silos. Multiple tables is fine for source-of-record reconciliation; consolidating into one ledger is fine for application-level queries. Doing both is over-engineering.",
+      },
+      {
+        q: "How do you prevent duplicate transactions from webhook replays?",
+        a: "Enforce uniqueness on external_id at the database level. Replayed webhooks attempt an insert that violates the unique constraint; the handler catches the conflict and returns 200 without doing anything. Idempotent by construction.",
+      },
+      {
+        q: "Does the transaction ledger pattern scale?",
+        a: "Yes, with partitioning. Postgres supports range partitioning by date; the table becomes one partition per month with the same query API. The aggregate queries stay fast even on multi-year history.",
+      },
+    ],
+  },
+
+  // -------------------------------------------------------------------------
+  // Cluster C — advance.al technical deep cuts
+  // -------------------------------------------------------------------------
+  {
+    slug: "embedding-worker-heartbeat-process-pattern",
+    title:
+      "Embedding worker on a heartbeat process — the pattern that keeps a matching engine honest",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 6,
+    description:
+      "advance.al's matching engine depends on a worker that recomputes embeddings whenever profiles or jobs change. The worker runs on its own PM2 process with a heartbeat that emails on silence. If the worker dies, the platform breaks silently — so it never gets to die quietly.",
+    keywords: [
+      "embedding worker",
+      "background job pattern",
+      "heartbeat monitoring",
+      "PM2 worker",
+      "vector embedding pipeline",
+      "silent failure detection",
+    ],
+    relatedProject: "advance-al",
+    answerBox:
+      "advance.al's embedding worker runs on its own PM2 process. Every 60 seconds it pings a heartbeat endpoint with a timestamp. If the endpoint doesn't see a heartbeat for 10 minutes, an alert email fires. The pattern protects against the worst failure mode of a matching engine — silent death where the platform appears working but matches stop updating.",
+    lede:
+      "An embedding-based matching engine has a specific failure mode that's worse than the obvious ones: silent stop. The web app still serves pages. Users still see old matches. Employers still post jobs. But the matches are stale because the worker that recomputes them died and nobody noticed. The heartbeat pattern exists to make that failure mode impossible.",
+    sections: [
+      {
+        heading: "Why a separate worker process?",
+        paragraphs: [
+          "Embedding generation is CPU-bound (or GPU-bound for self-hosted models) and unpredictable in latency. Running it inline in HTTP request handlers means a slow OpenAI call can tie up a web worker for seconds. A separate worker process lets the web tier respond fast while the embedding work happens asynchronously.",
+          "PM2 cluster mode runs N web workers for HTTP traffic plus 1 dedicated worker process for embedding work. The web workers write \"please re-embed this profile\" events to a Redis queue; the embedding worker pops them and processes.",
+        ],
+      },
+      {
+        heading: "What the heartbeat looks like",
+        paragraphs: [
+          "Every 60 seconds, the embedding worker calls a heartbeat endpoint with its identity and a timestamp. The endpoint writes the timestamp into a single-row table (or a Redis key with TTL).",
+          "Separately, a cron job runs every 5 minutes and checks: if the most recent heartbeat is more than 10 minutes old, send an alert email and post to Slack. The alert says \"embedding worker has been silent since X — likely dead.\"",
+          "The cron is cheap. The heartbeat is cheap. The whole monitoring layer is ~30 lines of code and catches the failure mode that would otherwise silently break the platform for days.",
+        ],
+        table: {
+          caption: "Heartbeat threshold tuning",
+          headers: ["Threshold (silence duration)", "What it catches", "False-positive risk"],
+          rows: [
+            ["5 minutes", "Hot crashes", "Higher (deploy windows can pause heartbeat)"],
+            ["10 minutes", "Most real failures", "Low — sweet spot for most workers"],
+            ["30 minutes", "Long-tail failures", "Very low — but you find out late"],
+          ],
+        },
+      },
+      {
+        heading: "Why not just monitor PM2's process status?",
+        paragraphs: [
+          "PM2 reports a process as `online` if it's running. A process can be online and still hung — blocked on a network call, stuck in an infinite loop, or pegged on CPU without making progress. \"Online\" tells you the OS sees the process; the heartbeat tells you the process is actually doing its job.",
+          "Both signals are useful. PM2 status catches the case where the process crashed and didn't restart. The heartbeat catches the case where the process is running but stuck. Together they cover the failure surface.",
+        ],
+      },
+      {
+        heading: "What does the worker actually do?",
+        paragraphs: [
+          "Pops jobs from a Redis queue. For each: fetch the profile or job entity, generate its embedding via OpenAI's `text-embedding-3-small`, store the embedding back to Postgres (as a `vector` column via pgvector), recompute downstream matches if the entity changed significantly.",
+          "The match recomputation is the expensive part. When a new job posts, every candidate's match score against that job is recomputed and stored. When a profile changes, every job's top-N matches are recomputed. The worker handles both shapes.",
+          "Failure handling: each job has a retry count. On failure, the job goes back to the queue with the retry count incremented. After three retries, the job is dead-lettered and an alert fires. Common failure modes: OpenAI rate limits (recover via backoff), Postgres connection drops (recover via reconnect), embedding-validation errors (don't recover — log and skip).",
+        ],
+      },
+      {
+        heading: "What this pattern generalizes to",
+        paragraphs: [
+          "Any background worker that's critical to product function. Notification fanout workers. Image-processing workers. Index-rebuild workers. The heartbeat pattern catches the silent-death failure mode that infrastructure monitoring alone misses.",
+          "Cost: 30 lines of code, one cron, one alert channel. Benefit: you find out within 10 minutes when a critical background system stops working, not days later when a user complains.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "PM2 status catches the case where the process crashed and didn't restart. The heartbeat catches the case where the process is running but stuck.",
+      },
+      {
+        quote:
+          "The whole monitoring layer is ~30 lines of code and catches the failure mode that would otherwise silently break the platform for days.",
+      },
+    ],
+    citations: [
+      {
+        label: "PM2 — production process manager",
+        url: "https://pm2.keymetrics.io/docs/usage/quick-start/",
+        relevance: "Multi-process Node.js orchestration",
+      },
+      {
+        label: "OpenAI text-embedding-3-small documentation",
+        url: "https://platform.openai.com/docs/models/text-embedding-3-small",
+        relevance: "The model that powers profile and job vectors",
+      },
+      {
+        label: "pgvector — Postgres extension for vector search",
+        url: "https://github.com/pgvector/pgvector",
+        relevance: "How embeddings are stored and queried in Postgres",
+      },
+    ],
+    faq: [
+      {
+        q: "What is a heartbeat in a background worker?",
+        a: "A periodic signal from the worker that says \"I'm alive and working.\" Usually a write to a database row or a counter increment. Separately, a monitor checks the heartbeat's recency and alerts if too old.",
+      },
+      {
+        q: "Why use a heartbeat instead of process monitoring?",
+        a: "Process monitoring catches crashes. Heartbeats catch hangs. A process can be running and not making progress — stuck on a network call, blocked on a lock, pegged on CPU without doing useful work. The heartbeat tells you the process is actually doing its job.",
+      },
+      {
+        q: "How frequent should the heartbeat be?",
+        a: "Frequent enough that the threshold catches real failures fast. 60 seconds is a common default; 10 minutes between heartbeat and alert threshold is reasonable. Too frequent: noise; too rare: late detection.",
+      },
+      {
+        q: "Does the heartbeat tell you what's wrong?",
+        a: "Only that something is wrong. The alert is the trigger for investigation; the worker's logs tell you what happened. Heartbeats are a coarse signal — silent yes/no.",
+      },
+    ],
+  },
+
+  {
+    slug: "openai-structured-extraction-profile-autofill",
+    title:
+      "OpenAI structured extraction — auto-filling profiles from any CV format",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 7,
+    description:
+      "advance.al accepts any CV — PDF or DOCX — and auto-fills the user's profile from it. pdfjs-dist and mammoth extract the text; OpenAI's structured-output API turns text into typed fields. The whole flow takes seconds and saves users from re-typing their career.",
+    keywords: [
+      "OpenAI structured output",
+      "CV parsing AI",
+      "PDF resume extraction",
+      "OpenAI JSON mode",
+      "function calling LLM",
+      "DOCX parsing",
+      "profile auto-fill",
+    ],
+    relatedProject: "advance-al",
+    answerBox:
+      "advance.al's profile auto-fill flow: pdfjs-dist or mammoth extracts text from the user's uploaded CV; OpenAI's structured-output API turns it into typed fields — skills, work history, education, summary. The schema is enforced server-side; low-confidence extractions trigger a manual-review fallback. Users go from CV upload to match-ready profile in under 10 seconds.",
+    lede:
+      "Jobseekers hate filling out long forms. They especially hate filling out forms when their CV already has the answer. advance.al's profile auto-fill is the single feature that drives the most user happiness, and it's three small pieces stitched together — text extraction, structured LLM extraction, and a confidence check that catches the edge cases.",
+    sections: [
+      {
+        heading: "The three pieces",
+        paragraphs: [
+          "PDF or DOCX text extraction. PDFs use `pdfjs-dist` (Mozilla's PDF.js in Node) to render each page to text. DOCX files use `mammoth` (a clean library for converting Word documents to plain text). Both return a single long string with the CV's content.",
+          "Structured extraction. The text goes into a single OpenAI call with `responseMimeType: 'application/json'` and an explicit schema describing the fields to extract: name, email, phone, skills (array of strings), work_history (array of `{ company, role, start, end, summary }`), education (array of `{ institution, degree, year }`), summary (text).",
+          "Confidence check. The OpenAI response includes per-field confidence. Fields below 0.7 confidence get flagged for manual review by the user before saving. High-confidence fields auto-fill silently.",
+        ],
+        table: {
+          caption: "Auto-fill pipeline stages",
+          headers: ["Stage", "Library / API", "Latency", "Failure mode"],
+          rows: [
+            ["PDF text extraction", "pdfjs-dist (Node)", "1-3s", "Image-only PDF (OCR fallback)"],
+            ["DOCX text extraction", "mammoth", "<1s", "Corrupted file (return error)"],
+            ["Structured LLM extraction", "OpenAI Chat API + JSON mode", "2-5s", "Schema validation failure (retry once)"],
+            ["Confidence routing", "Application logic", "<1s", "Low-confidence flag for manual review"],
+          ],
+        },
+      },
+      {
+        heading: "Why structured output instead of free-form parsing?",
+        paragraphs: [
+          "Free-form LLM responses are inconsistent. \"Extract this person's skills from the text\" might return a comma-separated list, a bulleted list, or a sentence describing their skills. Parsing that downstream is fragile.",
+          "Structured output (OpenAI's JSON mode with an explicit schema) returns guaranteed-valid JSON matching your schema. `{ \"skills\": [\"TypeScript\", \"React\", \"PostgreSQL\"] }` every time. The downstream code can rely on shape.",
+          "This isn't a small quality-of-life improvement; it's a categorical change. The whole feature is feasible because structured output exists. Without it, the validation and retry logic would be most of the code.",
+        ],
+      },
+      {
+        heading: "What happens with image-only PDFs?",
+        paragraphs: [
+          "Some users upload scanned PDFs where the content is rasterized images, not selectable text. `pdfjs-dist` returns empty strings on those pages.",
+          "Detection: if text extraction returns less than 100 characters total, treat the PDF as image-based. Fall back to OCR via Tesseract or an OpenAI vision call (newer models can read images directly).",
+          "Vision-based extraction is more expensive (more tokens per page) but it handles the edge case. The overall flow tolerates the extra latency because image-PDF uploads are <5% of total uploads.",
+        ],
+      },
+      {
+        heading: "How does the confidence check protect against bad extractions?",
+        paragraphs: [
+          "The OpenAI structured-output schema includes a per-field confidence (numeric 0-1). The model self-rates how sure it is about each extracted field.",
+          "Confidence is imperfect but correlates with extraction quality enough to be useful. A profile with skills extracted at 0.95 confidence is almost always correct; a profile with skills extracted at 0.4 confidence is often partial or wrong.",
+          "Fields below threshold trigger a manual-review UI: \"We think your skills are A, B, C — please confirm.\" High-confidence fields silently auto-fill. The user sees the review UI only when needed, not on every upload.",
+        ],
+      },
+      {
+        heading: "The edge case that took me a while to handle",
+        paragraphs: [
+          "One-page PDF, single H1 heading, no other text. My structured-extraction prompt initially returned a fully invented work history — the model decided the user must have one, even when the CV had no content to support it.",
+          "Fix: a length check at the start of the pipeline. If the extracted text is under 100 characters and isn't clearly an image-PDF, refuse the upload and ask for a more complete CV. This is rare (real CVs are not that sparse) but the failure mode was bad enough that I added the guard.",
+        ],
+      },
+      {
+        heading: "What this pattern generalizes to",
+        paragraphs: [
+          "Any user-facing form where the input data is unstructured but the destination is typed. CV parsing is one example. Receipt scanning is another. Invoice extraction. Lease-agreement parsing. Anywhere the user has a document and you want the structured representation of it.",
+          "The shape is always: extract text, call structured LLM, enforce schema, gate on confidence, fall back to manual review on uncertainty. The specifics change with the domain; the pattern doesn't.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "Without structured output, the validation and retry logic would be most of the code. With it, the feature is feasible.",
+      },
+      {
+        quote:
+          "One-page PDF with a single H1 — my prompt initially returned a fully invented work history. Fix: a length check at the start of the pipeline.",
+      },
+    ],
+    citations: [
+      {
+        label: "OpenAI structured outputs",
+        url: "https://platform.openai.com/docs/guides/structured-outputs",
+        relevance: "JSON-mode + schema-enforced responses",
+      },
+      {
+        label: "pdfjs-dist — Mozilla PDF.js for Node",
+        url: "https://github.com/mozilla/pdf.js",
+        relevance: "PDF text extraction library",
+      },
+      {
+        label: "mammoth — DOCX to text/HTML",
+        url: "https://github.com/mwilliamson/mammoth.js",
+        relevance: "Word-document text extraction library",
+      },
+      {
+        label: "Tesseract.js — OCR fallback for image-only PDFs",
+        url: "https://github.com/naptha/tesseract.js",
+        relevance: "When pdfjs returns empty strings",
+      },
+    ],
+    faq: [
+      {
+        q: "What is OpenAI structured output?",
+        a: "An API mode where you provide an explicit JSON schema and the model is guaranteed to return JSON matching that schema. Eliminates the parsing fragility of free-form responses. Available on GPT-4-class models since late 2024.",
+      },
+      {
+        q: "How accurate is AI-based CV parsing?",
+        a: "Very accurate on well-formatted CVs (PDFs with selectable text, standard sections like \"Work Experience\" and \"Skills\"). Less accurate on creative-design CVs, scanned PDFs, or non-English CVs in low-resource languages. The confidence check catches most edge cases.",
+      },
+      {
+        q: "Can you extract structured data from any document with an LLM?",
+        a: "Roughly yes, with caveats. The text needs to be extractable (PDFs, DOCX, scanned-with-OCR all work). The structure needs to be representable in your schema. The model needs enough context to find the fields. For most resume / invoice / contract use cases, modern LLMs handle this competently.",
+      },
+      {
+        q: "How do you handle confidence in AI extractions?",
+        a: "Include a per-field confidence in the response schema. Fields above a threshold (0.7 typical) auto-apply. Fields below threshold trigger manual review by the user. Treat confidence as a UX signal, not a hard guarantee.",
+      },
+    ],
+  },
+
+  {
+    slug: "bilingual-embedding-category-boost",
+    title:
+      "Bilingual embeddings and the category boost — when one vector space isn't enough",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 6,
+    description:
+      "Albanian and English share one OpenAI embedding space, but vocabulary depth differs by language. An Albanian-only profile can score lower against an English-only job than its qualifications deserve. advance.al's category boost cancels the bias without distorting same-language ranking.",
+    keywords: [
+      "bilingual embeddings",
+      "multilingual vector search",
+      "embedding language bias",
+      "OpenAI multilingual embeddings",
+      "low-resource language NLP",
+      "category boost embedding",
+    ],
+    relatedProject: "advance-al",
+    answerBox:
+      "Multilingual embedding models work — but vocabulary depth differs by language, so Albanian-only profiles score lower against English-only jobs than qualifications warrant. advance.al adds a coarse-category tag to every profile and job; when both share a category, the cosine score gets a small additive boost. Albanian-application rates rose ~18% with no drop in employer-reported quality.",
+    lede:
+      "Modern OpenAI embedding models handle multiple languages in the same vector space. That's the marketing claim. The reality is more nuanced: vocabulary depth differs across languages, and the languages that show up less in training data end up with thinner semantic neighborhoods. For a job marketplace that serves Albanian-speaking users applying to bilingual employers, this bias is real and worth fixing.",
+    sections: [
+      {
+        heading: "What does \"one vector space\" actually buy you?",
+        paragraphs: [
+          "An Albanian-text profile and an English-text job description both map to 1536-dimensional vectors. Cosine similarity between them is a meaningful number — higher when the profile genuinely matches the job, lower when it doesn't.",
+          "This works because OpenAI's embedding models are trained on multilingual corpora and learn cross-lingual semantic relationships. \"Software engineer\" in English and \"Inxhinier software\" in Albanian land near each other in the vector space.",
+        ],
+      },
+      {
+        heading: "Where the bias shows up",
+        paragraphs: [
+          "Vocabulary depth. The model has seen orders of magnitude more English technical writing than Albanian technical writing. Fine-grained distinctions exist in English semantic neighborhoods that don't exist in Albanian neighborhoods.",
+          "Concrete effect: an Albanian-only profile mentioning \"zhvilluesi i softuerit\" (software developer) matches an English-only job mentioning \"senior backend engineer\" with a lower cosine score than the candidate's actual qualifications would justify. The model isn't blind to the match; the score is just compressed because the Albanian side has less specificity.",
+          "I noticed this in the first month of advance.al's operation: Albanian-only profiles were applying to bilingual jobs at lower rates than English-mixed profiles, even when the underlying skills matched.",
+        ],
+        table: {
+          caption: "Observed bias on a held-out matched pair set",
+          headers: ["Profile language", "Job language", "Average cosine (pre-boost)", "Application rate"],
+          rows: [
+            ["English-mixed", "English", "0.78", "Baseline"],
+            ["Albanian-only", "English", "0.62", "23% lower"],
+            ["Albanian-only", "Albanian", "0.79", "Baseline"],
+            ["English-mixed", "Albanian", "0.68", "12% lower"],
+          ],
+        },
+      },
+      {
+        heading: "The category boost",
+        paragraphs: [
+          "Every job and every profile gets tagged into a coarse category: Software Engineering, Marketing, Sales, Operations, Design, Finance, Customer Support, etc. Categories are mutually exclusive at the top level; nested subcategories are optional.",
+          "When a candidate and job share a top-level category, the cosine score gets a small additive boost (typically +0.05 to +0.08). Same category in different languages now ranks closer to same category in the same language, while cross-category matches are unaffected.",
+          "The boost is intentionally small. Big enough to cancel the vocabulary-depth bias; small enough not to override the cosine signal entirely. Tuned empirically against held-out matched pairs.",
+        ],
+      },
+      {
+        heading: "Why categories and not language detection?",
+        paragraphs: [
+          "Language detection followed by a per-language scaling factor is the obvious alternative. It works, but it has worse failure modes: bilingual content gets classified inconsistently, and the scaling factors require constant retuning as OpenAI ships new embedding models.",
+          "Categories are stable. \"This is a software engineering profile\" is true regardless of what language the profile is in. The category tag is a coarser signal but a more stable one.",
+        ],
+      },
+      {
+        heading: "How did the change land?",
+        paragraphs: [
+          "Application rates from Albanian-only profiles against English-language listings rose ~18% in the first month after the boost shipped. Employer-reported candidate quality on those applications didn't drop (measured via the employer dashboard's \"would you interview this candidate\" feedback loop).",
+          "The bias was real; the fix cancels it. Albanian candidates who would have been qualified for English-language listings now actually surface in the matching engine at the rate they deserve.",
+        ],
+      },
+      {
+        heading: "What this pattern generalizes to",
+        paragraphs: [
+          "Any multilingual matching engine where one language has shallower training data than another. Add a coarse tag that's language-independent (category, intent, role family) and use it as an additive boost on cosine.",
+          "The same shape works for cross-domain matching: if your embedding space mixes \"finance\" and \"engineering\" content and you want to give same-domain matches a small boost, the category-tag pattern handles it without retraining the embedding model.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "Vocabulary depth differs by language. The model has seen orders of magnitude more English technical writing than Albanian technical writing.",
+      },
+      {
+        quote:
+          "The bias was real; the fix cancels it. Albanian candidates now surface at the rate they deserve.",
+      },
+    ],
+    citations: [
+      {
+        label: "OpenAI multilingual embedding capabilities",
+        url: "https://platform.openai.com/docs/guides/embeddings",
+        relevance: "Reference for the shared-vector-space claim",
+      },
+      {
+        label: "Massively Multilingual Text Embedding Benchmark (MTEB)",
+        url: "https://huggingface.co/spaces/mteb/leaderboard",
+        relevance: "Where to compare per-language embedding quality",
+      },
+    ],
+    faq: [
+      {
+        q: "Do OpenAI embeddings work across languages?",
+        a: "Yes — text-embedding-3-small and 3-large both produce shared vector spaces where multilingual semantic similarity is meaningful. The quality varies by language; high-resource languages (English, Spanish, French, German, Chinese) work best.",
+      },
+      {
+        q: "Why do low-resource languages get worse embeddings?",
+        a: "Less training data per language means less fine-grained semantic distinction in that language's neighborhood of the vector space. The model still understands the language broadly, but loses precision on technical or specialist terminology.",
+      },
+      {
+        q: "How big should an embedding boost be?",
+        a: "Small enough to cancel the bias you're targeting; large enough to be measurable. For our category boost, +0.05 to +0.08 against a cosine in the 0.5-0.9 range. Tune empirically against a held-out set of correctly-matched pairs across the bias axis.",
+      },
+      {
+        q: "Can you fix language bias by training a new embedding model?",
+        a: "In principle yes. In practice, training a multilingual embedding model is expensive and outside most teams' capability. The category-boost pattern fixes the symptom without retraining anything; the upgrade path is to swap in better OpenAI models when they ship.",
+      },
+    ],
+  },
+
+  {
+    slug: "drift-detection-vector-matching-engine",
+    title:
+      "Drift detection in a vector matching engine — when the model has changed",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 6,
+    description:
+      "OpenAI deprecates embedding models. A migration from text-embedding-ada-002 to text-embedding-3-small means every existing match's cosine number moves. advance.al's drift-detection alert catches the shift before users notice — and the dimension-breakdown layer keeps the UX stable across the migration.",
+    keywords: [
+      "embedding model drift",
+      "vector search migration",
+      "model deprecation handling",
+      "AI feature stability",
+      "embedding re-embedding pass",
+      "matching engine monitoring",
+    ],
+    relatedProject: "advance-al",
+    answerBox:
+      "When OpenAI deprecates an embedding model, every existing cosine number in your matching engine moves. advance.al's drift detector watches per-candidate match-list stability week over week and alerts on > 20% turnover. The 7-dimension explainable score on top of cosine keeps the dashboard UX stable while re-embedding catches up.",
+    lede:
+      "OpenAI deprecates embedding models. text-embedding-ada-002 was the standard in 2023; text-embedding-3-small replaced it in 2024; text-embedding-3-large rounds out the lineup. Every migration is a re-embedding pass plus a cosine-number shift, and a matching engine that doesn't monitor for drift will discover the change when employers start complaining about new candidates appearing in their dashboard.",
+    sections: [
+      {
+        heading: "What does drift look like?",
+        paragraphs: [
+          "Per-candidate match list changes. If candidate A's top-5 matches were Job 17, Job 22, Job 41, Job 53, Job 67 last week, and after a model migration they're Job 22, Job 67, Job 91, Job 102, Job 17 — that's 60% turnover in the top 5. Across many candidates, this turnover is the drift signal.",
+          "Some turnover is normal — new jobs post, old jobs expire, candidates update their profiles. The drift detector compares this week's turnover to a baseline of \"normal\" turnover and flags weeks with anomalously high churn.",
+        ],
+      },
+      {
+        heading: "How is drift detected?",
+        paragraphs: [
+          "Daily job: pick a stratified sample of 200 active candidates. Compute each one's top-5 match list. Compare against last week's top-5 for the same candidate. Compute average turnover rate (Jaccard distance) across the sample.",
+          "Baseline: trailing 30-day average of daily turnover rate. Threshold: anything exceeding 2× baseline triggers an alert.",
+          "The alert includes the affected candidates, the change pattern, and a link to a drift-investigation dashboard. The first action is to check whether OpenAI shipped a model update; the second is to check whether the embedding worker has been processing normally; the third is to look at whether a major content change (new job category, new market, etc.) might explain the shift.",
+        ],
+        table: {
+          caption: "Drift detection signals",
+          headers: ["Signal", "What it indicates", "Action"],
+          rows: [
+            ["Sudden high turnover across all candidates", "Model migration or major embedding change", "Verify model version; plan re-embedding"],
+            ["High turnover for one candidate only", "That candidate's profile changed significantly", "Normal — no action"],
+            ["Gradual turnover increase week-over-week", "Content shift (new categories, new geographies)", "Investigate underlying content"],
+            ["Turnover spike + worker silence alert", "Worker died mid-recompute", "Restart worker; verify integrity"],
+          ],
+        },
+      },
+      {
+        heading: "How does the dimension breakdown protect the UX?",
+        paragraphs: [
+          "The 7-dimension explainable score on top of cosine (title, skills, experience, location, education, salary, availability) is stable across model migrations. The dimension formulas don't depend on the embedding model.",
+          "When cosine numbers shift after a migration, the dashboard's score breakdown stays roughly the same — title-match scores, skills-match scores, location-match scores don't change just because OpenAI shipped a new model.",
+          "The user-visible \"this candidate scored 78\" stays roughly stable. The underlying ranking shifts a bit, but the headline number and its breakdown don't make employers think the platform broke overnight.",
+        ],
+      },
+      {
+        heading: "How do you do a re-embedding pass safely?",
+        paragraphs: [
+          "Two-phase migration. Phase 1: write embeddings for the new model into a separate column (`embedding_v2`) alongside the existing `embedding` column. The embedding worker fills `embedding_v2` for every entity over time.",
+          "Phase 2: once `embedding_v2` is populated for 95%+ of entities, switch read traffic to the new column. Keep the old column for a week as a rollback option. Then drop it.",
+          "Cost: re-embedding 10,000 profiles and 5,000 jobs at OpenAI's current pricing is ~$20-50, depending on text length. Cheap relative to the operational complexity of getting it wrong.",
+        ],
+      },
+      {
+        heading: "What I'd add next time",
+        paragraphs: [
+          "A pre-deployment shadow comparison. Before switching read traffic to the new embeddings, run both versions in parallel for a week and compare top-N matches across a held-out set of known-good candidate/job pairs. If the new model meaningfully degrades on the held-out set, hold the migration.",
+          "This is what large platforms do at scale — A/B testing the search ranker. For a smaller marketplace, the manual drift-detection alert is enough, but the shadow comparison is the next maturity step.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "A matching engine that doesn't monitor for drift will discover the change when employers start complaining about new candidates appearing in their dashboard.",
+      },
+      {
+        quote:
+          "Re-embedding 10,000 profiles costs $20-50. Cheap relative to the operational complexity of getting it wrong.",
+      },
+    ],
+    citations: [
+      {
+        label: "OpenAI deprecations policy",
+        url: "https://platform.openai.com/docs/deprecations",
+        relevance: "How OpenAI signals upcoming model changes",
+      },
+      {
+        label: "OpenAI text-embedding-3-small + 3-large announcement",
+        url: "https://openai.com/blog/new-embedding-models-and-api-updates",
+        relevance: "Reference for the most recent embedding-model migration",
+      },
+      {
+        label: "Jaccard index (Wikipedia)",
+        url: "https://en.wikipedia.org/wiki/Jaccard_index",
+        relevance: "Distance metric used for match-list turnover",
+      },
+    ],
+    faq: [
+      {
+        q: "How do you detect when an AI model has changed underneath your application?",
+        a: "Monitor a stable downstream metric — top-N output stability for a known input, output-length distribution, response-latency distribution. Anomalies in any of these can signal that the upstream model changed even when the API version is the same.",
+      },
+      {
+        q: "How expensive is re-embedding a vector database?",
+        a: "Highly dependent on volume and content length. At OpenAI's current pricing for text-embedding-3-small, ~$0.02 per 1K tokens, a job marketplace with 10K profiles and 5K jobs costs tens of dollars to re-embed end-to-end.",
+      },
+      {
+        q: "Should you migrate to new embedding models immediately?",
+        a: "No — wait until the new model is stable and your evaluation against held-out pairs shows it's at least as good as the current model. New embedding models can be worse for your specific task; benchmark before migrating.",
+      },
+      {
+        q: "Can you keep using deprecated embedding models?",
+        a: "OpenAI maintains deprecated models for an announced period (usually 6-12 months). After that, calls return errors. Plan migrations during the announced window; don't wait for the cutoff.",
+      },
+    ],
+  },
 ];
 
 export function getNote(slug: string): Note | undefined {
