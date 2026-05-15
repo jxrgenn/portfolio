@@ -48,7 +48,7 @@ export default async function Image({
             fontFamily: "sans-serif",
           }}
         >
-          <div style={{ display: "flex" }}>jurgenhalili.dev / notes</div>
+          <div style={{ display: "flex" }}>Jurgen Halili / notes</div>
           <div style={{ display: "flex", gap: 12 }}>
             {date ? <div style={{ display: "flex" }}>{date}</div> : null}
             {minutes ? (

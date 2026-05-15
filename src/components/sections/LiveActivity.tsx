@@ -68,7 +68,7 @@ async function loadActivity(): Promise<ActivityData> {
       {
         next: { revalidate: REVALIDATE },
         headers: {
-          "User-Agent": "jxrgenn-portfolio (+https://jurgenhalili.dev)",
+          "User-Agent": "jxrgenn-portfolio (+https://portfolio-seven-opal-35.vercel.app)",
           Accept: "text/html",
         },
       },

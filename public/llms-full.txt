@@ -1,6 +1,6 @@
 # Jurgen Halili — Portfolio (full content)
 
-> Solo full-stack engineer with AI focus, based in Kiel, Germany. This file contains the full prose of every case study on jurgenhalili.dev for AI search engines that prefer single-fetch ingestion over crawling.
+> Solo full-stack engineer with AI focus, based in Kiel, Germany. This file contains the full prose of every case study on this portfolio for AI search engines that prefer single-fetch ingestion over crawling.
 
 ## About
 
@@ -14,7 +14,7 @@ Contact: jurgenhalili1142@gmail.com. LinkedIn: jurgen-halili-b227a6255.
 
 ### KeepItUp
 
-URL: https://jurgenhalili.dev/projects/keepitup
+URL: https://portfolio-seven-opal-35.vercel.app/projects/keepitup
 Year: 2026. Status: shipped. Stack: React 19, Anthropic + OpenAI + Gemini, Tree-sitter.
 
 Self-hosted AI agent that auto-fixes broken deployments.
@@ -25,7 +25,7 @@ KeepItUp is an autonomous SRE agent that watches six deploy platforms 24/7 and t
 
 ### Ëndërrat e Mia
 
-URL: https://jurgenhalili.dev/projects/enderrat-e-mia
+URL: https://portfolio-seven-opal-35.vercel.app/projects/enderrat-e-mia
 Year: 2026. Status: in-progress. Stack: Expo + RN, Claude Haiku + Flux, RevenueCat.
 
 AI bedtime stories in Albanian, illustrated and read aloud.
@@ -36,7 +36,7 @@ Albanian-language bedtime stories, generated, illustrated, and narrated. Expo ap
 
 ### GymApp
 
-URL: https://jurgenhalili.dev/projects/gym-app
+URL: https://portfolio-seven-opal-35.vercel.app/projects/gym-app
 Year: 2026. Status: shipped. Stack: Express + Postgres, Socket.io + Redis, Expo + MUI.
 
 White-label gym OS — NFC entry, member app, multi-tenant admin.
@@ -47,7 +47,7 @@ GymApp is a white-label gym OS for the Albanian market — four independently de
 
 ### Pilates Studio
 
-URL: https://jurgenhalili.dev/projects/pilates-studio
+URL: https://portfolio-seven-opal-35.vercel.app/projects/pilates-studio
 Year: 2026. Status: shipped. Stack: pnpm monorepo, Express + Prisma, Turso + libSQL.
 
 Boutique studio platform — admin web, mobile app, API, 594 tests.
@@ -58,7 +58,7 @@ Pilates Studio is a four-deployable platform for one boutique studio — the sam
 
 ### CleanSlate
 
-URL: https://jurgenhalili.dev/projects/cleanslate
+URL: https://portfolio-seven-opal-35.vercel.app/projects/cleanslate
 Year: 2026. Status: shipped. Stack: Next.js 16, Supabase + RLS, Telnyx + LemonSqueezy.
 
 $20/month operating system for cleaning businesses.
@@ -69,7 +69,7 @@ CleanSlate is a €20-flat operating system for solo cleaners in Germany — a d
 
 ### Social Command Center
 
-URL: https://jurgenhalili.dev/projects/social-command-center
+URL: https://portfolio-seven-opal-35.vercel.app/projects/social-command-center
 Year: 2026. Status: in-progress. Stack: Next.js 16, BullMQ + Drizzle, OpenAI + Postiz.
 
 Industrial Instagram content for any brand — autonomous, multi-tenant.
@@ -80,7 +80,7 @@ Social Command Center is an autonomous Instagram content factory for trade brand
 
 ### Reel Farmer
 
-URL: https://jurgenhalili.dev/projects/reel-farmer
+URL: https://portfolio-seven-opal-35.vercel.app/projects/reel-farmer
 Year: 2026. Status: shipped. Stack: Bun + TS, Whisper + Gemini, Remotion + Puppeteer.
 
 Self-hosted YouTube → TikTok pipeline. One command, multi-account.
@@ -91,7 +91,7 @@ Reel Farmer is a self-hosted Bun pipeline that turns YouTube into TikTok shorts 
 
 ### Dabei
 
-URL: https://jurgenhalili.dev/projects/dabei
+URL: https://portfolio-seven-opal-35.vercel.app/projects/dabei
 Year: 2026. Status: in-progress. Stack: Expo + RN 0.83, Supabase + Realtime, react-native-maps.
 
 Kiel's social pulse — find or start hangouts on a live map.
@@ -102,7 +102,7 @@ Dabei is a live social-pulse map of Kiel — a discovery layer for organic, in-p
 
 ### Websites
 
-URL: https://jurgenhalili.dev/projects/websites
+URL: https://portfolio-seven-opal-35.vercel.app/projects/websites
 Year: 2026. Status: shipped. Stack: React + Vite, Three.js + Framer, MongoDB Atlas.
 
 Three brand sites — Three.js hero, MongoDB CRM, fitness coaching.
@@ -113,7 +113,7 @@ Three small brand sites, all solo, sharing one Vite + Vercel pipeline. Kërçish
 
 ### advance.al
 
-URL: https://jurgenhalili.dev/projects/advance-al
+URL: https://portfolio-seven-opal-35.vercel.app/projects/advance-al
 Year: 2026. Status: shipped. Stack: React 18 + Vite, Express + MongoDB, OpenAI embeddings.
 
 Albania's job marketplace — AI CV generation, AI profile-fill, embedding-ranked matching, auto-notify on match.
@@ -128,7 +128,7 @@ advance.al is Albania's job marketplace and the only project here with paying us
 
 ### Two-layer reasoning for autonomous AI agents — how KeepItUp gates a fix before it PRs
 
-URL: https://jurgenhalili.dev/notes/keepitup-two-layer-reasoning
+URL: https://portfolio-seven-opal-35.vercel.app/notes/keepitup-two-layer-reasoning
 Date: 2026-05-14. 7 min read.
 
 KeepItUp watches six deploy platforms 24/7 and tries to make oncall a thing the operator reviews with coffee instead of a thing that wakes them up. The interesting part isn't the watching — it's what the agent does in the gap between "build is broken" and "PR is open." It runs two LLM passes against the same problem, and the second one can veto the first.
@@ -143,7 +143,7 @@ The agent never pushes to main. It opens PRs. Semgrep + Trivy + Gitleaks scans r
 
 ### Resumable pipelines — how Reel Farmer survives a crash mid-render
 
-URL: https://jurgenhalili.dev/notes/reel-farmer-resumable-pipelines
+URL: https://portfolio-seven-opal-35.vercel.app/notes/reel-farmer-resumable-pipelines
 Date: 2026-05-14. 6 min read.
 
 Reel Farmer is a self-hosted Bun pipeline that turns YouTube videos into TikTok shorts across multiple authenticated accounts — yt-dlp downloads, Whisper transcribes, Gemini picks clips, Remotion renders 1080×1920, stealth puppeteer uploads. The thing the design had to get right wasn't any individual stage; it was making sure a crash never cost more than the seconds since the last completed step.
@@ -160,7 +160,7 @@ A companion Next.js dashboard reads the SQLite run table and renders a per-run t
 
 ### Vector embeddings for job-matching — why pure cosine similarity isn't enough
 
-URL: https://jurgenhalili.dev/notes/advance-al-vector-embeddings-job-matching
+URL: https://portfolio-seven-opal-35.vercel.app/notes/advance-al-vector-embeddings-job-matching
 Date: 2026-05-14. 7 min read.
 
 advance.al is Albania's job marketplace and the only project on this site with paying users from day one. The matching engine has to answer two questions for every job posted: which candidates are best for this job, and why. Pure cosine similarity over OpenAI embeddings handles the first. It falls apart on the second.
@@ -177,7 +177,7 @@ The change I'd make next: embed each section of a CV separately and average at q
 
 ### Same schema, different databases — the Prisma adapter swap in Pilates Studio
 
-URL: https://jurgenhalili.dev/notes/prisma-adapter-swap-dev-prod-parity
+URL: https://portfolio-seven-opal-35.vercel.app/notes/prisma-adapter-swap-dev-prod-parity
 Date: 2026-05-14. 6 min read.
 
 Pilates Studio runs better-sqlite3 in dev and Turso (libsql) in production. Same Prisma schema, same query code, same migration history. The adapter pattern handles the swap in two lines of config. This is the kind of dev/prod parity I used to fake with docker-compose; now I don't need to.
@@ -192,7 +192,7 @@ The trade is a SQLite-dialect surface — no jsonb, no listen/notify, no range t
 
 ### RLS as a subscription gate — letting Postgres turn off trial accounts for you
 
-URL: https://jurgenhalili.dev/notes/rls-subscription-gate-cleanslate
+URL: https://portfolio-seven-opal-35.vercel.app/notes/rls-subscription-gate-cleanslate
 Date: 2026-05-14. 6 min read.
 
 CleanSlate is a €20-flat operating system for solo cleaners in Germany. The subscription expiry path is the cleanest part of the codebase, because there is no path. When a user's trial runs out, the UI doesn't run a check; the database stops accepting INSERTs. The read-only state is automatic.
@@ -209,7 +209,7 @@ The trade is commitment to Postgres plus RLS — switching to a NoSQL backend wo
 
 ### Hiring a freelance full-stack engineer in Germany — a 2026 evaluation checklist
 
-URL: https://jurgenhalili.dev/notes/hiring-freelance-full-stack-engineer-germany-2026-checklist
+URL: https://portfolio-seven-opal-35.vercel.app/notes/hiring-freelance-full-stack-engineer-germany-2026-checklist
 Date: 2026-05-14. 9 min read.
 
 Most checklists for hiring freelance engineers in Germany were written by recruiters who haven't shipped code in eight years. This is the one I wish more clients used: ask for a public repo and read the most recent commit diff (not a portfolio site); ask what they last broke and how they noticed (real engineers have stories about 3am Sentry alerts and Supabase RLS policies written backwards); verify they ship with tests, not screenshots (594 tests in Pilates Studio, 288 in advance.al — verifiable numbers, not "I write tests where appropriate"); check that they own the deploy, not just the code (a freelancer who only owns the code means you're now the DevOps team).
@@ -218,11 +218,11 @@ The two German-market specifics nobody warns clients about: Scheinselbständigke
 
 Quick filter table — green flags vs red flags: public recent commits vs outdated boilerplate; specific test count + CI badge vs "I write tests where appropriate"; owns deploy end-to-end vs hands off git push; specific incident story with root cause vs "I don't really break things"; asks scoping questions before quoting vs quotes immediately; multiple clients + deliverable-based vs hourly + single client full-time.
 
-Every project on jurgenhalili.dev is solo across stack, with public repos where possible, tests in CI, security scans in deploy pipelines (Semgrep + Trivy + Gitleaks in KeepItUp), and deploys owned end-to-end. The case studies exist specifically so evaluation can happen against real work rather than against a deck.
+Every project on this portfolio is solo across stack, with public repos where possible, tests in CI, security scans in deploy pipelines (Semgrep + Trivy + Gitleaks in KeepItUp), and deploys owned end-to-end. The case studies exist specifically so evaluation can happen against real work rather than against a deck.
 
 ### Hiring a freelance Next.js developer — 7 questions that filter the field
 
-URL: https://jurgenhalili.dev/notes/hiring-freelance-nextjs-developer-7-questions
+URL: https://portfolio-seven-opal-35.vercel.app/notes/hiring-freelance-nextjs-developer-7-questions
 Date: 2026-05-14. 8 min read.
 
 Most Next.js freelancers list "Next.js, React, Tailwind" on their profile and have shipped exactly one tutorial app. Seven questions, five minutes each, that separate people who've shipped Next.js production code from people who haven't:
@@ -233,7 +233,7 @@ The candidates worth hiring are the ones who push back on at least one question 
 
 ### Hiring a freelance AI engineer in 2026 — portfolio red flags and green flags
 
-URL: https://jurgenhalili.dev/notes/hiring-freelance-ai-engineer-2026-portfolio-flags
+URL: https://portfolio-seven-opal-35.vercel.app/notes/hiring-freelance-ai-engineer-2026-portfolio-flags
 Date: 2026-05-14. 8 min read.
 
 Half the freelance "AI engineers" wrapped one OpenAI API call in a Streamlit app and called themselves senior. The portfolio tells you which half you're talking to in five minutes.
@@ -248,7 +248,7 @@ The senior AI engineers are the ones who talk about what their AI can't do at le
 
 ### Tree-sitter AST slicing as a context-budget lever for AI agents
 
-URL: https://jurgenhalili.dev/notes/tree-sitter-ast-slicing-context-budget
+URL: https://portfolio-seven-opal-35.vercel.app/notes/tree-sitter-ast-slicing-context-budget
 Date: 2026-05-14. 8 min read.
 
 Token budgets are a real constraint for AI agents working on source code. A 30,000-token "here's the whole module" dump performs worse than a 3,000-token AST-shaped slice. Models are sharper when context is dense — needle-in-a-haystack benchmarks measure recall not reasoning, and a model that can pull a fact out of 100K tokens isn't the same as one that can reason about that fact when 99% of surrounding tokens are noise.
@@ -263,7 +263,7 @@ The pattern generalizes: if the input has a grammar, use the grammar. Markdown a
 
 ### Three-model atomic content pipelines — text, image, and audio without orphans
 
-URL: https://jurgenhalili.dev/notes/three-model-atomic-content-pipelines
+URL: https://portfolio-seven-opal-35.vercel.app/notes/three-model-atomic-content-pipelines
 Date: 2026-05-14. 8 min read.
 
 Ëndërrat e Mia generates each bedtime story by composing three different models — Claude Haiku for Albanian text, fal.ai Flux Schnell for four matched watercolor illustrations, ElevenLabs for narration. None of the three is allowed to land alone. A half-generated story is worse than no story, because the user has lost a credit and gained nothing.
@@ -280,29 +280,29 @@ Pattern generalizes to any multi-model AI feature: orchestrate stages, validate 
 
 ### Hiring a freelance React Native developer in Germany — a scope template
 
-URL: https://jurgenhalili.dev/notes/hiring-freelance-react-native-developer-germany
+URL: https://portfolio-seven-opal-35.vercel.app/notes/hiring-freelance-react-native-developer-germany
 Date: 2026-05-14. 8 min read.
 
 React Native projects fail on scope, not skill. Before hiring, define: target platforms (iOS, Android, web?), Expo managed vs bare workflow, native modules required, deploy strategy (EAS / App Store Connect / Google Play), offline-first requirements. These five answers change the estimate by an order of magnitude.
 
 Platform choice — iOS-only is cheapest to develop, most expensive to maintain. Android-only has broader reach but more device fragmentation. Both means double the testing matrix. React Native Web adds another testing dimension; most apps don't need it. Workflow — Expo managed is the right call for ~80% of projects (EAS Build + EAS Submit, no local Xcode/Android Studio for normal feature work). Bare is for projects with native modules Expo doesn't support, slower development experience. Native modules — 0-2 fits tight scope; 3-5 doubles estimate; 6+ is native-team territory. Deploy — confirm the freelancer owns EAS + App Store Connect + Google Play end-to-end, including TestFlight beta cycle. Offline-first — yes/no changes architecture; offline requires MMKV/SQLite + conflict resolution + queue-and-replay, adds 4-6 weeks.
 
-Dabei (Kiel social-pulse app on jurgenhalili.dev, in progress) is the worked example: Expo Router 5 on RN 0.83, Supabase + Realtime, react-native-maps, MMKV for hot-path caching, OTP auth, deep-link invite flow, three-services data layer for clean RLS reasoning.
+Dabei (Kiel social-pulse app on this portfolio, in progress) is the worked example: Expo Router 5 on RN 0.83, Supabase + Realtime, react-native-maps, MMKV for hot-path caching, OTP auth, deep-link invite flow, three-services data layer for clean RLS reasoning.
 
 ### Hiring a freelance Microsoft Dynamics 365 Business Central contractor in Germany — what to evaluate
 
-URL: https://jurgenhalili.dev/notes/freelance-business-central-d365-germany-contractor
+URL: https://portfolio-seven-opal-35.vercel.app/notes/freelance-business-central-d365-germany-contractor
 Date: 2026-05-14. 8 min read.
 
 Business Central freelancers split into three tiers — config-only (UI navigation, basic reports, €60-90/hour), AL-extension developers (custom tables/pages/codeunits/reports, €90-130/hour), full-stack (AL + REST/OAuth2 integrations + NAV→BC migrations, €120-180/hour). Most German SMBs migrating off NAV need tier three; most freelance profiles claim tier three; ratio of claim-to-reality is ~4:1.
 
 Tell which tier you're talking to: ask for an AL extension code sample (tier-1 deflects, tier-2 shows a small extension, tier-3 walks through event subscriptions + upgrade compatibility patterns); ask about OAuth2 token refresh flow ("OAuth2 is a frontend thing" is disqualifying); ask about one real NAV→BC migration with specifics (data volume, custom tables carried, what went wrong, duration). German-market overlays: DATEV export for tax-advisor handoff, GoBD compliance for audit trails, ELSTER tax interface, Datenschutz / data-minimization configuration. Tier-3 contractors working in Germany know these by name.
 
-Where to find tier-3 contractors: Microsoft Partner Center directory (skews toward agencies), Microsoft Tech Community + BCTechDays presenters, GitHub (search for AL extensions on real profiles), personal portfolios that show actual projects. Microsoft Business Central is on the skills track at jurgenhalili.dev — AL extensions and REST/OAuth2 integrations for SMBs migrating from NAV.
+Where to find tier-3 contractors: Microsoft Partner Center directory (skews toward agencies), Microsoft Tech Community + BCTechDays presenters, GitHub (search for AL extensions on real profiles), personal portfolios that show actual projects. Microsoft Business Central is on the skills track at this portfolio — AL extensions and REST/OAuth2 integrations for SMBs migrating from NAV.
 
 ### Freelance vs agency for a software MVP — a 2026 comparison
 
-URL: https://jurgenhalili.dev/notes/freelance-vs-agency-software-mvp-2026
+URL: https://portfolio-seven-opal-35.vercel.app/notes/freelance-vs-agency-software-mvp-2026
 Date: 2026-05-14. 7 min read.
 
 Solo experienced freelance engineer wins when scope is clear, one decision-maker exists, project fits one person's working memory (≤4 months), stack the freelancer has shipped before, no regulatory complexity. Solo wins on speed-of-iteration — no internal coordination tax, deployed change by lunch on morning feedback. Agency wins when work splits into parallel streams (custom design + backend + mobile simultaneously), timeline 6+ months, formal compliance overhead, continuity guarantees needed.
@@ -313,7 +313,7 @@ Before signing — solo: walk me through three projects you've shipped solo end-
 
 ### Solo developer vs team of three — when each ships faster
 
-URL: https://jurgenhalili.dev/notes/solo-developer-vs-team-of-three-when-each-ships-faster
+URL: https://portfolio-seven-opal-35.vercel.app/notes/solo-developer-vs-team-of-three-when-each-ships-faster
 Date: 2026-05-14. 7 min read.
 
 Coordination overhead grows non-linearly with team size — Brooks's Law applies even at small scale. Two people coordinate over coffee; three need a standup; four need a Slack channel and weekly sync; five need a project manager. Three engineers add ~2.2x execution but ~3x coordination (standups + PR reviews + design syncs + conflict resolution).
@@ -324,7 +324,7 @@ Concrete hiring test: if a candidate engineer can sketch your project's full arc
 
 ### Where to find freelance software developers in Germany — 2026 guide
 
-URL: https://jurgenhalili.dev/notes/where-to-find-freelance-software-developers-germany-2026
+URL: https://portfolio-seven-opal-35.vercel.app/notes/where-to-find-freelance-software-developers-germany-2026
 Date: 2026-05-14. 8 min read.
 
 Six channels ranked by signal quality:
@@ -335,7 +335,7 @@ For senior full-stack: start with personal portfolios, expand to GitHub outreach
 
 ### The freelance developer due-diligence checklist — code, tests, deploys, security
 
-URL: https://jurgenhalili.dev/notes/freelance-developer-due-diligence-checklist
+URL: https://portfolio-seven-opal-35.vercel.app/notes/freelance-developer-due-diligence-checklist
 Date: 2026-05-14. 7 min read.
 
 20-minute technical pass that catches the bottom 80% of bad freelance hires. Four categories:
@@ -348,11 +348,11 @@ Date: 2026-05-14. 7 min read.
 
 (4) Security — CSP in deployed app, pre-commit secret-scanning hooks, dependency-update workflow (Dependabot/Renovate). Ask: how do you rotate a production secret if it leaks? What does your CI scan for? Tier-3 freelancers run Semgrep + CodeQL + Trivy + Gitleaks; tier-1 run nothing.
 
-Across the 10 projects on jurgenhalili.dev: every one has documented deploys, tests in CI (or clear architectural reason not), and sensitive-data projects (CleanSlate, advance.al) have RLS policies + audit trails as architectural primitives.
+Across the 10 projects on this portfolio: every one has documented deploys, tests in CI (or clear architectural reason not), and sensitive-data projects (CleanSlate, advance.al) have RLS policies + audit trails as architectural primitives.
 
 ### Freelance vs Festanstellung — a 2026 reality check for software engineers in Germany
 
-URL: https://jurgenhalili.dev/notes/freelance-vs-festanstellung-2026-germany
+URL: https://portfolio-seven-opal-35.vercel.app/notes/freelance-vs-festanstellung-2026-germany
 Date: 2026-05-14. 8 min read.
 
 Gross numbers mislead. A senior software engineer in Germany sees freelance at €100/hour and employed at €80-100K/year — naive math says 1.8x advantage. Real math: freelancers bill 1,400-1,500 effective hours (after admin time, client gaps, sick days, vacation, scope calls), landing at €140-150K. Subtract: private Krankenversicherung €5-10K/year, no paid vacation (~€10K equivalent loss), no employer pension contribution, no sick pay, Scheinselbständigkeit insurance, accountant. After all that, freelance break-even vs €80-100K Festanstellung is ~1.5-1.8x gross — meaningful but not the 2-3x mirage.
@@ -363,7 +363,7 @@ Scheinselbständigkeit (disguised employment) — Deutsche Rentenversicherung ca
 
 ### Build verification beats raw confidence — why test suites outweigh self-reports
 
-URL: https://jurgenhalili.dev/notes/build-verification-beats-raw-confidence-scores
+URL: https://portfolio-seven-opal-35.vercel.app/notes/build-verification-beats-raw-confidence-scores
 Date: 2026-05-14. 7 min read.
 
 A test suite is a stronger correctness signal than any LLM's self-confidence. KeepItUp's gate opens a PR at ≥85% Generator + Reviewer confidence by default. With build verification (run the proposed diff through the test suite in a sandboxed Docker container) and a green result, the threshold drops to ≥70%. A diff that passes 200 tests at 70% confidence beats a diff that fails three tests at 90% confidence, every time.
@@ -374,7 +374,7 @@ What if the repo has no tests — lint + type-check count as weak verification (
 
 ### Multi-provider routing — running Anthropic, OpenAI, and Gemini behind one client
 
-URL: https://jurgenhalili.dev/notes/multi-provider-routing-anthropic-openai-gemini
+URL: https://portfolio-seven-opal-35.vercel.app/notes/multi-provider-routing-anthropic-openai-gemini
 Date: 2026-05-14. 7 min read.
 
 Single-provider LLM stacks are fragile. KeepItUp routes between Anthropic Claude (Generator: code reasoning + uncertainty calibration), OpenAI GPT-4-class (Reviewer: different blind spots; structured extraction), and Google Gemini (fallback: cheaper per token) behind one internal client. Routing isn't load-balancing — it's pairing different models on stages so they don't share blind spots. Same prompt through two Claude instances is closer to 1.5 passes than 2.
@@ -385,7 +385,7 @@ Pattern generalizes — any production AI feature calling more than one LLM ough
 
 ### Cost telemetry per LLM call — what to actually measure
 
-URL: https://jurgenhalili.dev/notes/cost-telemetry-per-llm-call-what-to-measure
+URL: https://portfolio-seven-opal-35.vercel.app/notes/cost-telemetry-per-llm-call-what-to-measure
 Date: 2026-05-14. 6 min read.
 
 Per call: provider, model, stage, input + output tokens, latency, cost USD, trace ID, timestamp. Eight fields. At 100K calls/month, hundreds of MB — trivial to store, queryable in any time-series database. Aggregations: daily spend per tenant, daily spend per stage, cost per successful action (PR opened, match generated, story rendered), cost per failed vs successful attempt (failures usually cost more — retries). Monthly trend at constant volume catches prompt regressions inflating input.
@@ -394,7 +394,7 @@ Anomaly detection: daily spend > 3σ above trailing 30-day average emails me. Si
 
 ### Why an AI agent should run Semgrep, Trivy, and Gitleaks before opening a PR
 
-URL: https://jurgenhalili.dev/notes/semgrep-trivy-gitleaks-pre-pr-docker
+URL: https://portfolio-seven-opal-35.vercel.app/notes/semgrep-trivy-gitleaks-pre-pr-docker
 Date: 2026-05-14. 6 min read.
 
 Anyone who's run an LLM at scale has seen a model regenerate code that originally had an API key inlined. Three security scans run in a sandboxed Docker container against every proposed diff: Semgrep (static analysis — SQL injection, hardcoded credentials, unsafe deserialization, language-specific anti-patterns); Trivy (dependency vulnerability scanner against CVE databases); Gitleaks (secret detection — regex + entropy heuristics for API keys, JWT secrets, AWS keys).
@@ -403,7 +403,7 @@ Any scanner flag adds a comment to the PR + `security-review-required` label, bu
 
 ### Polling six deploy platforms 24/7 — API patterns that don't get rate-limited
 
-URL: https://jurgenhalili.dev/notes/polling-six-deploy-platforms-without-rate-limit-hell
+URL: https://portfolio-seven-opal-35.vercel.app/notes/polling-six-deploy-platforms-without-rate-limit-hell
 Date: 2026-05-14. 7 min read.
 
 Webhooks first (GitHub Actions, Vercel, most production CI/CD platforms). Thin Next.js webhook handler drops events into a queue; downstream workers pick them up. Adaptive polling for platforms without webhooks: 60s during recent activity, 5min during business-hours quiet, 30min off-hours. Adaptive cuts request volume by 80%+ vs naive constant polling.
@@ -414,7 +414,7 @@ The number of AI agent projects retrying on 1-second loops until success is too 
 
 ### Stealth puppeteer and multi-account uploaders — the TikTok compliance-flag dance
 
-URL: https://jurgenhalili.dev/notes/stealth-puppeteer-multi-account-tiktok-compliance
+URL: https://portfolio-seven-opal-35.vercel.app/notes/stealth-puppeteer-multi-account-tiktok-compliance
 Date: 2026-05-14. 7 min read.
 
 TikTok bot detection looks at three categories — browser fingerprint (user agent, WebGL signatures, navigator properties, fonts), behavioral patterns (mouse movement, typing cadence, time-on-page), session signals (cookie age, IP reputation, time-of-day, request frequency). Vanilla puppeteer fails on fingerprint immediately (`navigator.webdriver = true`, "HeadlessChrome" UA, default WebGL signature). puppeteer-extra-plugin-stealth patches the obvious tells.
@@ -423,7 +423,7 @@ Cookie management per account — never share jars, never reuse after fingerprin
 
 ### Remotion video rendering with the same components as the app — brand consistency without two codebases
 
-URL: https://jurgenhalili.dev/notes/remotion-programmatic-video-rendering-app-components
+URL: https://portfolio-seven-opal-35.vercel.app/notes/remotion-programmatic-video-rendering-app-components
 Date: 2026-05-14. 7 min read.
 
 Remotion is React-based offline video rendering — components describe each frame, composition has duration + frame rate, headless Chromium renders MP4/WebM. The trick: import components from `packages/ui` in both your app workspace and your `apps/ads` workspace. A button rendered in the app and a button rendered in an ad share one source of truth.
@@ -434,7 +434,7 @@ Right call: After Effects for hero-level brand films; Remotion for everyday ad c
 
 ### Whisper model size — when bigger isn't worth the GPU
 
-URL: https://jurgenhalili.dev/notes/whisper-model-size-when-bigger-isnt-worth-it
+URL: https://portfolio-seven-opal-35.vercel.app/notes/whisper-model-size-when-bigger-isnt-worth-it
 Date: 2026-05-14. 6 min read.
 
 Six Whisper sizes — tiny (39M), base (74M), small (244M), medium (769M), large-v3 (1550M), large-v3-turbo. Quality gap isn't linear: tiny→base is big, base→small meaningful, small→medium smaller, medium→large incremental. For transcript-as-input-to-LLM (Reel Farmer's clip-selection use case), base or small is usually right — 80-90% as accurate as large at 10-30x speed. The downstream clip-selection LLM is robust to minor transcription errors.
@@ -443,7 +443,7 @@ User-facing transcripts (captions, legal review) need medium/large because every
 
 ### Gemini clip selection — getting an LLM to pick highlights with the transcript in context
 
-URL: https://jurgenhalili.dev/notes/gemini-clip-selection-transcript-context
+URL: https://portfolio-seven-opal-35.vercel.app/notes/gemini-clip-selection-transcript-context
 Date: 2026-05-14. 6 min read.
 
 Gemini's long context window (1M+ tokens) makes it the right model for clip selection from full podcast transcripts. Prompt structure: (1) full transcript with timestamps, (2) criteria for what makes a good clip (surprising claims, complete arguments, sharp one-liners, anything that holds attention without context), (3) output schema (JSON array of `{ startSec, endSec, summary, confidence }`). `responseMimeType: 'application/json'` enforces structure; schema-validation failures get one retry with stricter framing.
@@ -454,7 +454,7 @@ Empirically Gemini and Claude perform similarly on this task, both beat GPT-4 by
 
 ### The transaction ledger — unifying ads, subscriptions, and purchases into one accounting story
 
-URL: https://jurgenhalili.dev/notes/transaction-ledger-unified-credits-mobile-app
+URL: https://portfolio-seven-opal-35.vercel.app/notes/transaction-ledger-unified-credits-mobile-app
 Date: 2026-05-14. 7 min read.
 
 Ëndërrat e Mia's billing has four sources — RevenueCat subscriptions, AdMob rewards, in-app purchases, free trial — all writing to one Transaction table. Columns: id, user_id, amount (positive credit, negative debit), source (revenuecat / admob / iap / story_render / refund / promo), external_id (subscription ID, reward ID, purchase token, or null for system-internal), created_at, notes. Balance = `SELECT SUM(amount) FROM transactions WHERE user_id = ?`. No state machine. No reconciliation. The balance is whatever the rows say it is.
@@ -465,7 +465,7 @@ Fraud queries become single queries: "users who got unusual admob credit in 24h"
 
 ### Embedding worker on a heartbeat process — the pattern that keeps a matching engine honest
 
-URL: https://jurgenhalili.dev/notes/embedding-worker-heartbeat-process-pattern
+URL: https://portfolio-seven-opal-35.vercel.app/notes/embedding-worker-heartbeat-process-pattern
 Date: 2026-05-14. 6 min read.
 
 advance.al's embedding worker runs on its own PM2 process (cluster mode runs N web workers + 1 embedding worker). Every 60s the worker pings a heartbeat endpoint with timestamp + identity; cron job every 5min checks recency; >10min silent triggers alert email + Slack. The whole monitoring layer is ~30 lines of code and catches the silent-stop failure mode where the platform appears working but matches stop updating.
@@ -476,7 +476,7 @@ Pattern generalizes to any background worker critical to product function — no
 
 ### OpenAI structured extraction — auto-filling profiles from any CV format
 
-URL: https://jurgenhalili.dev/notes/openai-structured-extraction-profile-autofill
+URL: https://portfolio-seven-opal-35.vercel.app/notes/openai-structured-extraction-profile-autofill
 Date: 2026-05-14. 7 min read.
 
 Three pieces stitched together: (1) text extraction (pdfjs-dist for PDFs, mammoth for DOCX — returns single long string of CV content); (2) structured LLM extraction (OpenAI Chat API + `responseMimeType: 'application/json'` + explicit schema describing fields — name, email, phone, skills, work_history, education, summary, all with per-field confidence); (3) confidence routing (fields above 0.7 silently auto-fill, below trigger manual-review UI).
@@ -489,7 +489,7 @@ Pattern generalizes to any user-facing form where input is unstructured and dest
 
 ### Bilingual embeddings and the category boost — when one vector space isn't enough
 
-URL: https://jurgenhalili.dev/notes/bilingual-embedding-category-boost
+URL: https://portfolio-seven-opal-35.vercel.app/notes/bilingual-embedding-category-boost
 Date: 2026-05-14. 6 min read.
 
 Modern OpenAI embeddings handle multilingual content in one shared 1536-dim vector space. But vocabulary depth differs by language — model has seen orders of magnitude more English technical writing than Albanian technical writing. Result: an Albanian-only profile matching an English-only job scores lower than the candidate's qualifications justify, because Albanian semantic neighborhoods are thinner.
@@ -502,7 +502,7 @@ Pattern generalizes to any multilingual matching engine where one language has s
 
 ### Drift detection in a vector matching engine — when the model has changed
 
-URL: https://jurgenhalili.dev/notes/drift-detection-vector-matching-engine
+URL: https://portfolio-seven-opal-35.vercel.app/notes/drift-detection-vector-matching-engine
 Date: 2026-05-14. 6 min read.
 
 OpenAI deprecates embedding models. ada-002 → 3-small → 3-large. Every migration is a re-embedding pass + cosine number shift. A matching engine without drift detection discovers the change when employers complain about new candidates appearing in their dashboard.
@@ -515,7 +515,7 @@ Re-embedding pass: two-phase migration. Phase 1: write `embedding_v2` alongside 
 
 ### White-label as a runtime config, not a build step — how one app becomes many
 
-URL: https://jurgenhalili.dev/notes/white-label-runtime-config-vs-build-step
+URL: https://portfolio-seven-opal-35.vercel.app/notes/white-label-runtime-config-vs-build-step
 Date: 2026-05-14. 7 min read.
 
 GymApp's member app is one React Native binary shared by every gym. At launch, the app fetches the tenant's branding row (primary_color, logo_url, app_identifier) and the React tree reads from GymConfigContext. The app becomes that gym's app at runtime, not build time. One binary, N tenants, one App Store account.
@@ -526,7 +526,7 @@ Trade: structurally-different per-tenant apps still need per-tenant builds. For 
 
 ### Socket.io + Redis pub/sub across PM2 cluster workers — live occupancy without polling
 
-URL: https://jurgenhalili.dev/notes/socketio-redis-pubsub-pm2-cluster
+URL: https://portfolio-seven-opal-35.vercel.app/notes/socketio-redis-pubsub-pm2-cluster
 Date: 2026-05-14. 7 min read.
 
 Socket.io stores connection state in process memory by default. Across PM2 cluster (multiple Node processes) or multiple boxes behind a load balancer, emits from one worker can't reach connections on another — vanilla setup loses half the emits.
@@ -537,7 +537,7 @@ GymApp live-occupancy flow: NFC tap → scanner-bridge POSTs `/api/visits` → A
 
 ### node-hid as a hardware-abstraction layer — decoupling NFC scanners from the API
 
-URL: https://jurgenhalili.dev/notes/node-hid-nfc-scanner-bridge-pattern
+URL: https://portfolio-seven-opal-35.vercel.app/notes/node-hid-nfc-scanner-bridge-pattern
 Date: 2026-05-14. 6 min read.
 
 GymApp's scanner-bridge is a small Node service on a Raspberry Pi at each gate. Uses `node-hid` to read card UIDs off USB NFC readers and POSTs `/api/visits` with the UID. Bridge knows hardware (USB device discovery, HID frame parsing, vendor protocols). API knows business logic (member lookup, visit insert, occupancy emit). Neither knows the other's details.
@@ -548,7 +548,7 @@ Pattern generalizes to payment terminal integrations, IoT sensors, thermal-print
 
 ### Brand-as-filesystem-config — adding a tenant without a code change
 
-URL: https://jurgenhalili.dev/notes/social-command-center-brand-as-filesystem-config
+URL: https://portfolio-seven-opal-35.vercel.app/notes/social-command-center-brand-as-filesystem-config
 Date: 2026-05-14. 7 min read.
 
 Social Command Center adds a brand by creating `brands/<slug>/` with `config.json` + `knowledge-base/` (markdown files describing products, voice, audience, recent campaigns). Commit + push. Next BullMQ cron run picks up the new directory. Six-stage pipeline walks each brand: Brand Discovery → Research → Strategy → Content Gen → Quality Gate → Post Creation.
@@ -561,7 +561,7 @@ Zero-API-cost path: Claude Code slash commands (`/analyze-brand`, `/generate-con
 
 ### Audit middleware that never blocks the real write — best-effort logging done right
 
-URL: https://jurgenhalili.dev/notes/audit-middleware-never-blocks-real-write
+URL: https://portfolio-seven-opal-35.vercel.app/notes/audit-middleware-never-blocks-real-write
 Date: 2026-05-14. 6 min read.
 
 Pilates Studio's audit middleware records every admin write — actor, resource, IP, user-agent, before/after diff — to `audit_log` table. Audit insert is best-effort: failures logged locally, real operation still commits. Losing a booking because audit insert was slow is not acceptable user-facing behavior.
@@ -572,7 +572,7 @@ When you need stronger guarantees (healthcare, finance, regulatory audit): use b
 
 ### Booking-flow status transitions — auto-promoting from the waitlist on cancellation
 
-URL: https://jurgenhalili.dev/notes/booking-flow-status-transitions-waitlist
+URL: https://portfolio-seven-opal-35.vercel.app/notes/booking-flow-status-transitions-waitlist
 Date: 2026-05-14. 6 min read.
 
 Pilates Studio booking states: pending → confirmed → attended | cancelled → refunded. Waitlist states: waiting → promoted | expired. Postgres enums via Prisma; every transition logged for audit reconstruction.
@@ -583,7 +583,7 @@ Cron sweep (every 5 min) belt-and-suspenders for missed real-time promotions. Pr
 
 ### Discipline as the product — architectural rules that survive every refactor
 
-URL: https://jurgenhalili.dev/notes/discipline-as-the-product
+URL: https://portfolio-seven-opal-35.vercel.app/notes/discipline-as-the-product
 Date: 2026-05-14. 7 min read.
 
 CleanSlate's product is the architectural discipline. Rules enforced structurally — TypeScript types + ESLint imports + RLS policies, not conventions:
@@ -604,7 +604,7 @@ Customer pays for software working reliably for 3 years, not for architectural d
 
 ### Four Vercel cron endpoints — the minimum for a SaaS that runs itself
 
-URL: https://jurgenhalili.dev/notes/four-vercel-crons-saas-runs-itself
+URL: https://portfolio-seven-opal-35.vercel.app/notes/four-vercel-crons-saas-runs-itself
 Date: 2026-05-14. 6 min read.
 
 CleanSlate's operator never logs in for routine admin. Four crons handle everything: (1) trial-reminders daily — finds users in 3-day window before trial end + emails; (2) overdue-invoices daily — nudges `past_due` subscriptions + auto-cancels after 3 nudges (then RLS gate prevents new writes); (3) recurring-jobs daily — generates next week's bookings from active recurring schedules; (4) pre-job-sms hourly — sends reminders for jobs within 24h, marks confirmed.
@@ -615,7 +615,7 @@ Why cron not queue: these are periodic sweeps of database state, not event-trigg
 
 ### MMKV vs AsyncStorage on the cold-start hot path — when synchronous storage wins
 
-URL: https://jurgenhalili.dev/notes/mmkv-vs-asyncstorage-cold-start-hot-path
+URL: https://portfolio-seven-opal-35.vercel.app/notes/mmkv-vs-asyncstorage-cold-start-hot-path
 Date: 2026-05-14. 6 min read.
 
 AsyncStorage's `getItem(key): Promise<string | null>` crosses the JavaScript-to-native bridge on every read. Cold-start sequence with auth + draft + recent state needs 5-6 reads minimum — 20-50ms of bridge waits before UI can do anything useful. Loading screen between launch and first useful render gives users impression of slowness.
@@ -628,7 +628,7 @@ Expo support: works in bare workflow + EAS dev client; doesn't work in Expo Go (
 
 ### Vibe Checks as a first-class entity — when a social mechanic is the product
 
-URL: https://jurgenhalili.dev/notes/vibe-checks-first-class-entity
+URL: https://portfolio-seven-opal-35.vercel.app/notes/vibe-checks-first-class-entity
 Date: 2026-05-14. 7 min read.
 
 Dabei's vibe check is a one-tap rating any attendee can submit during or up to 48 hours after a hangout. Trinary (good/neutral/off), optional comment. Stored as rows in `vibe_checks` table with unique constraint on (submitter_id, target_id, hangout_id).
@@ -641,7 +641,7 @@ Trinary not stars: star ratings inflate (everyone is 4.7). Trinary preserves dis
 
 ### Splitting the data layer into reads, writes, and actions — the three-services pattern
 
-URL: https://jurgenhalili.dev/notes/three-services-data-layer-hangout-crud-queries-actions
+URL: https://portfolio-seven-opal-35.vercel.app/notes/three-services-data-layer-hangout-crud-queries-actions
 Date: 2026-05-14. 7 min read.
 
 Dabei's hangout data layer is three small services instead of one 1500-line god-service: `hangout-crud` (writes — create, update, delete with Zod validation), `hangout-queries` (reads — list, fetch, search, with caching where applicable), `hangout-actions` (cross-entity transactional logic — RSVP writes RSVP row + increments counter + sends notification + updates user stats, all in one transaction).
@@ -652,7 +652,7 @@ RLS reasoning becomes local — each service touches narrow set of tables, so po
 
 ### A Three.js Hyperspeed hero for a one-day brand build
 
-URL: https://jurgenhalili.dev/notes/threejs-hyperspeed-hero-one-day-build
+URL: https://portfolio-seven-opal-35.vercel.app/notes/threejs-hyperspeed-hero-one-day-build
 Date: 2026-05-14. 6 min read.
 
 Small brand sites drift into one of two failure modes: boring template or over-designed mess. Kërçishta Garage commits to one signature visual — a Three.js Hyperspeed hero — and keeps everything else restrained. Type stays restrained (1-2 fonts, generous whitespace); colors stay restrained (1 accent, 1-2 neutrals); animations elsewhere stay subtle. The hero earns attention; the rest of the page recedes.
@@ -663,7 +663,7 @@ Pattern generalizes across three brand sites — Kërçishta Garage (Three.js sp
 
 ### Hidden admin CRMs gated by a passphrase plus Bearer token
 
-URL: https://jurgenhalili.dev/notes/hidden-admin-crm-passphrase-bearer-token
+URL: https://portfolio-seven-opal-35.vercel.app/notes/hidden-admin-crm-passphrase-bearer-token
 Date: 2026-05-14. 6 min read.
 
 Kërçishta Garage's hidden /admin CRM: not in nav, no public link, known URL + passphrase. Successful login returns JWT-shaped Bearer token stored in sessionStorage; admin API calls include in Authorization header. For single-operator small business with few records per day, right-sized security. Anything heavier is overhead without proportional safety gain.
@@ -674,7 +674,7 @@ Trades: no password reset (rotate manually for single user); minimal audit loggi
 
 ### Quiz state in URL params — backend-touch deferred until final submit
 
-URL: https://jurgenhalili.dev/notes/url-params-as-form-state
+URL: https://portfolio-seven-opal-35.vercel.app/notes/url-params-as-form-state
 Date: 2026-05-14. 5 min read.
 
 Klodi Trainer's multi-step fitness quiz stores each answer in URL query parameters. Refresh preserves state. Sharing a URL shares state. Backend never touched until final submit. Three benefits: no incomplete submissions, no state-management library, no backend draft system.
@@ -685,10 +685,10 @@ Doesn't work for: long forms (URL length limits, 2000-8000 chars), sensitive dat
 
 ### Route → service → data — the layer discipline that scales solo development
 
-URL: https://jurgenhalili.dev/notes/service-layer-discipline-route-service-data
+URL: https://portfolio-seven-opal-35.vercel.app/notes/service-layer-discipline-route-service-data
 Date: 2026-05-14. 7 min read.
 
-Across every project on jurgenhalili.dev, same three-layer discipline holds. Routes are HTTP boundary — parse input (Zod), dispatch to service, return response. Services own business logic + data ops — every Supabase / Prisma / Mongoose call. Components are UI — never touch DB, never import ORM.
+Across every project on this portfolio, same three-layer discipline holds. Routes are HTTP boundary — parse input (Zod), dispatch to service, return response. Services own business logic + data ops — every Supabase / Prisma / Mongoose call. Components are UI — never touch DB, never import ORM.
 
 Enforced structurally: TypeScript types make boundaries visible; ESLint no-restricted-imports blocks components from importing DB client at compile time. "We agreed components shouldn't touch the DB" is a convention. "Components physically cannot import the DB client" is structural enforcement. The first decays; the second doesn't.
 
@@ -698,7 +698,7 @@ Same pattern across Next.js, Express, React Native, NestJS — mechanics of rout
 
 ### How many tests is enough — the 594-test budget on a solo project
 
-URL: https://jurgenhalili.dev/notes/test-budget-594-tests-pilates-discipline
+URL: https://portfolio-seven-opal-35.vercel.app/notes/test-budget-594-tests-pilates-discipline
 Date: 2026-05-14. 6 min read.
 
 Test count isn't a target — it's the count that comes from covering unhappy paths your users will hit. Pilates Studio: 594 across ~250 Vitest unit + ~200 supertest API integration + ~100 Playwright E2E + ~44 component tests. Skip the obvious-correct (getter returning a property). Cover the unhappy paths (cancellation while waitlist exists, payment failure during booking, audit-log failure during write, refund flow when card deleted, waitlist promotion under concurrent cancellations).
@@ -709,7 +709,7 @@ Coverage percentage not a target. Coverage measures whether code executed; doesn
 
 ### Playwright "walker" tests — screenshotting every route on every device
 
-URL: https://jurgenhalili.dev/notes/playwright-walker-tests-screenshot-every-route
+URL: https://portfolio-seven-opal-35.vercel.app/notes/playwright-walker-tests-screenshot-every-route
 Date: 2026-05-14. 6 min read.
 
 Playwright suites visit every route (from sitemap.xml + hand-maintained authenticated routes) across desktop + iPhone 12 + Pixel 5 viewports. Screenshot each. advance.al runs them on every release; they catch what per-feature E2E misses — responsive-layout regressions, broken links, missing translation strings, CSS regressions from new dependencies, asset-path failures that work in dev but not prod.
@@ -720,7 +720,7 @@ Run pre-deploy against staging — diff vs previous baseline above threshold hal
 
 ### Postgres RLS vs middleware auth gates — when each one wins
 
-URL: https://jurgenhalili.dev/notes/postgres-rls-vs-middleware-auth-comparison
+URL: https://portfolio-seven-opal-35.vercel.app/notes/postgres-rls-vs-middleware-auth-comparison
 Date: 2026-05-14. 7 min read.
 
 Three places authorization can live: database (Postgres RLS policies), API (middleware on every route), UI (client-side checks). Not interchangeable.
@@ -733,7 +733,7 @@ UI checks belong in UX (hide Delete button when unauthorized) not security. Bypa
 
 ### better-sqlite3 vs Turso (libsql) — when each one wins in production
 
-URL: https://jurgenhalili.dev/notes/better-sqlite3-vs-turso-libsql-production
+URL: https://portfolio-seven-opal-35.vercel.app/notes/better-sqlite3-vs-turso-libsql-production
 Date: 2026-05-14. 6 min read.
 
 better-sqlite3: in-process synchronous SQLite, microsecond reads, file-backed, single-node. Right for dev, embedded apps (Electron, CLIs), single-box production. Turso (libsql): networked SQLite with edge-replicated read replicas, HTTP/WebSocket access, multi-region. Right for serverless production, geographically-distributed users.
@@ -746,7 +746,7 @@ Where neither wins: high-write multi-region (SQLite is single-writer regardless 
 
 ### Claude vs OpenAI vs Gemini for code-fix agents — which model does what best
 
-URL: https://jurgenhalili.dev/notes/claude-vs-openai-vs-gemini-for-code-agents
+URL: https://portfolio-seven-opal-35.vercel.app/notes/claude-vs-openai-vs-gemini-for-code-agents
 Date: 2026-05-14. 7 min read.
 
 Per-stage routing beats picking one model. KeepItUp empirically across hundreds of code-fix tasks:
@@ -761,7 +761,7 @@ Open-source models (Llama, Qwen, DeepSeek) closed a lot of the gap; still meanin
 
 ### BullMQ vs Trigger.dev vs Inngest — comparing job queues for production
 
-URL: https://jurgenhalili.dev/notes/bullmq-vs-trigger-dev-vs-inngest-job-queues
+URL: https://portfolio-seven-opal-35.vercel.app/notes/bullmq-vs-trigger-dev-vs-inngest-job-queues
 Date: 2026-05-14. 7 min read.
 
 BullMQ: self-hosted, Redis-backed, TypeScript-first, mature, lowest cost at scale, requires Redis + workers operational knowledge. Right for high-volume self-managed pipelines where Redis already in production (Social Command Center's six-stage content pipeline).
@@ -774,7 +774,7 @@ When none needed: simple cron jobs (Vercel cron / GitHub Actions cron / setInter
 
 ### Supabase RLS vs Firestore Rules — comparing database-layer authorization
 
-URL: https://jurgenhalili.dev/notes/supabase-rls-vs-firestore-rules-comparison
+URL: https://portfolio-seven-opal-35.vercel.app/notes/supabase-rls-vs-firestore-rules-comparison
 Date: 2026-05-14. 6 min read.
 
 Both push auth into database. Same goal, different mechanisms. Supabase RLS: SQL policy expressions in Postgres; native joins; full SQL power; integrates with Postgres ecosystem (psql, every ORM). Firestore Rules: JavaScript-like DSL; document-shaped queries; native real-time + offline-first mobile.
@@ -785,7 +785,7 @@ Both harder to test than application-layer auth — Postgres has pg-tap for SQL-
 
 ### Express as a Vercel catch-all — one codebase, two runtime models
 
-URL: https://jurgenhalili.dev/notes/express-vercel-catch-all-one-codebase-two-runtimes
+URL: https://portfolio-seven-opal-35.vercel.app/notes/express-vercel-catch-all-one-codebase-two-runtimes
 Date: 2026-05-14. 6 min read.
 
 Pilates Studio's API ships as Vercel serverless catch-all at `api/[[...path]].ts`. Same Express app runs as long-lived server locally + serverless function in production. Middleware stack same, route definitions same, validation same. Connection lifetime differs (process-long pool dev vs per-invocation HTTP prod) — Prisma adapter swap handles it.
@@ -798,7 +798,7 @@ For greenfield Next.js projects, route handlers are simpler. For existing Expres
 
 ### Single App.tsx — when scope discipline beats abstraction
 
-URL: https://jurgenhalili.dev/notes/single-app-tsx-when-scope-discipline-beats-abstraction
+URL: https://portfolio-seven-opal-35.vercel.app/notes/single-app-tsx-when-scope-discipline-beats-abstraction
 Date: 2026-05-14. 5 min read.
 
 Kërçishta Garage's full-stack app — public site, contact form, admin CRM, MongoDB integration — fits in one App.tsx (~600 lines). Discipline isn't refusing to abstract; it's recognizing that splitting a one-and-a-half-day build would have been gold-plating.
@@ -809,7 +809,7 @@ Match structure to scope, not to abstract ideals. "Best practice" is contextual 
 
 ### GDPR-compliant soft delete with retention crons
 
-URL: https://jurgenhalili.dev/notes/gdpr-soft-delete-retention-crons
+URL: https://portfolio-seven-opal-35.vercel.app/notes/gdpr-soft-delete-retention-crons
 Date: 2026-05-14. 6 min read.
 
 advance.al's deletion flow: API sets `users.deleted_at = NOW()`. User logged out, session invalidated, profile removed from search, job applications anonymized in employer views. Functionally gone within seconds. Daily Vercel cron hard-deletes any soft-deleted user older than 30 days — cascade deletes related tables, post-deletion verification confirms no orphaned references.
@@ -820,7 +820,7 @@ Functional removal layers: middleware filters every read query (`SELECT ... WHER
 
 ### What 10 production projects taught me about solo shipping
 
-URL: https://jurgenhalili.dev/notes/solo-shipping-architecture-trade-offs-10-projects
+URL: https://portfolio-seven-opal-35.vercel.app/notes/solo-shipping-architecture-trade-offs-10-projects
 Date: 2026-05-14. 8 min read.
 
 Pays back day one: layer discipline (route → service → data with import enforcement), boundary types (Cents, E164, ISO timestamps), database-level authorization (RLS or equivalent), test budget on unhappy paths.
@@ -833,7 +833,7 @@ Keep getting wrong: estimating (30-50% optimistic by default), over-investing in
 
 ### How freelance software developer rates work in Germany — Stundensatz reality check
 
-URL: https://jurgenhalili.dev/notes/freelance-developer-rate-card-germany
+URL: https://portfolio-seven-opal-35.vercel.app/notes/freelance-developer-rate-card-germany
 Date: 2026-05-14. 6 min read.
 
 Practical 2026 ranges direct-to-client in Germany: junior (1-3 years) €50-80/hour, mid-level (3-5 years) €70-110, senior full-stack (5+ years, web + mobile + AI + deploy) €90-150, specialist niche (Microsoft BC, regulated industries) €120-200. Berlin/Munich/Hamburg/Frankfurt top of each band; Kiel/Bremen/Leipzig 10-20% lower for similar work (remote-friendly contracts largely flatten this).
@@ -844,7 +844,7 @@ Werkvertrag (fixed-deliverable) pricing translates Stundensatz via velocity esti
 
 ### What a freelance engineer's portfolio should actually show
 
-URL: https://jurgenhalili.dev/notes/freelance-engineer-portfolio-what-to-show
+URL: https://portfolio-seven-opal-35.vercel.app/notes/freelance-engineer-portfolio-what-to-show
 Date: 2026-05-14. 6 min read.
 
 Most freelance portfolios are screenshot grids + three-line descriptions. Tells client nothing about whether engineer can ship. Evidence-based portfolio shows: live URLs (web apps + App Store/Play Store listings; explicit NDA framing where applicable), public repos where possible (most-recent-commit diff tells client more than portfolio paragraph), test counts + CI status ("594 tests across Vitest + Playwright" is verifiable; "I write tests" is not), architecture paragraph per project highlighting non-obvious decisions, explicit solo-vs-team contribution framing.
@@ -855,7 +855,7 @@ Case studies answer: what problem (real problem, real audience); what did you bu
 
 ### What good AI engineering looks like — beyond the demo
 
-URL: https://jurgenhalili.dev/notes/what-good-ai-engineering-looks-like
+URL: https://portfolio-seven-opal-35.vercel.app/notes/what-good-ai-engineering-looks-like
 Date: 2026-05-14. 7 min read.
 
 Production AI is everything around the model call. Demo fits in 20 lines; production fits in 2000. Adds: input validation (length checks, sanitization, content policy), output enforcement (schema-validated structured responses, retries on validation failure), cost telemetry (per call, per user, per feature, daily aggregations), multi-provider routing (fallback on outage, route by task strength), eval framework (held-out test set, regression measurement), failure-mode handling (rate limits, content policy, hallucinations, network errors), observability (structured traces, latency percentiles, error breakdown).

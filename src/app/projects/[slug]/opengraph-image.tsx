@@ -58,7 +58,7 @@ export default async function Image({
             alignItems: "center",
           }}
         >
-          <div style={{ display: "flex" }}>jurgenhalili.dev</div>
+          <div style={{ display: "flex" }}>Jurgen Halili</div>
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
             <div
               style={{

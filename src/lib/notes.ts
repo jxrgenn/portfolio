@@ -863,7 +863,7 @@ export const notes: readonly Note[] = [
       "freelance developer hiring",
     ],
     answerBox:
-      "Ask for a public repo and read the most recent commit diff. Ask what they last broke and how they noticed. Verify they ship with tests, not screenshots. Confirm Scheinselbstständigkeit risk is mitigated by contract structure. Check that they own the deploy, not just the code. Worked example: every project on jurgenhalili.dev was solo across stack, with public tests and CI.",
+      "Ask for a public repo and read the most recent commit diff. Ask what they last broke and how they noticed. Verify they ship with tests, not screenshots. Confirm Scheinselbstständigkeit risk is mitigated by contract structure. Check that they own the deploy, not just the code. Worked example: every project on this portfolio was solo across stack, with public tests and CI.",
     lede:
       "Most checklists for hiring freelance engineers are written by recruiters who haven't shipped a feature in eight years, so they end up with twenty bullet points about \"communication skills\" and zero about whether the person can actually carry a project alone. This is the one I wish more clients used before they emailed me.",
     sections: [
@@ -929,7 +929,7 @@ export const notes: readonly Note[] = [
       {
         heading: "What this looks like in practice",
         paragraphs: [
-          "Every project on jurgenhalili.dev is solo across stack, with the kind of artifacts a hiring client should want to see: a public repo where possible, tests that actually run in CI (594 in Pilates Studio, 288 in advance.al), security scans in the deploy pipeline (Semgrep + Trivy + Gitleaks in KeepItUp), and deploys owned end-to-end on Vercel or Render. The case studies on this site exist specifically so the evaluation can happen against real work rather than against a deck.",
+          "Every project on this portfolio is solo across stack, with the kind of artifacts a hiring client should want to see: a public repo where possible, tests that actually run in CI (594 in Pilates Studio, 288 in advance.al), security scans in the deploy pipeline (Semgrep + Trivy + Gitleaks in KeepItUp), and deploys owned end-to-end on Vercel or Render. The case studies on this site exist specifically so the evaluation can happen against real work rather than against a deck.",
           "If you're hiring a freelance full-stack engineer in Germany, you don't have to use my checklist. But you should use a checklist that resembles it, and you should run candidates through it before signing.",
         ],
       },
@@ -1818,7 +1818,7 @@ export const notes: readonly Note[] = [
         heading: "Where to find Tier-3 contractors",
         paragraphs: [
           "Microsoft's official partner directory (search for \"Business Central\" within Germany) is a starting point but skews toward agencies. For freelance contractors specifically, the more reliable sources are: developer-focused communities (Microsoft Tech Community, BCTechDays presenters), GitHub (search for AL extensions on real GitHub profiles), and personal portfolios that show actual project examples — not slide decks.",
-          "Microsoft Business Central is on the skills track at jurgenhalili.dev (the engineering side of the portfolio) — alongside MERN + Next.js + RN, with the BC track focused on AL extensions and REST/OAuth2 integrations for SMBs migrating from NAV.",
+          "Microsoft Business Central is on the skills track at this portfolio (the engineering side of the portfolio) — alongside MERN + Next.js + RN, with the BC track focused on AL extensions and REST/OAuth2 integrations for SMBs migrating from NAV.",
         ],
       },
     ],
@@ -1974,7 +1974,7 @@ export const notes: readonly Note[] = [
     faq: [
       {
         q: "Can a solo freelance developer really ship a full MVP?",
-        a: "Yes, if scope is clear and the freelancer is genuinely full-stack. Every project on this site (jurgenhalili.dev) was built solo across stack — admin web, mobile app, API, deploys. The ceiling on what one person can ship is higher than most clients assume.",
+        a: "Yes, if scope is clear and the freelancer is genuinely full-stack. Every project on this portfolio was built solo across stack — admin web, mobile app, API, deploys. The ceiling on what one person can ship is higher than most clients assume.",
       },
       {
         q: "How long should an MVP take?",
@@ -2314,7 +2314,7 @@ export const notes: readonly Note[] = [
       {
         heading: "What this looks like in practice",
         paragraphs: [
-          "Across the 10 projects on jurgenhalili.dev: every one has a documented deploy story, every one has tests in CI (or a clear architectural reason why they don't), and the ones that handle sensitive data (CleanSlate, advance.al) have RLS policies and audit trails as architectural primitives — not as add-ons.",
+          "Across the 10 projects on this portfolio: every one has a documented deploy story, every one has tests in CI (or a clear architectural reason why they don't), and the ones that handle sensitive data (CleanSlate, advance.al) have RLS policies and audit trails as architectural primitives — not as add-ons.",
           "If you're running this checklist on a freelance candidate, you don't need them to match every box. You need them to think about every box. A candidate who has solid answers in three out of four categories and admits they're learning the fourth is more reliable than one who claims expertise in all four with no evidence in any.",
         ],
       },
@@ -6088,7 +6088,7 @@ export const notes: readonly Note[] = [
     dateModified: "2026-05-14",
     readingMinutes: 7,
     description:
-      "Across every project on jurgenhalili.dev, the same three-layer discipline holds: routes dispatch to services, services own data ops, components never touch the database. The reason isn't taste — it's that this is the discipline that lets one person maintain ten projects without breaking things.",
+      "Across every project on this portfolio, the same three-layer discipline holds: routes dispatch to services, services own data ops, components never touch the database. The reason isn't taste — it's that this is the discipline that lets one person maintain ten projects without breaking things.",
     keywords: [
       "service layer pattern",
       "Next.js architecture solo",
@@ -7661,8 +7661,8 @@ export const notes: readonly Note[] = [
     ],
     citations: [
       {
-        label: "jurgenhalili.dev portfolio",
-        url: "https://jurgenhalili.dev",
+        label: "Jurgen Halili portfolio",
+        url: "https://portfolio-seven-opal-35.vercel.app",
         relevance: "The 10 projects this retrospective is drawn from",
       },
     ],
@@ -7909,8 +7909,8 @@ export const notes: readonly Note[] = [
     ],
     citations: [
       {
-        label: "jurgenhalili.dev portfolio (worked example)",
-        url: "https://jurgenhalili.dev",
+        label: "Jurgen Halili portfolio (worked example)",
+        url: "https://portfolio-seven-opal-35.vercel.app",
         relevance: "10 production projects with full case studies",
       },
       {

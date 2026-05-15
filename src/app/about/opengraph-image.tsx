@@ -31,7 +31,7 @@ export default function Image() {
             display: "flex",
           }}
         >
-          jurgenhalili.dev / about
+          Jurgen Halili / about
         </div>
 
         <div
