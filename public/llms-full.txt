@@ -649,3 +649,217 @@ Dabei's hangout data layer is three small services instead of one 1500-line god-
 Why split: (1) reads and writes have different concerns (projection vs validation), mixing them risks every change affecting both; (2) business logic that crosses entities doesn't fit cleanly in CRUD or queries; (3) tests targeting one service are clean — reads testable with DB snapshots, writes with input fixtures + final state, actions with cross-entity integration. A single fat service forces tests to mock half of itself; tests become tautological.
 
 RLS reasoning becomes local — each service touches narrow set of tables, so policy change only requires auditing services that use that table. Lighter than CQRS (no separate data stores; both reads and writes hit same Supabase + same RLS policies). Trade: three files per entity instead of one; each small enough to hold in head, boundaries match how operations actually differ. Right pattern for projects past trivial size where single per-entity services start becoming unwieldy.
+
+### A Three.js Hyperspeed hero for a one-day brand build
+
+URL: https://jurgenhalili.dev/notes/threejs-hyperspeed-hero-one-day-build
+Date: 2026-05-14. 6 min read.
+
+Small brand sites drift into one of two failure modes: boring template or over-designed mess. Kërçishta Garage commits to one signature visual — a Three.js Hyperspeed hero — and keeps everything else restrained. Type stays restrained (1-2 fonts, generous whitespace); colors stay restrained (1 accent, 1-2 neutrals); animations elsewhere stay subtle. The hero earns attention; the rest of the page recedes.
+
+Implementation ~150 lines of React + Three.js. Performance: 60fps desktop, throttled 30fps mobile, canvas pauses when scrolled out of view (Intersection Observer). Bundle weight ~150KB gzipped for Three.js — real cost. For brand sites where first-paint speed matters less than user impression, acceptable tradeoff.
+
+Pattern generalizes across three brand sites — Kërçishta Garage (Three.js speed visual), Klodi Trainer (multi-step fitness quiz), jxsoft.al (deliberately boring, fast, no animation theater). Three signature decisions, one shared Vite + Vercel pipeline.
+
+### Hidden admin CRMs gated by a passphrase plus Bearer token
+
+URL: https://jurgenhalili.dev/notes/hidden-admin-crm-passphrase-bearer-token
+Date: 2026-05-14. 6 min read.
+
+Kërçishta Garage's hidden /admin CRM: not in nav, no public link, known URL + passphrase. Successful login returns JWT-shaped Bearer token stored in sessionStorage; admin API calls include in Authorization header. For single-operator small business with few records per day, right-sized security. Anything heavier is overhead without proportional safety gain.
+
+sessionStorage vs localStorage tradeoffs vs httpOnly cookies. sessionStorage clears on tab close; reduces XSS exfiltration window. httpOnly cookies are meaningfully safer for higher-value tokens. For small admin route with one user + tiny XSS surface, sessionStorage is appropriate.
+
+Trades: no password reset (rotate manually for single user); minimal audit logging (scale doesn't require compliance trail); basic rate limiting (threat model doesn't include sustained brute force). Upgrade triggers: more than one operator (need real accounts + recovery flows); sensitive data (threat model upgrades); regulatory requirements (structured auth with documented controls).
+
+### Quiz state in URL params — backend-touch deferred until final submit
+
+URL: https://jurgenhalili.dev/notes/url-params-as-form-state
+Date: 2026-05-14. 5 min read.
+
+Klodi Trainer's multi-step fitness quiz stores each answer in URL query parameters. Refresh preserves state. Sharing a URL shares state. Backend never touched until final submit. Three benefits: no incomplete submissions, no state-management library, no backend draft system.
+
+URLSearchParams handles read/write. React Router's useSearchParams hook keeps the React tree in sync with the URL. Navigation back/forward works naturally (browser back = earlier step's URL = fewer params = earlier step). Validation: client-side for UX (block forward navigation on invalid steps), server-side for security (re-validate on final submit because URL params can be tampered).
+
+Doesn't work for: long forms (URL length limits, 2000-8000 chars), sensitive data (URL params visible in history + server logs + referrers), non-string values (files, blobs). Right pattern for marketing quizzes, product configurators, pricing calculators where final action is single submit.
+
+### Route → service → data — the layer discipline that scales solo development
+
+URL: https://jurgenhalili.dev/notes/service-layer-discipline-route-service-data
+Date: 2026-05-14. 7 min read.
+
+Across every project on jurgenhalili.dev, same three-layer discipline holds. Routes are HTTP boundary — parse input (Zod), dispatch to service, return response. Services own business logic + data ops — every Supabase / Prisma / Mongoose call. Components are UI — never touch DB, never import ORM.
+
+Enforced structurally: TypeScript types make boundaries visible; ESLint no-restricted-imports blocks components from importing DB client at compile time. "We agreed components shouldn't touch the DB" is a convention. "Components physically cannot import the DB client" is structural enforcement. The first decays; the second doesn't.
+
+Payback: schema changes only touch service layer. ORM migrations only touch services. Six months away from a project, returning to fix a bug: route handler points at service, service points at data operation, blast radius is bounded. Without discipline, every file potentially touches every table — unmaintainable.
+
+Same pattern across Next.js, Express, React Native, NestJS — mechanics of route handlers differ; discipline doesn't. Routes dispatch, services own data ops, UI never touches data directly.
+
+### How many tests is enough — the 594-test budget on a solo project
+
+URL: https://jurgenhalili.dev/notes/test-budget-594-tests-pilates-discipline
+Date: 2026-05-14. 6 min read.
+
+Test count isn't a target — it's the count that comes from covering unhappy paths your users will hit. Pilates Studio: 594 across ~250 Vitest unit + ~200 supertest API integration + ~100 Playwright E2E + ~44 component tests. Skip the obvious-correct (getter returning a property). Cover the unhappy paths (cancellation while waitlist exists, payment failure during booking, audit-log failure during write, refund flow when card deleted, waitlist promotion under concurrent cancellations).
+
+Strict philosophy: permissive matchers banned (`expect(result).toBeDefined()` passes for any non-undefined value including wrong ones). Tautological assertions banned (testing what a mock was told to return tests nothing real). Every assertion specifies expected value. Difference between 594-test suite that catches regressions and 594-test suite that always passes regardless of bugs.
+
+Coverage percentage not a target. Coverage measures whether code executed; doesn't measure whether tests caught what they should. 70% coverage with rigorous assertions beats 95% with permissive matchers. Track regression-catch rate (does suite fail when you break things?) not coverage percentage.
+
+### Playwright "walker" tests — screenshotting every route on every device
+
+URL: https://jurgenhalili.dev/notes/playwright-walker-tests-screenshot-every-route
+Date: 2026-05-14. 6 min read.
+
+Playwright suites visit every route (from sitemap.xml + hand-maintained authenticated routes) across desktop + iPhone 12 + Pixel 5 viewports. Screenshot each. advance.al runs them on every release; they catch what per-feature E2E misses — responsive-layout regressions, broken links, missing translation strings, CSS regressions from new dependencies, asset-path failures that work in dev but not prod.
+
+Stability requires: waitForLoadState('networkidle') before screenshotting; disable animations via prefers-reduced-motion emulation; mask volatile content (timestamps, ads, user-specific data); pin deviceScaleFactor; run on consistent CI runner type. Authentication via Playwright storageState — sign in once, save cookies, reuse across walker test runs. Multi-role: three parallel walker suites per role with pre-stored auth.
+
+Run pre-deploy against staging — diff vs previous baseline above threshold halts deploy. Optionally post-deploy as smoke against production. Not on every PR (slow). Three hours of setup; ongoing maintenance minimal.
+
+### Postgres RLS vs middleware auth gates — when each one wins
+
+URL: https://jurgenhalili.dev/notes/postgres-rls-vs-middleware-auth-comparison
+Date: 2026-05-14. 7 min read.
+
+Three places authorization can live: database (Postgres RLS policies), API (middleware on every route), UI (client-side checks). Not interchangeable.
+
+RLS wins for per-user data ("user sees own bookings"), per-tenant data ("staff sees own gym's members"), subscription gates (CleanSlate's RLS-stops-INSERT pattern). Native per-row scoping, atomic with query (no race conditions), bypass-via-direct-API impossible. Hard for cross-cutting concerns.
+
+Middleware wins for rate limits ("10 req/min per user"), feature flags ("route X gated behind feature Y"), multi-step business logic ("requires completed onboarding + accepted ToS"), anything touching non-database state. Easy cross-cutting; needs discipline for per-row.
+
+UI checks belong in UX (hide Delete button when unauthorized) not security. Bypass-via-direct-API trivial; UI as only check is theater. Use all three as defense in depth — RLS at database, middleware at API, UI for UX. Any one failing doesn't compromise system.
+
+### better-sqlite3 vs Turso (libsql) — when each one wins in production
+
+URL: https://jurgenhalili.dev/notes/better-sqlite3-vs-turso-libsql-production
+Date: 2026-05-14. 6 min read.
+
+better-sqlite3: in-process synchronous SQLite, microsecond reads, file-backed, single-node. Right for dev, embedded apps (Electron, CLIs), single-box production. Turso (libsql): networked SQLite with edge-replicated read replicas, HTTP/WebSocket access, multi-region. Right for serverless production, geographically-distributed users.
+
+Both share Prisma adapter (driver-adapter pattern). Same schema, same migrations, same query code work against either. Pilates Studio: better-sqlite3 dev (no daemon, file in gitignore, new contributor running in <1min); Turso prod (Vercel functions are HTTP-based and stateless — Turso speaks HTTP, fits cleanly).
+
+Trades a SQLite-dialect surface (no jsonb operators, no listen/notify, no range types, no native geospatial). For relational data with simple bookings/members/payments shape, no constraint. For analytics-heavy or geospatial workloads, Postgres still right call.
+
+Where neither wins: high-write multi-region (SQLite is single-writer regardless of access model — use Postgres or distributed systems), very high cardinality (SQLite handles tens of GB fine; past that operational story gets harder).
+
+### Claude vs OpenAI vs Gemini for code-fix agents — which model does what best
+
+URL: https://jurgenhalili.dev/notes/claude-vs-openai-vs-gemini-for-code-agents
+Date: 2026-05-14. 7 min read.
+
+Per-stage routing beats picking one model. KeepItUp empirically across hundreds of code-fix tasks:
+
+Anthropic Claude Sonnet wins Generator stage — strongest on code reasoning + honest uncertainty calibration (when Claude says 70% confidence, empirical correctness is close to 70%; other models tend to be overconfident at the high end).
+
+OpenAI GPT-4-class wins Reviewer stage (different training corpora = different blind spots than Generator) + structured extraction (function calling, JSON-mode reliability).
+
+Google Gemini wins long-context reasoning (1M-token context window for clip selection from podcast transcripts in Reel Farmer) + cost per token (cheapest budget-overflow fallback at acceptable quality).
+
+Open-source models (Llama, Qwen, DeepSeek) closed a lot of the gap; still meaningfully behind Claude on Generator-axis tasks. Self-host break-even ~100M+ tokens/month. Rankings shift quarterly with model releases — maintain held-out eval set, re-rank when new model ships, swap if your stage's specific metric improves.
+
+### BullMQ vs Trigger.dev vs Inngest — comparing job queues for production
+
+URL: https://jurgenhalili.dev/notes/bullmq-vs-trigger-dev-vs-inngest-job-queues
+Date: 2026-05-14. 7 min read.
+
+BullMQ: self-hosted, Redis-backed, TypeScript-first, mature, lowest cost at scale, requires Redis + workers operational knowledge. Right for high-volume self-managed pipelines where Redis already in production (Social Command Center's six-stage content pipeline).
+
+Trigger.dev: managed, durable code-defined workflows (write a function that awaits an LLM call, sleeps an hour, sends email, waits for webhook, conditionally branches — Trigger.dev persists function state across all of it, resumes after worker crash). Best DX. Right for long-running multi-step business processes — onboarding flows spanning days, scheduled email sequences with conditional branching, AI pipelines with human-in-loop.
+
+Inngest: managed, event-driven, strong tracing. Events trigger functions; functions emit events; whole graph is event-shaped. Best observability. Right for event-heavy systems where seeing "what events happened, what functions ran, in what order" matters.
+
+When none needed: simple cron jobs (Vercel cron / GitHub Actions cron / setInterval), fire-and-forget async (Promise.resolve().then(work)). Job-queue complexity is overhead unless you actually need retries, durability, scheduled jobs, complex workflows, observability.
+
+### Supabase RLS vs Firestore Rules — comparing database-layer authorization
+
+URL: https://jurgenhalili.dev/notes/supabase-rls-vs-firestore-rules-comparison
+Date: 2026-05-14. 6 min read.
+
+Both push auth into database. Same goal, different mechanisms. Supabase RLS: SQL policy expressions in Postgres; native joins; full SQL power; integrates with Postgres ecosystem (psql, every ORM). Firestore Rules: JavaScript-like DSL; document-shaped queries; native real-time + offline-first mobile.
+
+Choosing is mostly the same decision as choosing between Postgres + Supabase and Firestore. Relational data + complex queries + aggregations → Supabase. Document-shaped data + offline-first mobile + native real-time on docs → Firestore. Rules-language ergonomics secondary; data-model fit dominates.
+
+Both harder to test than application-layer auth — Postgres has pg-tap for SQL-level policy tests; Firebase has Firestore emulator. Integration tests running as specific authenticated users is the right pattern in either ecosystem.
+
+### Express as a Vercel catch-all — one codebase, two runtime models
+
+URL: https://jurgenhalili.dev/notes/express-vercel-catch-all-one-codebase-two-runtimes
+Date: 2026-05-14. 6 min read.
+
+Pilates Studio's API ships as Vercel serverless catch-all at `api/[[...path]].ts`. Same Express app runs as long-lived server locally + serverless function in production. Middleware stack same, route definitions same, validation same. Connection lifetime differs (process-long pool dev vs per-invocation HTTP prod) — Prisma adapter swap handles it.
+
+Pattern shines: hot reload during dev (Express + nodemon = file save → server restarts → next request hits new code, faster than serverless local dev's cold-start-per-request); production scale (Vercel functions auto-scale to zero + thousands of concurrent invocations); cost (per-execution billing cheaper than long-running uptime for most SaaS).
+
+Trades: cold starts ~100ms (network dominates for most user-facing requests); no WebSockets / long-poll (Pilates is request/response, fine); stateful per-request data needs external store (Vercel KV for rate-limit counters, in-memory caches).
+
+For greenfield Next.js projects, route handlers are simpler. For existing Express codebases deploying on Vercel, catch-all is the migration path.
+
+### Single App.tsx — when scope discipline beats abstraction
+
+URL: https://jurgenhalili.dev/notes/single-app-tsx-when-scope-discipline-beats-abstraction
+Date: 2026-05-14. 5 min read.
+
+Kërçishta Garage's full-stack app — public site, contact form, admin CRM, MongoDB integration — fits in one App.tsx (~600 lines). Discipline isn't refusing to abstract; it's recognizing that splitting a one-and-a-half-day build would have been gold-plating.
+
+Single file wins: solo, short build, project lifetime days to weeks, manual testing fine, no cross-module reuse, file fits in head (~1000 lines). Split files win: 2+ developers, months/years lifetime, per-module unit tests required, reuse across modules, IDE performance past ~1000 lines.
+
+Match structure to scope, not to abstract ideals. "Best practice" is contextual — best for what kind of project, at what team size, over what time horizon. Defaulting to maximum structure on every project produces over-engineering.
+
+### GDPR-compliant soft delete with retention crons
+
+URL: https://jurgenhalili.dev/notes/gdpr-soft-delete-retention-crons
+Date: 2026-05-14. 6 min read.
+
+advance.al's deletion flow: API sets `users.deleted_at = NOW()`. User logged out, session invalidated, profile removed from search, job applications anonymized in employer views. Functionally gone within seconds. Daily Vercel cron hard-deletes any soft-deleted user older than 30 days — cascade deletes related tables, post-deletion verification confirms no orphaned references.
+
+GDPR Article 17 doesn't require immediate hard delete — it requires deletion within reasonable window (typically 30 days). Soft-delete-then-hard-delete pattern is compliant + keeps operational benefits (recoverable accidents, audit reconstruction during window, anti-abuse during window). Privacy policy must document the deletion timeline.
+
+Functional removal layers: middleware filters every read query (`SELECT ... WHERE id = ? AND deleted_at IS NULL` automatically); JWT revocation list in Redis/KV; embedding worker re-runs to remove from match indexes; notification queue cleanup. Architectural enforcement so bypassing requires explicit intent.
+
+### What 10 production projects taught me about solo shipping
+
+URL: https://jurgenhalili.dev/notes/solo-shipping-architecture-trade-offs-10-projects
+Date: 2026-05-14. 8 min read.
+
+Pays back day one: layer discipline (route → service → data with import enforcement), boundary types (Cents, E164, ISO timestamps), database-level authorization (RLS or equivalent), test budget on unhappy paths.
+
+Defer until earned: multi-environment infrastructure for small projects, custom admin UIs when JSON + CLI works, microservices at small team size, component libraries before multiple products need shared identity.
+
+Changed my mind: AI as first-class layer (not add-on) — multi-provider routing, cost telemetry, prompt versioning, eval discipline are infrastructure now. Database-level rules over middleware-level rules — the check should live where the data lives. Runtime config over build-time variants — GymApp's pattern is meaningfully cheaper at every scale. Idempotency as default — assume re-runs will happen.
+
+Keep getting wrong: estimating (30-50% optimistic by default), over-investing in V1 features (real users surface different priorities), documentation (always behind). 10 projects, low six figures lines of code, 25+ deployable surfaces, low thousands of tests, small handful of customer-facing incidents.
+
+### How freelance software developer rates work in Germany — Stundensatz reality check
+
+URL: https://jurgenhalili.dev/notes/freelance-developer-rate-card-germany
+Date: 2026-05-14. 6 min read.
+
+Practical 2026 ranges direct-to-client in Germany: junior (1-3 years) €50-80/hour, mid-level (3-5 years) €70-110, senior full-stack (5+ years, web + mobile + AI + deploy) €90-150, specialist niche (Microsoft BC, regulated industries) €120-200. Berlin/Munich/Hamburg/Frankfurt top of each band; Kiel/Bremen/Leipzig 10-20% lower for similar work (remote-friendly contracts largely flatten this).
+
+Raises rate: stack breadth, AI integration (+€20-40), production track record with public artifacts, regulated industry depth, Microsoft Business Central tier-3 (small pool, well-paid). Lowers rate: single-stack only, no public artifacts, long stable contracts (lower hourly for revenue stability), off-shore competition pressure.
+
+Werkvertrag (fixed-deliverable) pricing translates Stundensatz via velocity estimates + risk premium 10-50% based on scope clarity. For predictable cost: Werkvertrag with clear deliverables. For flexible scope: hourly. Don't expect both at same price.
+
+### What a freelance engineer's portfolio should actually show
+
+URL: https://jurgenhalili.dev/notes/freelance-engineer-portfolio-what-to-show
+Date: 2026-05-14. 6 min read.
+
+Most freelance portfolios are screenshot grids + three-line descriptions. Tells client nothing about whether engineer can ship. Evidence-based portfolio shows: live URLs (web apps + App Store/Play Store listings; explicit NDA framing where applicable), public repos where possible (most-recent-commit diff tells client more than portfolio paragraph), test counts + CI status ("594 tests across Vitest + Playwright" is verifiable; "I write tests" is not), architecture paragraph per project highlighting non-obvious decisions, explicit solo-vs-team contribution framing.
+
+Case studies answer: what problem (real problem, real audience); what did you build (specifics in terms hiring engineer recognizes); what was hard (real projects have friction; surfacing them is hiring signal); what would you do differently (retrospective awareness); where can it be verified.
+
+500-1500 words per project. Under 200 reads as marketing; over 3000 reads as essay. Skim-readable structure. NDA work: explicit framing + describe in shape/impact terms without violating. If everything is NDA, build one substantive public side project.
+
+### What good AI engineering looks like — beyond the demo
+
+URL: https://jurgenhalili.dev/notes/what-good-ai-engineering-looks-like
+Date: 2026-05-14. 7 min read.
+
+Production AI is everything around the model call. Demo fits in 20 lines; production fits in 2000. Adds: input validation (length checks, sanitization, content policy), output enforcement (schema-validated structured responses, retries on validation failure), cost telemetry (per call, per user, per feature, daily aggregations), multi-provider routing (fallback on outage, route by task strength), eval framework (held-out test set, regression measurement), failure-mode handling (rate limits, content policy, hallucinations, network errors), observability (structured traces, latency percentiles, error breakdown).
+
+Eval framework is non-negotiable. "It looked good when I tried it" isn't a measurement. Held-out set of inputs with known-good outputs labeled by someone with judgment lets you measure correctness as a number — re-run every change to prompt, model, surrounding logic. Without an eval set, prompt changes feel like vibes; with one, they're measurable.
+
+Hiring: AI engineer walking through cost telemetry + eval framework + multi-provider routing is at production grade. AI engineer showing a Streamlit demo with single OpenAI call is at demo grade. Both real categories of work; second isn't ready for production yet. Ask: how do you know your AI feature works? What's your eval? How do you handle model deprecation? Walk me through your last production AI bug.

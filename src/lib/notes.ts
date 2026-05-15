@@ -5700,6 +5700,2385 @@ export const notes: readonly Note[] = [
       },
     ],
   },
+
+  // -------------------------------------------------------------------------
+  // Cluster H — Websites cluster
+  // -------------------------------------------------------------------------
+  {
+    slug: "threejs-hyperspeed-hero-one-day-build",
+    title:
+      "A Three.js Hyperspeed hero for a one-day brand build — when scope and ambition meet",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 6,
+    description:
+      "Kërçishta Garage's landing page is a small-brand site that ships with a Three.js Hyperspeed hero — the kind of visual that makes a one-day build feel like a real product. The trick: pick one bold element and let everything else stay restrained.",
+    keywords: [
+      "Three.js Hyperspeed",
+      "Vite landing page",
+      "small brand site",
+      "Three.js hero",
+      "one-day brand build",
+      "small business website",
+    ],
+    relatedProject: "websites",
+    answerBox:
+      "Small brand sites usually drift into one of two failure modes: boring template or over-designed mess. Kërçishta Garage avoids both by committing to one signature visual — a Three.js Hyperspeed hero — and keeping everything else restrained. The build was one and a half days; the hero is the part that gives the site presence.",
+    lede:
+      "Solo brand sites have a budget. Maybe two days of design, three days of development, and a small amount of money to spend on visuals. Most sites in this budget end up looking like every other Webflow template. Kërçishta Garage's site goes a different way — one bold Three.js hero, everything else restrained, and the whole thing fits in one App.tsx.",
+    sections: [
+      {
+        heading: "What is the Hyperspeed hero?",
+        paragraphs: [
+          "A WebGL canvas rendering streaks of light receding into the distance — like driving down a road at night with the lights blurring past. It's a Three.js implementation of a familiar visual language (sci-fi tunnel, racetrack lights) adapted as a hero background.",
+          "Kërçishta Garage is an auto shop, so the visual reads as motion and speed without being heavy-handed about it. A motorcycle dealer or a delivery service could use the same visual; a yoga studio couldn't.",
+        ],
+      },
+      {
+        heading: "Why one bold element + restraint everywhere else?",
+        paragraphs: [
+          "A one-day build can't sustain ten interesting design decisions. Pick one — the hero — and let it do the work. Type stays restrained (one or two fonts, generous whitespace). Colors stay restrained (one accent, one or two neutrals). Animations elsewhere stay restrained (subtle hover states, no scroll-driven theatrics).",
+          "The hero earns the attention; the rest of the page recedes. A user lands on the page, gets the visual hook, then reads the content without competing animations vying for their eye.",
+          "Compare to a small brand site that tries to make every section animated: the user's brain fatigues by the third scroll, the hero doesn't stand out, and the site reads as design-by-checklist.",
+        ],
+        table: {
+          caption: "Decision matrix for small brand sites",
+          headers: ["Element", "Bold or restrained?", "Why"],
+          rows: [
+            ["Hero visual", "Bold (one big thing)", "Earns the attention"],
+            ["Type / fonts", "Restrained", "Lets the hero breathe"],
+            ["Color palette", "Restrained (1 accent + neutrals)", "Same"],
+            ["Section transitions", "Restrained", "Scroll fatigue is real"],
+            ["Micro-interactions", "Subtle (hover states only)", "No competition with the hero"],
+            ["Imagery", "1-2 strong photos + lots of negative space", "Photos earn their position"],
+          ],
+        },
+      },
+      {
+        heading: "What does the Three.js hero cost to ship?",
+        paragraphs: [
+          "Hyperspeed-style effects exist as open-source Three.js components. The implementation in Kërçishta is ~150 lines of React + Three.js, drawing from a community-known visual pattern. Total implementation time: half a day, mostly tuning colors and speed to match the brand.",
+          "Performance: ~60fps on desktop, throttled to ~30fps on mobile. The canvas pauses when scrolled out of view (Intersection Observer trick). Bundle weight: Three.js itself adds ~150KB gzipped, which is the real cost. For a brand site where first-paint speed matters less than user impression, that's an acceptable tradeoff.",
+        ],
+      },
+      {
+        heading: "What does the hidden admin look like?",
+        paragraphs: [
+          "Kërçishta has a hidden /admin CRM gated by a password and a Bearer token in `sessionStorage`. Not in nav, no public link, just a known URL plus a passphrase.",
+          "The whole full-stack app — public site, contact form, admin CRM, MongoDB integration — fits in one `App.tsx`. Deliberate scope discipline because splitting it would have been gold-plating for a one-and-a-half-day build.",
+          "The admin uses the same Vite app, just gated routes. The token in sessionStorage means a refresh keeps the operator logged in until they close the tab. Simple security model that's appropriate for the scale.",
+        ],
+      },
+      {
+        heading: "Why this scales to small brand work",
+        paragraphs: [
+          "The pattern — pick one signature visual, keep everything else restrained, fit the whole thing in one file when scope permits — generalizes across small brand sites. Klodi Trainer (personal trainer) has a different signature (the multi-step fitness quiz). jxsoft.al (the small software studio) has the opposite signature — deliberately boring, fast, no animation theater, because credibility for a studio site matters more than wow-factor.",
+          "Three brand sites, three signature decisions, one shared Vite + Vercel pipeline. The signatures diverge where the brand earns the divergence; the infrastructure stays uniform.",
+        ],
+      },
+      {
+        heading: "Where this pattern fails",
+        paragraphs: [
+          "Sites where the brand requires range. A media publisher's site needs multiple visual languages — different homepage hero per section, multiple article layouts. \"One bold thing\" doesn't fit. Those projects need a different design discipline (systematic, more components, more decisions).",
+          "For small brand sites — the kind where a single founder is the audience the site is talking to — one bold thing plus restraint everywhere else is the winning shape.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "A one-day build can't sustain ten interesting design decisions. Pick one and let it do the work.",
+      },
+      {
+        quote:
+          "Three brand sites, three signature decisions, one shared Vite + Vercel pipeline. Signatures diverge where the brand earns the divergence; the infrastructure stays uniform.",
+      },
+    ],
+    citations: [
+      {
+        label: "Three.js — official documentation",
+        url: "https://threejs.org/docs/",
+        relevance: "The 3D graphics library powering the Hyperspeed hero",
+      },
+      {
+        label: "Vite — build tool",
+        url: "https://vitejs.dev/",
+        relevance: "Bundles all three brand sites",
+      },
+      {
+        label: "Intersection Observer API (MDN)",
+        url: "https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API",
+        relevance: "Used to pause the hero canvas when scrolled out of view",
+      },
+    ],
+    faq: [
+      {
+        q: "Is Three.js worth the bundle size for a small brand site?",
+        a: "Yes, if the hero is the brand's signature visual. ~150KB of additional JS is acceptable when the site's purpose is making a strong first impression. For sites that compete on speed (commerce, news), the cost is harder to justify.",
+      },
+      {
+        q: "Can one developer ship a brand site in a day?",
+        a: "If the scope is constrained — one hero visual, restrained type and color, content that's already written. Two days is more typical for a polished result. Anything more ambitious is honest-priced at 3-5 days minimum.",
+      },
+      {
+        q: "What's the right architecture for a small brand site?",
+        a: "Vite + React for the build, Vercel for deploy, single-file App.tsx if the scope fits. Resist the urge to over-architect — components, route splits, state management can be added when the site grows; small sites don't need them.",
+      },
+      {
+        q: "How do you decide on one signature visual for a brand site?",
+        a: "Find the element of the brand that's visually distinctive — speed, fitness, calm, technology. Pick one visual idiom that maps to it. Let the rest of the design recede so that one element earns the attention.",
+      },
+    ],
+  },
+
+  {
+    slug: "hidden-admin-crm-passphrase-bearer-token",
+    title:
+      "Hidden admin CRMs gated by a passphrase plus Bearer token — when minimal auth is right-sized",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 6,
+    description:
+      "Kërçishta Garage's admin CRM has no public link, no login form in the nav, no signup. A known URL plus a passphrase plus a Bearer token in sessionStorage. For a single-operator small business, this is the appropriate security model — anything more is theater.",
+    keywords: [
+      "minimal admin auth",
+      "hidden admin route",
+      "passphrase Bearer token",
+      "small business CRM",
+      "sessionStorage Bearer",
+      "single-operator security",
+    ],
+    relatedProject: "websites",
+    answerBox:
+      "Kërçishta Garage's hidden /admin CRM uses minimal auth: not in nav, no public link, just a known URL plus a passphrase. Successful login returns a Bearer token stored in sessionStorage; API requests include it. For a single-operator small business with a few records per day, this is right-sized security. Anything heavier is overhead without proportional safety gain.",
+    lede:
+      "Most admin security designs target the wrong threat model. Small-business CRMs don't have nation-state attackers; they have garden-variety internet noise. A model that defends against the latter without over-engineering for the former is the right call for the right size of operation.",
+    sections: [
+      {
+        heading: "What does the auth flow look like?",
+        paragraphs: [
+          "Owner navigates to `/admin` (URL is known to them, not linked from the public site). The route shows a passphrase form. Owner enters the passphrase. The API verifies via constant-time comparison, returns a JWT-shaped Bearer token, and the client stores it in `sessionStorage`.",
+          "Subsequent admin API calls include the token in the `Authorization` header. The API verifies the token on every request. On token expiry (24 hours), the owner sees the passphrase form again.",
+        ],
+      },
+      {
+        heading: "Why this is right-sized",
+        paragraphs: [
+          "The operator is one person. The threat model is: random internet bot finds the route, tries common passwords, gives up; or a curious user discovers the URL from a leaked link, tries to bypass, fails on the passphrase. A multi-factor auth flow, social login, password reset emails — all of this is overhead for a system that has one user.",
+          "The passphrase is long and unguessable. The constant-time comparison prevents timing attacks. The Bearer token in sessionStorage (not localStorage) means it's gone when the tab closes — minor improvement over persistent storage. The auth surface is small enough to reason about in five minutes.",
+        ],
+        table: {
+          caption: "Auth complexity vs threat model",
+          headers: ["Threat model", "Right auth"],
+          rows: [
+            ["Single operator, small business", "Passphrase + Bearer token in sessionStorage"],
+            ["Small team, professional product", "Email + password + 2FA via authenticator app"],
+            ["Multi-user SaaS", "Magic-link OR password + 2FA + session rotation"],
+            ["Regulated industry", "SSO + hardware tokens + audit logging + compliance reviews"],
+            ["Government / critical infrastructure", "Specialist; out of scope for this list"],
+          ],
+        },
+      },
+      {
+        heading: "What sessionStorage actually buys you",
+        paragraphs: [
+          "Tokens in sessionStorage are isolated per tab and cleared when the tab closes. Compared to localStorage (persistent across tabs and sessions), sessionStorage reduces the window where an XSS attack could exfiltrate the token.",
+          "Compared to httpOnly cookies, sessionStorage is more vulnerable to XSS — if an attacker can inject script into your domain, they can read sessionStorage. For a small admin route with one user, the XSS surface is tiny (the admin doesn't ingest user-generated content); the simplicity of Bearer-token-in-storage is acceptable.",
+          "For larger systems or higher-value tokens, httpOnly Secure cookies with proper SameSite settings are the right call. For this scale, sessionStorage is fine.",
+        ],
+      },
+      {
+        heading: "What this trades away",
+        paragraphs: [
+          "Password reset. There isn't one. If the owner forgets the passphrase, I rotate it manually. For a one-user system this is acceptable; for any multi-user system it's not.",
+          "Audit logging. There's a minimal log of admin actions (who logged in, what they changed) but no compliance-grade audit trail. The scale doesn't require it.",
+          "Rate limiting on the passphrase endpoint. There is some — exponential backoff per IP — but no sophisticated brute-force protection. The threat model doesn't include sustained brute-force attempts on this specific URL.",
+        ],
+      },
+      {
+        heading: "When you should upgrade auth",
+        paragraphs: [
+          "More than one operator. The moment you have two users, you need real user accounts, real passwords (or magic links), real account recovery flows. The passphrase model doesn't scale.",
+          "Storing significantly sensitive data. Customer payment info, medical records, financial records — the threat model upgrades and auth must follow. Even the passphrase + Bearer pattern is no longer enough.",
+          "Regulatory requirements. Anything subject to GDPR audit, HIPAA, PCI-DSS, or industry-specific regulation needs structured auth with documented controls. Right-sized auth at this end of the spectrum looks very different.",
+        ],
+      },
+      {
+        heading: "The general rule",
+        paragraphs: [
+          "Match auth complexity to threat model. Single-operator small business: minimal. Small team: standard. Multi-tenant SaaS: rigorous. Regulated industry: specialist.",
+          "Over-engineering security for a single-operator small business produces real costs — operator friction, slower delivery, more maintenance — without proportional safety gain. The right call is the one that matches the actual threat, not the theoretical worst case.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "Small-business CRMs don't have nation-state attackers; they have garden-variety internet noise.",
+      },
+      {
+        quote:
+          "Over-engineering security for a single-operator small business produces real costs without proportional safety gain.",
+      },
+    ],
+    citations: [
+      {
+        label: "MDN — Window.sessionStorage",
+        url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage",
+        relevance: "Storage primitive used for the Bearer token",
+      },
+      {
+        label: "OWASP — Authentication Cheat Sheet",
+        url: "https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html",
+        relevance: "Reference for matching auth complexity to threat model",
+      },
+      {
+        label: "Constant-time comparison (Node.js crypto.timingSafeEqual)",
+        url: "https://nodejs.org/api/crypto.html#cryptotimingsafeequalbuffer1-buffer2",
+        relevance: "Prevents timing attacks on passphrase verification",
+      },
+    ],
+    faq: [
+      {
+        q: "Is sessionStorage secure enough for auth tokens?",
+        a: "For small-scale, low-sensitivity admin systems with limited XSS surface, yes. For multi-user products or sensitive data, httpOnly Secure cookies are the right call. Match the auth model to the threat model.",
+      },
+      {
+        q: "Can a hidden URL serve as security?",
+        a: "Not on its own — security through obscurity isn't security. Combined with a strong passphrase, rate limiting, and constant-time comparison, the hidden URL reduces noise (bots don't probe it as often) but the actual security comes from the auth layer underneath.",
+      },
+      {
+        q: "When should I add a password reset flow to a small admin system?",
+        a: "When you have more than one user. A single-operator system can recover by rotating the passphrase manually. Any multi-user system needs self-service recovery, which means email-based reset or equivalent. The threshold is the second user.",
+      },
+      {
+        q: "What's wrong with localStorage for auth tokens?",
+        a: "Persistent across tabs and sessions, more exposure to XSS exfiltration. SessionStorage is marginally safer (cleared on tab close). httpOnly cookies are meaningfully safer (inaccessible to JavaScript). Each tier has trade-offs; pick based on threat model.",
+      },
+    ],
+  },
+
+  {
+    slug: "url-params-as-form-state",
+    title:
+      "Quiz state in URL params — backend-touch deferred until final submit",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 5,
+    description:
+      "Klodi Trainer's fitness quiz keeps every step's answer in URL query parameters until the final submit. Partial answers survive a refresh. The backend never sees an incomplete submission. The whole flow is share-able and resumable from any step.",
+    keywords: [
+      "URL state form",
+      "URL params React",
+      "stateful URL",
+      "quiz state management",
+      "shareable form state",
+      "no-backend quiz",
+    ],
+    relatedProject: "websites",
+    answerBox:
+      "Klodi Trainer's multi-step fitness quiz stores each answer in URL query parameters. Refresh preserves state. Sharing a URL shares state. Backend never touches the quiz until final submit. Three benefits: no incomplete submissions, no state-management library, no backend for a draft. Right pattern for forms where the final submit is the only durable step.",
+    lede:
+      "Most multi-step forms persist draft state to a backend so users can resume later. For a fitness quiz that takes 90 seconds, this is over-engineering. URL parameters give you persistence, shareability, and resumability with zero backend. The whole quiz is one client-side React app that only talks to the server on final submit.",
+    sections: [
+      {
+        heading: "What does URL state look like?",
+        paragraphs: [
+          "Each step's answer is a query parameter. Step 1 (\"What's your fitness goal?\") writes `?goal=strength`. Step 2 (\"How often can you train?\") appends `&frequency=3x_week`. Step 3 (\"Any injuries?\") appends `&injuries=knee_pain`. By the final step, the URL contains every answer.",
+          "Refresh the page: the React app reads the params, repopulates the form, and the user is back where they were. Share the URL: the recipient sees the same prefilled answers. Bookmark a partial quiz: same effect.",
+        ],
+      },
+      {
+        heading: "Why URL params over component state?",
+        paragraphs: [
+          "Component state vanishes on refresh. Local state plus localStorage handles the refresh case but doesn't survive sharing. URL params solve both with no extra infrastructure.",
+          "Navigation back / forward also works naturally. Browser back goes to the previous step's URL, which has fewer params, which the React app reads as \"the user is on the earlier step.\" No custom navigation logic.",
+        ],
+        table: {
+          caption: "State persistence options for multi-step forms",
+          headers: ["Approach", "Survives refresh?", "Shareable?", "Backend required?"],
+          rows: [
+            ["Component state only", "No", "No", "No"],
+            ["localStorage", "Yes", "No", "No"],
+            ["URL params", "Yes", "Yes", "No"],
+            ["Backend-persisted draft", "Yes", "Yes (if you build sharing)", "Yes"],
+          ],
+        },
+      },
+      {
+        heading: "What about privacy concerns?",
+        paragraphs: [
+          "URL params are visible in browser history, server logs, and analytics. For a fitness quiz with non-sensitive answers (training goal, frequency, age range), this is fine. For sensitive data (medical conditions, financial details), URL params are the wrong choice — those need backend-persisted drafts with proper auth.",
+          "Klodi Trainer's quiz collects general fitness preferences, not medical specifics. The privacy posture matches the answer sensitivity.",
+        ],
+      },
+      {
+        heading: "What about validation?",
+        paragraphs: [
+          "Validation happens at the boundary. The React app validates each step before allowing navigation forward (\"please pick a goal before continuing\"). Final submit re-validates everything server-side before persisting.",
+          "URL params can be tampered with (a user could manually edit `?goal=invalid_option`). Server-side validation catches this; the client-side validation is for UX, not security.",
+        ],
+      },
+      {
+        heading: "When this pattern doesn't work",
+        paragraphs: [
+          "Long forms with many fields. URL length has practical limits (most browsers handle 2000-8000 character URLs reliably; servers may cap lower). A 50-field form would generate URLs that exceed those limits.",
+          "Forms with sensitive data. As above — health info, financial details, anything regulated belongs in backend-persisted drafts with proper access control.",
+          "Forms with non-string values. Files, blobs, anything binary doesn't fit in URL params. Either upload-on-step (which requires backend) or upload-on-final-submit (which can fit URL-param patterns if the form's metadata is small).",
+        ],
+      },
+      {
+        heading: "Where this generalizes",
+        paragraphs: [
+          "Marketing quizzes. Product configurators. Pricing calculators. Any flow where the user is making selections and the final action is a single submit. URL params give you persistence and shareability for free.",
+          "The pattern is: client-side state lives in the URL; backend gets called once at the end. Most marketing-flow forms don't need anything more than this, and adding a backend-persisted draft layer is a maintenance burden that doesn't earn its keep.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "Component state vanishes on refresh. Local state plus localStorage handles refresh but doesn't survive sharing. URL params solve both with no extra infrastructure.",
+      },
+      {
+        quote:
+          "The pattern is: client-side state lives in the URL; backend gets called once at the end.",
+      },
+    ],
+    citations: [
+      {
+        label: "URLSearchParams — MDN",
+        url: "https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams",
+        relevance: "Standard API for reading/writing URL query parameters",
+      },
+      {
+        label: "React Router — useSearchParams",
+        url: "https://reactrouter.com/en/main/hooks/use-search-params",
+        relevance: "Hook for managing URL state in React",
+      },
+    ],
+    faq: [
+      {
+        q: "Can I use URL params for multi-step form state?",
+        a: "Yes, for forms with short, non-sensitive state. URL params survive refresh, support sharing, and don't require a backend draft system. For long forms or sensitive data, backend-persisted drafts are more appropriate.",
+      },
+      {
+        q: "What's the max URL length?",
+        a: "Practically, 2000-8000 characters depending on browser and server. RFC 7230 doesn't set a strict limit, but most production setups cap below 8KB. Forms with state above 1000 characters should consider backend-persisted alternatives.",
+      },
+      {
+        q: "Is putting form state in the URL a security risk?",
+        a: "Only if the state contains sensitive data — URL params are visible in browser history, server logs, and referer headers. For non-sensitive marketing or fitness quizzes, the trade-off is acceptable. For health, financial, or PII data, use backend storage with proper auth.",
+      },
+      {
+        q: "How do you validate URL-param state?",
+        a: "Client-side for UX (block navigation forward on invalid steps). Server-side for security (re-validate everything on final submit). URL params can be tampered with; never trust them as the source of truth for important values.",
+      },
+    ],
+  },
+
+  // -------------------------------------------------------------------------
+  // Cluster F — Solo-dev cross-cutting
+  // -------------------------------------------------------------------------
+  {
+    slug: "service-layer-discipline-route-service-data",
+    title:
+      "Route → service → data — the layer discipline that scales solo development",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 7,
+    description:
+      "Across every project on jurgenhalili.dev, the same three-layer discipline holds: routes dispatch to services, services own data ops, components never touch the database. The reason isn't taste — it's that this is the discipline that lets one person maintain ten projects without breaking things.",
+    keywords: [
+      "service layer pattern",
+      "Next.js architecture solo",
+      "route handler discipline",
+      "data layer separation",
+      "solo developer architecture",
+      "scalable codebase pattern",
+    ],
+    answerBox:
+      "Route handlers dispatch to services in two lines. Services own all data operations. Components never touch the database directly. The discipline is enforced by TypeScript types and ESLint import restrictions, not by code review. This is the architectural pattern that lets one developer maintain 10 production projects in parallel without breaking things.",
+    lede:
+      "Solo development at the 10-project scale is only possible with strong, enforced architectural rules. Without them, every codebase becomes its own surprise after six months away. The route-service-data discipline is the rule that I've found pays back across every shape of project — Next.js, React Native, Express, you name it.",
+    sections: [
+      {
+        heading: "What does the discipline mean in practice?",
+        paragraphs: [
+          "Routes are the HTTP boundary. They parse input (Zod validation), dispatch to a service function, return the result. They never call the database, never embed business logic, never import the ORM.",
+          "Services are the business-logic layer. They own data operations — every Supabase call, every Prisma query, every Mongoose findOne. They take typed inputs, return typed outputs, and contain all the multi-step orchestration.",
+          "Components are the UI. They never touch the database, never import the ORM, never know what tables exist. They consume from services (in server components or via API routes), render the result, and dispatch user actions through services.",
+        ],
+      },
+      {
+        heading: "How is the discipline enforced?",
+        paragraphs: [
+          "TypeScript types make the boundaries visible. The service module exports typed functions; consumers can only call those. The database client is exported only from a single internal module that services import.",
+          "ESLint's `no-restricted-imports` rule blocks components from importing the database client. Attempting to do so is a compile error. The rule is enforced at every commit; CI fails if a violation slips through.",
+          "Architectural enforcement beats convention. \"We agreed components shouldn't touch the DB\" is a convention. \"Components physically cannot import the DB client\" is structural enforcement. The first decays over time; the second doesn't.",
+        ],
+        table: {
+          caption: "What each layer can import",
+          headers: ["Layer", "Can import from", "Cannot import from"],
+          rows: [
+            ["Routes", "Services, validation, types", "ORM / DB client, components"],
+            ["Services", "ORM / DB client, types, other services", "Components, routes"],
+            ["Components", "Services, types, hooks, UI libraries", "ORM / DB client, raw SQL"],
+            ["Hooks", "Services, React APIs", "ORM / DB client"],
+          ],
+        },
+      },
+      {
+        heading: "Why this is the discipline that scales",
+        paragraphs: [
+          "Schema change. When the database schema changes — a column rename, a new table, a relation rewrite — only the service layer needs to update. Components and routes are insulated. The blast radius of a schema change is bounded.",
+          "Data layer migration. Moving from one ORM to another (Prisma to Drizzle, Mongoose to Prisma, etc.) is a service-layer change. Without the discipline, every component that called the ORM directly needs to be updated.",
+          "Multiple projects. Six months away from a project, returning to fix a bug: with the discipline, I know exactly where to look. The route handler for the broken endpoint points me at the service function. The service function points me at the data operation. The component (if relevant) renders the result. Without the discipline, I'd be reading every file to figure out what touches what.",
+        ],
+      },
+      {
+        heading: "Where the discipline gets tested",
+        paragraphs: [
+          "When a feature needs to do something that doesn't fit cleanly. \"This component needs to subscribe to real-time updates from Supabase\" — does the component import the Supabase client directly? No. Add a hook in the service-adjacent layer that wraps the subscription; the component uses the hook.",
+          "\"This route needs to make 50 database calls\" — does the route inline the loop? No. The service function takes the inputs, runs the loop, returns the result. The route stays two lines.",
+          "Every time the discipline gets tested, the answer is to add a small piece to the right layer rather than to skip the layer. The discipline holds because every escape hatch is intentionally closed.",
+        ],
+      },
+      {
+        heading: "What this trades away",
+        paragraphs: [
+          "Some velocity in the very early days of a project. Before the schema is stable, writing through the service layer means you write more boilerplate. The payoff comes later when the schema stabilizes and the layers start protecting changes.",
+          "For a one-week prototype with no continuation, the discipline is overhead. For anything intended to last six months or more, the discipline pays back. I default to applying it on day one; for prototypes I'll relax, but I know I'm taking on tech debt that future-me has to repay.",
+        ],
+      },
+      {
+        heading: "Where this generalizes",
+        paragraphs: [
+          "Every JavaScript / TypeScript framework I work in: Next.js, Express, React Native, NestJS. The mechanics of route handlers differ; the discipline doesn't. Routes dispatch to services. Services own data ops. UI never touches data directly. The pattern works because it's about boundary discipline, not about specific frameworks.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "\"We agreed components shouldn't touch the DB\" is a convention. \"Components physically cannot import the DB client\" is structural enforcement.",
+      },
+      {
+        quote:
+          "Every time the discipline gets tested, the answer is to add a small piece to the right layer rather than to skip the layer.",
+      },
+    ],
+    citations: [
+      {
+        label: "ESLint no-restricted-imports",
+        url: "https://eslint.org/docs/latest/rules/no-restricted-imports",
+        relevance: "Tooling that enforces layer boundaries at lint time",
+      },
+      {
+        label: "Hexagonal Architecture (Wikipedia)",
+        url: "https://en.wikipedia.org/wiki/Hexagonal_architecture_(software)",
+        relevance: "Theoretical ancestor of the route-service-data pattern",
+      },
+      {
+        label: "Zod schema validation",
+        url: "https://zod.dev/",
+        relevance: "Used at the route boundary for input validation",
+      },
+    ],
+    faq: [
+      {
+        q: "How do you keep components from accessing the database directly?",
+        a: "ESLint no-restricted-imports rule plus TypeScript module structure. The DB client is exported only from an internal module that services import; components can't import it because the lint config blocks the path. Architectural enforcement beats discipline.",
+      },
+      {
+        q: "Isn't the service layer just extra boilerplate?",
+        a: "Yes, marginally. The boilerplate pays back as the project grows. For prototypes that won't continue, it's overhead. For anything lasting six months or more, the layer prevents the codebase from becoming unmaintainable.",
+      },
+      {
+        q: "Where does business logic live in the service layer?",
+        a: "Inside service functions, alongside the data operations. Multi-step orchestration, transactions, conditional logic, validation rules that span entities — all live in services. Routes are dispatch only; components are render only.",
+      },
+      {
+        q: "How do you handle real-time subscriptions with this discipline?",
+        a: "A hook in the service-adjacent layer wraps the subscription. The component uses the hook; it doesn't import the Supabase client. The hook can do the subscription setup, cleanup, and reactive state; components stay layer-clean.",
+      },
+    ],
+  },
+
+  {
+    slug: "test-budget-594-tests-pilates-discipline",
+    title:
+      "How many tests is enough — the 594-test budget on a solo project",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 6,
+    description:
+      "Pilates Studio has 594 tests across Vitest, supertest, and Playwright. That number isn't a target; it's the count that came out of covering the booking flow, payment flow, audit middleware, and bilingual UI strings honestly. Here's how to think about test budget on a solo project.",
+    keywords: [
+      "solo project test budget",
+      "how many tests",
+      "Vitest Playwright coverage",
+      "test discipline solo dev",
+      "production SaaS testing",
+      "test ROI",
+    ],
+    relatedProject: "pilates-studio",
+    answerBox:
+      "Test budget isn't a target — it's the count that comes from covering the unhappy paths your users will hit. Pilates Studio ends at 594 across unit (Vitest), API integration (supertest), and E2E (Playwright). Skip the obvious-correct (a getter that returns a property). Cover the unhappy paths (cancellation flows, waitlist promotion, audit failure-mode, payment refunds). Test discipline is what makes a six-figure-revenue SaaS maintainable by one person.",
+    lede:
+      "\"How many tests should I write?\" is the wrong question. The right question is which paths break in production if you don't test them. Pilates Studio's 594 tests are the natural consequence of asking that question across the whole product — booking, payment, audit, waitlist, refunds, multi-language UI. The number isn't a goal; the coverage is.",
+    sections: [
+      {
+        heading: "What gets tested vs what doesn't",
+        paragraphs: [
+          "Tested: unhappy paths. Cancellation while a waitlist exists. Payment failure during booking. Audit-log failure during a write. Refund flow when payment was on a deleted card. Waitlist promotion when two cancellations happen simultaneously. Recurring-job generation when the previous week's job already exists.",
+          "Not tested: trivial getters. Functions that return a single property without transformation. UI rendering of static text. Things that compile or they don't.",
+          "The instinct \"test everything\" produces a test suite that's mostly assertions about what TypeScript already enforces. The instinct \"test the unhappy paths\" produces a test suite that actually catches regressions.",
+        ],
+      },
+      {
+        heading: "How the 594 break down",
+        paragraphs: [
+          "Roughly: 250 Vitest unit tests on services and utility functions. 200 supertest API integration tests covering route handlers + service paths together. 100 Playwright E2E tests across admin web + mobile app. 44 component tests for non-trivial UI logic.",
+          "The split is intentional. Unit tests are fastest, cover the most paths, find the most bugs per dollar of test-writing time. Integration tests catch contract issues between layers. E2E tests catch user-flow regressions that integration tests miss because they're not running the full stack.",
+        ],
+        table: {
+          caption: "Test count by layer (Pilates Studio)",
+          headers: ["Layer", "Count", "What it catches"],
+          rows: [
+            ["Vitest unit", "~250", "Service-function logic, validation, transformation"],
+            ["supertest API integration", "~200", "Route + service contract, RLS, status codes"],
+            ["Playwright E2E", "~100", "User flows, multi-step interactions, browser-specific bugs"],
+            ["Component tests", "~44", "Non-trivial UI logic (form state machines, complex rendering)"],
+          ],
+        },
+      },
+      {
+        heading: "Why the strict philosophy matters",
+        paragraphs: [
+          "Permissive matchers — `expect(result).toBeDefined()`, `expect(result).not.toBeNull()` — pass when nothing meaningful was tested. Banned in this codebase. Every assertion specifies the expected value.",
+          "Tautological assertions — testing that a mock returned what you told it to return — pass without testing anything real. Also banned. If the test depends on a mock for its assertion, the test isn't testing the thing the mock represents.",
+          "These philosophies sound pedantic. In practice they're the difference between a 594-test suite that catches regressions and a 594-test suite that always passes regardless of bugs. The discipline is non-negotiable.",
+        ],
+      },
+      {
+        heading: "What about coverage percentages?",
+        paragraphs: [
+          "I don't track coverage percentages as a target. Coverage tells you how much of your code was executed by tests; it doesn't tell you whether the tests caught what they should. A codebase with 95% coverage and permissive matchers has worse safety than one with 70% coverage and rigorous assertions.",
+          "What I do track: do tests reliably catch regressions when I deliberately break a feature? If a refactor introduces a bug, do the tests fail? The answer matters more than the percentage.",
+        ],
+      },
+      {
+        heading: "When test discipline pays back",
+        paragraphs: [
+          "Refactors. Schema changes. Library upgrades. Each of these is a moment when you want the test suite to be honest. With strict tests, breaking change → red CI → fix → green CI. Without, breaking change → green CI → bug ships → users complain → you find out.",
+          "The 594 tests pay back every time I refactor without fear. That's the actual product of the test discipline.",
+        ],
+      },
+      {
+        heading: "When tests aren't worth the cost",
+        paragraphs: [
+          "Prototype code that won't ship. Throwaway scripts. One-off migrations. Anything where the code's lifetime is short enough that the test won't pay back.",
+          "Some UI rendering. Pixel-perfect snapshots are flaky and noisy; you spend more time updating snapshots than catching bugs. For purely-presentational UI, manual review during development catches more than snapshot tests do.",
+          "The discipline is: write tests that pay back. The 594 in Pilates Studio is the natural count when you write tests that actually pay back across a real production SaaS.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "\"How many tests should I write?\" is the wrong question. The right question is which paths break in production if you don't test them.",
+      },
+      {
+        quote:
+          "A codebase with 95% coverage and permissive matchers has worse safety than one with 70% coverage and rigorous assertions.",
+      },
+    ],
+    citations: [
+      {
+        label: "Vitest — Vite-native unit testing",
+        url: "https://vitest.dev/",
+        relevance: "Test runner for unit tests in Pilates Studio",
+      },
+      {
+        label: "supertest — HTTP testing for Node.js",
+        url: "https://github.com/ladjs/supertest",
+        relevance: "API integration test framework",
+      },
+      {
+        label: "Playwright — End-to-end testing",
+        url: "https://playwright.dev/",
+        relevance: "E2E test framework for admin web + mobile",
+      },
+    ],
+    faq: [
+      {
+        q: "What's the right test budget for a solo project?",
+        a: "Cover the unhappy paths users will hit; skip the obvious-correct. The exact count comes out of doing that honestly. For Pilates Studio it lands at 594; for smaller projects it'd be much less. Aim for coverage that pays back, not a fixed number.",
+      },
+      {
+        q: "Should I aim for 100% test coverage?",
+        a: "No. Coverage measures whether your code was executed by tests, not whether tests catch what they should. 70% coverage with rigorous assertions beats 95% with permissive matchers. Track regression-catch rate (does the suite fail when you break things?), not coverage percentage.",
+      },
+      {
+        q: "What's a permissive matcher?",
+        a: "An assertion that passes for many incorrect values. `expect(result).toBeDefined()` passes for any non-undefined value, including wrong ones. Use specific assertions: `expect(result).toEqual(expected)`. Permissive matchers should be banned from production codebases.",
+      },
+      {
+        q: "What's a tautological assertion?",
+        a: "A test that asserts what a mock was told to return. If the mock returns 42 and the test asserts the result equals 42, you've tested nothing real — only that the mock works. Tests should assert on real behavior, not on the mock's configuration.",
+      },
+    ],
+  },
+
+  {
+    slug: "playwright-walker-tests-screenshot-every-route",
+    title:
+      "Playwright \"walker\" tests — screenshotting every route on every device",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 6,
+    description:
+      "advance.al's walker tests visit every public, jobseeker, employer, and admin route across desktop, iPhone 12, and Pixel 5 viewports. Every release ships with a fresh set of screenshots that catch the responsive-layout bugs you'd otherwise discover in production.",
+    keywords: [
+      "Playwright walker tests",
+      "responsive layout testing",
+      "screenshot tests Playwright",
+      "every-route smoke test",
+      "multi-viewport testing",
+      "regression screenshots",
+    ],
+    relatedProject: "advance-al",
+    answerBox:
+      "Walker tests are Playwright suites that visit every route on the site across multiple viewports (desktop, iPhone 12, Pixel 5) and screenshot each one. advance.al runs them on every release. They don't replace per-feature E2E tests — they catch the layout regressions that per-feature tests miss because they aren't visiting every responsive breakpoint of every page.",
+    lede:
+      "Per-feature E2E tests cover \"can a user complete the booking flow on mobile.\" They don't cover \"does the marketing page look right on a Pixel 5 today.\" Walker tests fill that gap by literally walking every route and screenshotting it across every viewport you care about. They're the cheapest smoke test for layout regressions.",
+    sections: [
+      {
+        heading: "What does a walker test look like?",
+        paragraphs: [
+          "A Playwright test that loads a list of URLs (from sitemap.xml or a hand-maintained list), navigates to each, waits for the page to settle, and takes a screenshot. Loops through three or more viewport sizes (desktop, tablet, phone) per route.",
+          "The list of URLs is typically generated. advance.al pulls it from the sitemap (every public + signup + login route) plus a hand-maintained list of authenticated routes (jobseeker dashboard, employer dashboard, admin pages). Each release runs the walker against the full list.",
+        ],
+      },
+      {
+        heading: "What walker tests catch",
+        paragraphs: [
+          "Responsive-layout regressions. A new CSS rule that breaks the mobile nav. A grid that overflows on iPhone-size screens. A font-size change that makes desktop headlines wrap awkwardly. These bugs are obvious in a screenshot and invisible in a feature-specific test.",
+          "Broken links. If a page 404s during the walker, the test fails — you discover it before users do. Includes pages that worked yesterday and were broken by an unrelated change.",
+          "Content regressions. Translation strings that didn't get included in the build. Placeholder text that made it to production. Asset paths that resolve in dev but not in prod. All visible in screenshots.",
+        ],
+        table: {
+          caption: "What walker tests vs feature tests catch",
+          headers: ["Failure mode", "Feature E2E", "Walker test"],
+          rows: [
+            ["Booking flow broken on mobile", "Yes (if mobile test exists)", "Yes (if route in list)"],
+            ["Footer text overflow on tablet", "Rarely tested", "Visible in screenshot"],
+            ["404 on legacy URL", "Not tested unless explicit", "Caught (404 status)"],
+            ["Translation missing from new page", "Not tested unless explicit", "Visible in screenshot"],
+            ["CSS regression from new dependency", "Rarely tested", "Visible across all routes"],
+            ["Authenticated dashboard layout shift", "Yes (if feature-tested)", "Yes (if logged-in walker exists)"],
+          ],
+        },
+      },
+      {
+        heading: "How do you avoid screenshot flakiness?",
+        paragraphs: [
+          "Wait for stable. Playwright's `waitForLoadState('networkidle')` waits for no in-flight requests for 500ms before screenshotting. Also disable animations during walker runs (`prefers-reduced-motion: reduce` via emulation), so screenshots aren't sensitive to animation timing.",
+          "Mask volatile content. Timestamps, ad placements, user-specific data — anything that changes between runs gets `mask: locator` so the screenshot ignores those regions. Otherwise every test fails because the \"2 minutes ago\" became \"3 minutes ago.\"",
+          "Pin the viewport pixel-density. `deviceScaleFactor: 1` (or whatever fits) ensures the screenshots aren't subtly different across machines. Walker runs on the same CI runner type for consistency.",
+        ],
+      },
+      {
+        heading: "When does the walker run?",
+        paragraphs: [
+          "On every release pipeline. Pre-deploy: the walker runs against the staging deployment. If any route produces a screenshot diff above threshold from the previous baseline, the deploy halts and the diff is surfaced for review.",
+          "Post-deploy: the walker runs against production as a smoke test. If a route 404s post-deploy that didn't 404 in staging, the alert fires immediately.",
+          "Not on every commit. Walker tests are slow (visiting every route × every viewport × loading + waiting) — running them on every PR would bottleneck CI. Pre-deploy is the right cadence.",
+        ],
+      },
+      {
+        heading: "What about authentication?",
+        paragraphs: [
+          "The walker handles authenticated routes by signing in once at the start of the run and reusing the auth state. Playwright's `storageState` lets you serialize the post-login cookies and reload them in subsequent tests.",
+          "For multi-role testing (jobseeker, employer, admin), the walker runs three parallel walker suites — one per role — each with its own pre-stored auth state. The three role walkers cover all the role-specific dashboards in one test run.",
+        ],
+      },
+      {
+        heading: "Where this pattern generalizes",
+        paragraphs: [
+          "Any site or app with more than a dozen routes. Marketing sites with content pages. SaaS products with many dashboard views. E-commerce sites with category and product pages.",
+          "The pattern is cheap once Playwright is set up. The list of URLs is generated; the screenshot logic is the same per route; baseline images update on intentional UI changes. Three hours of setup; ongoing maintenance is minimal.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "Per-feature E2E tests cover \"can a user complete the booking flow on mobile.\" They don't cover \"does the marketing page look right on a Pixel 5 today.\"",
+      },
+      {
+        quote:
+          "Walker tests are slow. Pre-deploy is the right cadence; running them on every PR would bottleneck CI.",
+      },
+    ],
+    citations: [
+      {
+        label: "Playwright — official documentation",
+        url: "https://playwright.dev/docs/intro",
+        relevance: "Test framework the walker is built on",
+      },
+      {
+        label: "Playwright visual comparisons",
+        url: "https://playwright.dev/docs/test-snapshots",
+        relevance: "How screenshot baselines are compared across runs",
+      },
+      {
+        label: "Playwright storageState",
+        url: "https://playwright.dev/docs/auth#reuse-signed-in-state",
+        relevance: "Reusing auth across walker test runs",
+      },
+    ],
+    faq: [
+      {
+        q: "What is a Playwright walker test?",
+        a: "A test that visits every route on your site (or a defined subset) across multiple viewports and captures screenshots or asserts the page loads. Designed to catch broad layout regressions that per-feature tests miss because they don't visit every page.",
+      },
+      {
+        q: "How do you handle authentication in walker tests?",
+        a: "Sign in once at the start, save the auth state via Playwright's storageState, reuse it across subsequent test runs. For multi-role coverage, run separate walker suites per role with their own pre-stored auth.",
+      },
+      {
+        q: "How do you keep screenshot tests stable?",
+        a: "Wait for networkidle before screenshotting, disable animations via prefers-reduced-motion emulation, mask volatile content like timestamps and ads, pin the deviceScaleFactor. Run on the same CI machine type for consistency.",
+      },
+      {
+        q: "Should walker tests run on every PR?",
+        a: "No — too slow. Pre-deploy is the right cadence. Run them against staging before deploy; if any route fails or the screenshot diff exceeds threshold, halt the deploy. Optionally also run as a post-deploy smoke against production.",
+      },
+    ],
+  },
+
+  // -------------------------------------------------------------------------
+  // Cluster — Comparison posts (Perplexity table-magnets)
+  // -------------------------------------------------------------------------
+  {
+    slug: "postgres-rls-vs-middleware-auth-comparison",
+    title:
+      "Postgres RLS vs middleware auth gates — when each one wins",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 7,
+    description:
+      "Authorization in a typed web app can live at the database (Row Level Security policies), at the API (middleware on every route), or at the UI (client-side checks). Each has different failure modes and different costs. Here's the comparison and when to pick which.",
+    keywords: [
+      "Postgres RLS vs middleware",
+      "row level security comparison",
+      "API authorization patterns",
+      "SaaS authorization",
+      "Supabase RLS",
+      "database vs application security",
+    ],
+    answerBox:
+      "Postgres RLS wins when the rule is per-row access scoped to user identity (per-user data, per-tenant data, subscription gates). Middleware wins when the rule depends on cross-cutting context (rate limits, feature flags, multi-step business logic). UI checks are never enough on their own — they're UX, not security. Use both RLS and middleware; treat them as defense in depth.",
+    lede:
+      "Authorization in a typed web application has three places it can live: at the database (RLS policies), at the API (middleware on every route), or at the UI (client-side checks). They're not interchangeable. Each one's failure mode is different, each one's cost is different, and the right call usually involves more than one of them at once.",
+    sections: [
+      {
+        heading: "Where each lives",
+        paragraphs: [
+          "RLS: Postgres policies attached to tables. Evaluated at every query, in the same transaction as the read or write. \"This user can only see rows where `user_id = auth.uid()`.\"",
+          "Middleware: Application code at the API layer. Runs before the route handler. \"This route requires an authenticated user with role=admin.\"",
+          "UI: React component logic or route guards. \"If the user isn't admin, redirect to /home.\" Runs on the client, can be bypassed by anyone who knows how to hit the API directly.",
+        ],
+      },
+      {
+        heading: "Comparison table",
+        paragraphs: [
+          "The trade-offs aren't subtle when you list them side by side.",
+        ],
+        table: {
+          caption: "Authorization layers compared",
+          headers: ["Aspect", "Postgres RLS", "API middleware", "UI checks"],
+          rows: [
+            ["Where evaluated", "Database, every query", "API server, every request", "Browser, every render"],
+            ["Bypassable via direct API?", "No", "No", "Yes — UI is the only gate"],
+            ["Race conditions", "None — atomic with query", "Possible if check is async", "Common (mount races)"],
+            ["Cross-cutting concerns (rate limits, etc.)", "Hard", "Easy", "Possible"],
+            ["Per-row scoping", "Native", "Manual per query", "Manual"],
+            ["Testability in isolation", "Hard (needs DB)", "Easy", "Medium"],
+            ["Performance overhead", "Low (indexed)", "Low", "Zero"],
+            ["Right primary use", "Per-user / per-tenant scope", "Cross-cutting logic", "UX (hide what they can't do)"],
+          ],
+        },
+      },
+      {
+        heading: "Where RLS wins",
+        paragraphs: [
+          "Per-user data. \"A user can only see their own bookings.\" One policy on the bookings table; every query is automatically scoped. Adding new routes that read bookings doesn't require remembering to add the filter.",
+          "Per-tenant data. \"A gym staff member can only see their gym's members.\" Same shape — policy keyed on `auth.uid()` to `gymId` lookup. Multi-tenant data leaks become structurally impossible.",
+          "Subscription gates. CleanSlate's pattern — `EXISTS (SELECT 1 FROM subscriptions WHERE user_id = auth.uid() AND status = 'active')` in every write policy. Trial expiry stops writes at the database, not at the UI.",
+        ],
+      },
+      {
+        heading: "Where middleware wins",
+        paragraphs: [
+          "Rate limiting. \"This route is limited to 10 requests per minute per user.\" Doesn't fit RLS — it's not about data access, it's about API quota. Middleware is the right layer.",
+          "Feature flags. \"This route is gated behind feature X for users in group Y.\" Same shape — not about row access, about API access. Middleware.",
+          "Multi-step business logic. \"This operation requires the user to have completed onboarding and accepted the latest ToS.\" Complex conditions across multiple tables fit application-level logic better than RLS policy expressions.",
+          "Anything that touches non-database state. External API permissions, third-party service credentials, cross-region routing rules. RLS doesn't reach outside the database.",
+        ],
+      },
+      {
+        heading: "Where UI checks belong",
+        paragraphs: [
+          "UX, not security. Hiding the \"Delete\" button when the user isn't authorized to delete. Showing a friendly message instead of a 403. Redirecting users to the right page when they accidentally hit one they can't use.",
+          "UI checks should never be the only gate. If the API allows a delete only when authorized, and the UI happens to render a Delete button anyway, the worst case is a confusing UI — not a security breach.",
+          "The reverse — UI hides the Delete button but the API allows anyone — is a real vulnerability. UI as the only check is theater.",
+        ],
+      },
+      {
+        heading: "Use them all, in layers",
+        paragraphs: [
+          "Defense in depth. RLS at the database (handles per-row access). Middleware at the API (handles cross-cutting concerns, rate limits, business logic). UI checks at the client (handles UX).",
+          "Any one of them failing doesn't compromise the system because the others still apply. A bug in middleware doesn't leak data because RLS still enforces. A bug in RLS doesn't allow unlimited access because middleware still rate-limits.",
+          "This is the model on every project I run that has any sensitive data. The discipline is layered enforcement, not single-point control.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "UI checks should never be the only gate. UI as the only check is theater.",
+      },
+      {
+        quote:
+          "Defense in depth. RLS, middleware, UI checks. Any one failing doesn't compromise the system because the others still apply.",
+      },
+    ],
+    citations: [
+      {
+        label: "PostgreSQL — Row Security Policies",
+        url: "https://www.postgresql.org/docs/current/ddl-rowsecurity.html",
+        relevance: "Authoritative reference for RLS",
+      },
+      {
+        label: "Supabase Row Level Security",
+        url: "https://supabase.com/docs/guides/database/postgres/row-level-security",
+        relevance: "Postgres RLS in the Supabase context",
+      },
+      {
+        label: "Express.js middleware guide",
+        url: "https://expressjs.com/en/guide/using-middleware.html",
+        relevance: "API-layer authorization mechanism",
+      },
+      {
+        label: "OWASP — Authorization Cheat Sheet",
+        url: "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html",
+        relevance: "Standard reference for layered authorization",
+      },
+    ],
+    faq: [
+      {
+        q: "Is Postgres RLS enough for production authorization?",
+        a: "For per-user and per-tenant data access, yes — RLS handles the common case cleanly. For cross-cutting concerns (rate limits, feature flags, multi-step business logic), you need middleware too. Don't pick one; use both.",
+      },
+      {
+        q: "Can UI checks replace API authorization?",
+        a: "No. UI checks are bypassable by anyone who hits the API directly. They serve UX (hiding what users can't do) but never security. Treat them as never-sufficient.",
+      },
+      {
+        q: "What's the performance cost of RLS?",
+        a: "Negligible for indexed policy expressions. RLS policies compile into query plans alongside the user's query; an EXISTS check on an indexed table adds a single index lookup per row. For unindexed expressions or complex joins, it can matter — but the same complexity in middleware would also matter.",
+      },
+      {
+        q: "How do you test RLS policies?",
+        a: "Integration tests that run as a specific authenticated user (via setRole or a JWT) and assert that allowed operations succeed and disallowed ones fail. Supabase has pg-tap for SQL-level policy tests. Either approach beats trying to unit-test policies in isolation.",
+      },
+    ],
+  },
+
+  {
+    slug: "better-sqlite3-vs-turso-libsql-production",
+    title:
+      "better-sqlite3 vs Turso (libsql) — when each one wins in production",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 6,
+    description:
+      "better-sqlite3 is in-process, synchronous SQLite. Turso (libsql) is networked, edge-replicated SQLite. They share a SQL dialect and a Prisma adapter; they have very different deployment models. Here's when to pick each, and how Pilates Studio uses both.",
+    keywords: [
+      "better-sqlite3 vs Turso",
+      "libsql vs SQLite",
+      "edge SQLite production",
+      "SQLite Prisma adapter",
+      "Turso libsql comparison",
+      "SQLite serverless",
+    ],
+    answerBox:
+      "better-sqlite3 is in-process synchronous SQLite — fast, file-based, single-node. Right for local dev, embedded apps, or single-box production. Turso (libsql) is networked SQLite with edge replication, multi-region read replicas, and HTTP-based access — right for production serverless deployments that need SQLite semantics. Both share the Prisma adapter. Pilates Studio uses better-sqlite3 in dev, Turso in prod.",
+    lede:
+      "SQLite used to be either-or — embedded library or DIY networked deployment. Turso changed that by offering libsql (SQLite fork) as a managed networked service with edge replication. Now the choice between in-process SQLite and networked SQLite is a real architecture decision, not a hack. Pilates Studio uses both, swapped via Prisma adapter.",
+    sections: [
+      {
+        heading: "What better-sqlite3 is",
+        paragraphs: [
+          "Native Node.js binding to SQLite. Synchronous API — `db.prepare('SELECT * FROM users').all()` returns immediately. The database is a file on disk; the library is in-process; there's no network round-trip.",
+          "Speed comes from this. A read against a small SQLite database via better-sqlite3 is in the microseconds. For local dev, ad-hoc scripts, embedded apps (Electron, CLIs), or single-box production deployments, this is the right primitive.",
+        ],
+      },
+      {
+        heading: "What Turso is",
+        paragraphs: [
+          "Managed networked SQLite. Turso runs libsql (a fork of SQLite with HTTP and websocket access) on edge infrastructure with multi-region replication. You get a database URL; your application connects to it like any networked database.",
+          "Edge replication: your data lives in a primary region and replicates to read replicas in other regions. Reads go to the nearest replica; writes go to the primary. For a globally-distributed user base, this matters.",
+        ],
+      },
+      {
+        heading: "Comparison table",
+        paragraphs: [
+          "The trade-offs depend on deployment model and scale.",
+        ],
+        table: {
+          caption: "better-sqlite3 vs Turso (libsql) production trade-offs",
+          headers: ["Aspect", "better-sqlite3", "Turso (libsql)"],
+          rows: [
+            ["Access model", "In-process, file-backed", "Networked, HTTP/WebSocket"],
+            ["Latency", "Microseconds (no network)", "Single-digit ms (edge replica)"],
+            ["Scaling model", "Single box", "Multi-region replicas"],
+            ["Backup story", "Manual file copy", "Managed snapshots"],
+            ["Serverless compatible?", "No (file persistence issue)", "Yes (HTTP per request)"],
+            ["Multi-instance writes", "Single writer", "Single writer (primary region)"],
+            ["Best for", "Dev, embedded, single-box prod", "Serverless prod, edge deployments"],
+            ["Prisma adapter", "@prisma/adapter-better-sqlite3", "@prisma/adapter-libsql"],
+          ],
+        },
+      },
+      {
+        heading: "Why one Prisma schema can serve both",
+        paragraphs: [
+          "Prisma's driver-adapter pattern decouples the schema from the database connection. The same schema, the same migrations, the same query code work against either adapter. The swap is one line of config.",
+          "This is what makes the dev/prod parity story work in Pilates Studio. Local dev uses better-sqlite3 (no daemon, fast, file-on-disk). Production uses Turso (edge-replicated, networked). Both speak the same SQLite dialect; tests that pass against better-sqlite3 will pass against Turso.",
+        ],
+      },
+      {
+        heading: "Where better-sqlite3 wins",
+        paragraphs: [
+          "Local development. Zero-setup, no daemon to run, no network configuration. New contributor: `pnpm install`, `pnpm prisma migrate dev`, `pnpm dev` — they're running the same schema as production in under a minute.",
+          "CI testing. Tests run against an in-memory or file-backed SQLite database, no separate database container required. Faster CI, cheaper resource usage, no flakes from a slow test database.",
+          "Single-box production. Some apps fit on one server. better-sqlite3 there is faster and operationally simpler than networking out to Turso.",
+          "Embedded apps. Electron, CLIs, mobile apps with embedded data — better-sqlite3 is the obvious choice.",
+        ],
+      },
+      {
+        heading: "Where Turso wins",
+        paragraphs: [
+          "Serverless production. Vercel functions don't have persistent file storage; better-sqlite3 needs a file. Turso speaks HTTP, so a serverless function makes an HTTP request to read or write. Pilates Studio's API ships as a Vercel catch-all; Turso is the natural fit.",
+          "Multi-region reads. Users in three continents reading the same data with sub-100ms latency — Turso's edge replicas handle this without manual sharding.",
+          "Managed operations. Backups, point-in-time recovery, monitoring, alerts. Turso handles all of it. better-sqlite3 means you handle all of it yourself.",
+          "Smaller budgets that still need production-grade infrastructure. Turso's free tier is generous; paid plans are inexpensive compared to traditional networked databases.",
+        ],
+      },
+      {
+        heading: "Where neither wins",
+        paragraphs: [
+          "High-write multi-region. SQLite is single-writer regardless of the access model. If you need geographically-distributed concurrent writes, Postgres or distributed systems (CockroachDB, FaunaDB, etc.) are the right call.",
+          "Postgres-specific features. If you need jsonb operators, listen/notify, range types, geospatial — SQLite doesn't have them. Use Postgres.",
+          "Very high cardinality / very large data. SQLite handles tens of GB fine; past that, the operational story gets harder. Postgres or specialized systems become the right call at scale.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "SQLite used to be either-or — embedded library or DIY networked deployment. Turso changed that.",
+      },
+      {
+        quote:
+          "Tests that pass against better-sqlite3 will pass against Turso. The Prisma adapter makes the swap free.",
+      },
+    ],
+    citations: [
+      {
+        label: "better-sqlite3 — npm package",
+        url: "https://www.npmjs.com/package/better-sqlite3",
+        relevance: "In-process SQLite binding for Node.js",
+      },
+      {
+        label: "Turso (libsql) documentation",
+        url: "https://docs.turso.tech/",
+        relevance: "Managed networked SQLite with edge replication",
+      },
+      {
+        label: "@prisma/adapter-libsql",
+        url: "https://www.npmjs.com/package/@prisma/adapter-libsql",
+        relevance: "Production adapter for Turso",
+      },
+      {
+        label: "@prisma/adapter-better-sqlite3",
+        url: "https://www.npmjs.com/package/@prisma/adapter-better-sqlite3",
+        relevance: "Dev adapter for in-process SQLite",
+      },
+    ],
+    faq: [
+      {
+        q: "Can I use SQLite in production?",
+        a: "Yes — via Turso for networked / serverless deployments, or better-sqlite3 for single-box production. Both are real production options; the choice is about deployment model, not about \"is SQLite enough.\"",
+      },
+      {
+        q: "Is Turso the same as SQLite?",
+        a: "Turso runs libsql, a fork of SQLite with added networked-access features (HTTP, WebSocket, edge replication). The SQL dialect is compatible; most application code that targets SQLite targets Turso without changes.",
+      },
+      {
+        q: "When should I use Postgres instead of SQLite (either flavor)?",
+        a: "When you need Postgres-specific features (jsonb, listen/notify, range types, geospatial), high-write multi-region capability, or very high data cardinality. For most SaaS applications with simple data models, either SQLite flavor handles the workload.",
+      },
+      {
+        q: "What's the latency comparison between better-sqlite3 and Turso?",
+        a: "better-sqlite3 is microseconds (in-process). Turso is single-digit milliseconds (edge replica). The difference rarely matters at application level because application logic dominates. For ultra-low-latency requirements (in-process only), better-sqlite3 is the call.",
+      },
+    ],
+  },
+
+  {
+    slug: "claude-vs-openai-vs-gemini-for-code-agents",
+    title:
+      "Claude vs OpenAI vs Gemini for code-fix agents — which model does what best",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 7,
+    description:
+      "KeepItUp tested all three frontier models on the same code-fix tasks. Anthropic Claude wins on code reasoning + honest uncertainty. OpenAI wins on structured extraction. Gemini wins on long-context reasoning and cost. The model choice per stage is more important than picking one for everything.",
+    keywords: [
+      "Claude vs OpenAI vs Gemini",
+      "best LLM for code fixes",
+      "AI code agent provider",
+      "Claude Sonnet code generation",
+      "Gemini long context",
+      "GPT-4 structured output",
+    ],
+    answerBox:
+      "Across KeepItUp's code-fix benchmarks: Anthropic Claude Sonnet wins on Generator-stage code reasoning + uncertainty calibration. OpenAI GPT-4-class wins on structured extraction (function calling). Google Gemini wins on long-context reasoning and cost per token. Routing different stages to different providers is more useful than picking one for everything. Models change quarterly; rankings shift.",
+    lede:
+      "The right model for code-fix agents isn't one model. It's a routing decision per stage. Anthropic Claude is strongest on code reasoning; OpenAI is strongest on structured output; Google Gemini is strongest on long-context and cost. KeepItUp uses all three, picked per stage, behind one budget-gated client.",
+    sections: [
+      {
+        heading: "What \"best\" means here",
+        paragraphs: [
+          "Three axes that matter for production code agents: (1) code-reasoning quality on a held-out set of fix tasks; (2) honest uncertainty calibration — does the model's self-rated confidence track actual correctness?; (3) cost per token for the volume you're running.",
+          "No single model dominates all three. Picking by axis-per-stage is more useful than picking by aggregate ranking.",
+        ],
+      },
+      {
+        heading: "Where Claude wins",
+        paragraphs: [
+          "Generator stage. Reading a failing build, an AST slice of the broken code, and producing a proposed fix. Claude Sonnet (and Opus on harder tasks) produces fewer fabricated function signatures, fewer cross-module rewrites, and more accurate fixes on the same task across a few hundred test cases.",
+          "Uncertainty calibration. When Claude says \"70% confidence,\" the empirical correctness rate is close to 70%. When it says \"95%,\" it's close to 95%. Other models tend to be overconfident at the high end (95% confidence on a wrong fix is more common than you'd hope). Calibration matters because the confidence gate depends on it.",
+        ],
+      },
+      {
+        heading: "Where OpenAI wins",
+        paragraphs: [
+          "Structured extraction. Function calling, schema-enforced JSON responses, parsing semi-structured input into typed output. OpenAI's structured-output mode (with strict schemas) is reliably the most mature implementation of this in production.",
+          "Reviewer stage. When pairing models on the Generator/Reviewer split, using OpenAI as the Reviewer against Claude as the Generator catches errors a single-model pipeline would miss. They have different training corpora and different blind spots.",
+          "Function-call cascades. Multi-step tool-use where the model plans a sequence of function calls. OpenAI's tool-use API and JSON-mode handle this most reliably, in my testing.",
+        ],
+      },
+      {
+        heading: "Where Gemini wins",
+        paragraphs: [
+          "Long-context reasoning. Gemini's context window (1M+ tokens) lets you stuff multiple files, version history, and reasoning context into a single call. For tasks like clip selection from a 90-minute podcast transcript (Reel Farmer's use case), it's the right model.",
+          "Cost per token on long-context tasks. The economics of running long-context prompts are meaningfully better on Gemini than on Claude or GPT-4-class models. For pipelines that run frequently, the cost difference adds up.",
+          "Fallback / budget-overflow tier. When the budget for a stage is exhausted with Claude or OpenAI, Gemini's lower cost makes it the right default fallback. Quality is acceptable for fallback-mode use.",
+        ],
+        table: {
+          caption: "Per-stage routing for a code agent",
+          headers: ["Stage", "Default provider", "Why"],
+          rows: [
+            ["Generator (propose code fix)", "Anthropic Claude Sonnet", "Best code reasoning + honest calibration"],
+            ["Reviewer (score diff cold)", "OpenAI GPT-4-class", "Different blind spots; structured-output reliability"],
+            ["Long-context (clip selection, doc summarization)", "Google Gemini", "1M-token context + cheaper per-token"],
+            ["Structured extraction (CV parse, JSON output)", "OpenAI", "Most mature function-call / JSON-mode"],
+            ["Fallback / budget overflow", "Google Gemini", "Cheapest; acceptable quality"],
+          ],
+        },
+      },
+      {
+        heading: "Where rankings shift",
+        paragraphs: [
+          "Models update quarterly. Claude 4.6 → 4.7 → next; GPT-4o → o1 → o3; Gemini Pro → Ultra → next. Per-stage rankings can shift on any release. The architecture insight (route per stage, evaluate empirically) is stable; the specific model picks aren't.",
+          "The right practice: maintain a held-out evaluation set for each stage. When a new model ships, re-run the eval. If the new model beats the incumbent on the stage's specific metric, swap. Don't pick based on benchmarks; pick based on your stage's metric.",
+        ],
+      },
+      {
+        heading: "What about open-source models?",
+        paragraphs: [
+          "Llama 3 and successors, Qwen, DeepSeek — open-source models have closed a lot of the gap on commercial models for many tasks. For code-fix specifically, my testing shows they're still meaningfully behind Claude on the Generator axis, but they're closer than they were a year ago.",
+          "Cost is the open-source advantage. Self-hosting a 70B model on a GPU costs less than API tokens at scale. The break-even is around 100M+ tokens per month for most workloads; below that, API tokens are cheaper after accounting for infrastructure.",
+          "If your task is sensitive enough that you don't want it leaving your VPC, open-source self-hosted is the right answer regardless of quality differences. Otherwise, API access to frontier models is the better economics for most teams.",
+        ],
+      },
+      {
+        heading: "What this means for hiring AI engineers",
+        paragraphs: [
+          "An AI engineer who only knows one provider is fragile. A real production AI feature uses two or three providers behind an internal client, picks per-stage based on empirical performance, and survives provider outages and pricing changes without rewrites.",
+          "When hiring, ask about routing decisions specifically. \"Why did you pick X provider for Y stage?\" If the answer is \"it's what we always use,\" you're talking to someone who hasn't shipped multi-provider AI at production scale.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "The right model for code-fix agents isn't one model. It's a routing decision per stage.",
+      },
+      {
+        quote:
+          "When Claude says \"70% confidence,\" the empirical correctness rate is close to 70%. Other models tend to be overconfident at the high end.",
+      },
+    ],
+    citations: [
+      {
+        label: "Anthropic Claude model card",
+        url: "https://docs.anthropic.com/en/docs/about-claude/models",
+        relevance: "Reference for Claude capabilities used at the Generator stage",
+      },
+      {
+        label: "OpenAI Models documentation",
+        url: "https://platform.openai.com/docs/models",
+        relevance: "Reference for OpenAI capabilities used at the Reviewer + extraction stages",
+      },
+      {
+        label: "Google Gemini API",
+        url: "https://ai.google.dev/gemini-api/docs",
+        relevance: "Reference for Gemini capabilities used at the long-context + fallback stages",
+      },
+      {
+        label: "HumanEval — code generation benchmark",
+        url: "https://github.com/openai/human-eval",
+        relevance: "Standard code-reasoning benchmark used as one input to model selection",
+      },
+    ],
+    faq: [
+      {
+        q: "Which LLM is best for AI code agents?",
+        a: "Depends on stage. For code-fix generation: Anthropic Claude Sonnet typically. For structured extraction: OpenAI. For long-context tasks: Google Gemini. Production agents typically route different stages to different providers rather than picking one model for everything.",
+      },
+      {
+        q: "Should I use one LLM provider or multiple?",
+        a: "Multiple, behind an internal client. Single-provider lock-in is fragile (outages, pricing changes, blind spots). Multi-provider routing per stage catches errors a single-model pipeline would miss and protects against provider risk.",
+      },
+      {
+        q: "Are open-source LLMs good enough for production code agents?",
+        a: "Improving but still behind frontier commercial models on the hardest code-fix tasks. The gap is closing. For self-hosting reasons (privacy, cost at very high scale) open-source is the right call; for quality on hard tasks, commercial models still lead.",
+      },
+      {
+        q: "How often do LLM rankings shift?",
+        a: "Quarterly to bi-annually with new model releases. The architecture (route per stage, evaluate empirically) is stable; the specific model picks shift. Maintain a held-out evaluation set so you can re-rank when a new model ships.",
+      },
+    ],
+  },
+
+  {
+    slug: "bullmq-vs-trigger-dev-vs-inngest-job-queues",
+    title:
+      "BullMQ vs Trigger.dev vs Inngest — comparing job queues for production",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 7,
+    description:
+      "Three job-queue options for production Node/TypeScript apps. BullMQ is self-hosted, Redis-backed, mature. Trigger.dev is managed, code-defined, durable. Inngest is managed, event-driven, observability-first. Each one wins in different shapes of project — here's the comparison.",
+    keywords: [
+      "BullMQ vs Trigger.dev",
+      "Inngest job queue",
+      "Node.js background jobs",
+      "durable workflow comparison",
+      "production job queue",
+      "TypeScript queue library",
+    ],
+    answerBox:
+      "BullMQ: self-hosted, Redis-backed, mature, lowest cost at scale, requires operational knowledge. Trigger.dev: managed, durable code-defined workflows, retries automatic. Inngest: managed, event-driven, strong observability. Self-host BullMQ for high-volume self-managed; pick Trigger.dev for code-defined durable workflows; pick Inngest for event-heavy systems with strong tracing needs.",
+    lede:
+      "Most Node apps eventually need a job queue. The choice between self-hosted (BullMQ) and managed (Trigger.dev, Inngest) used to be obvious — self-host if you can, pay for managed if you can't. The managed options have gotten good enough that the answer is now actually \"it depends.\" Here's what depends on what.",
+    sections: [
+      {
+        heading: "What each one is",
+        paragraphs: [
+          "BullMQ: TypeScript-first job queue backed by Redis. Open source, self-hosted. You provide the Redis instance and the worker processes; BullMQ provides the queue semantics (retries, scheduled jobs, rate limiting, priorities). Used by Social Command Center for its six-stage content pipeline.",
+          "Trigger.dev: managed durable-workflow platform. You write workflows as code (TypeScript functions with `await`); Trigger.dev runs them, persists state, handles retries, and shows you the execution timeline. The model is more \"workflow\" than \"queue.\"",
+          "Inngest: managed event-driven workflow platform. Events trigger functions; functions can fan out, fan in, sleep, retry. Strong tracing and observability. Similar to Trigger.dev in shape but more event-pattern-oriented.",
+        ],
+      },
+      {
+        heading: "Comparison table",
+        paragraphs: [
+          "The trade-offs follow operational model + workflow model.",
+        ],
+        table: {
+          caption: "BullMQ vs Trigger.dev vs Inngest",
+          headers: ["Aspect", "BullMQ", "Trigger.dev", "Inngest"],
+          rows: [
+            ["Hosting", "Self-hosted", "Managed", "Managed"],
+            ["State backend", "Redis", "Managed (DB)", "Managed (DB)"],
+            ["Workflow model", "Queue jobs", "Durable code workflows", "Event-driven workflows"],
+            ["Cost at low volume", "Free (Redis cost)", "Free tier", "Free tier"],
+            ["Cost at high volume", "Lowest (just Redis)", "Per-execution pricing", "Per-execution pricing"],
+            ["Observability", "BullBoard / Arena (3rd party)", "Built-in execution timeline", "Built-in tracing"],
+            ["Setup time", "Hours (Redis + workers)", "Minutes (SDK + deploy)", "Minutes (SDK + deploy)"],
+            ["Operational burden", "Yes (Redis, workers, monitoring)", "None", "None"],
+            ["Best for", "High-volume self-managed pipelines", "Code-defined durable workflows", "Event-heavy systems"],
+          ],
+        },
+      },
+      {
+        heading: "Where BullMQ wins",
+        paragraphs: [
+          "High volume. Past a certain throughput, managed services' per-execution pricing exceeds the cost of running your own Redis + workers. The crossover varies but is typically in the high-thousands of jobs per minute.",
+          "Privacy / data residency requirements. Self-hosted means job payloads never leave your infrastructure. For regulated industries this matters.",
+          "Mature operational stack. If you already run Redis for caching and pub/sub, adding BullMQ on top is operationally cheap.",
+          "Social Command Center uses BullMQ specifically because the six-stage content pipeline runs at predictable cadence and the team already has Redis in production for other things. Adding BullMQ was a small step.",
+        ],
+      },
+      {
+        heading: "Where Trigger.dev wins",
+        paragraphs: [
+          "Code-defined durable workflows. You write a function that awaits an LLM call, waits an hour, sends an email, waits for a webhook, conditionally branches. Trigger.dev persists the function state across all of that. If the worker crashes mid-execution, the workflow resumes from where it left off.",
+          "Strong DX. The SDK is genuinely pleasant to work with. The execution timeline UI shows exactly where a workflow is, what it's done, and what failed.",
+          "Right for: long-running multi-step business processes — onboarding flows that span days, scheduled email sequences with conditional branching, AI pipelines with human-in-the-loop steps.",
+        ],
+      },
+      {
+        heading: "Where Inngest wins",
+        paragraphs: [
+          "Event-driven architecture. If your system already thinks in events (user.signed_up, payment.succeeded, content.published), Inngest maps directly. Events trigger functions; functions can emit events; the whole graph is event-shaped.",
+          "Tracing. Inngest's observability is built around \"what events happened, what functions ran, in what order, with what context.\" For complex event-driven systems this is the differentiator.",
+          "Fan-out / fan-in patterns. Sending a notification to every user in a segment, processing each user in parallel, waiting for all to complete before continuing. Inngest's API for this is clean.",
+        ],
+      },
+      {
+        heading: "When you don't need any of these",
+        paragraphs: [
+          "Simple cron jobs. Vercel cron, GitHub Actions cron, or plain `setInterval` in a long-running process — for periodic sweeps that don't need durability or complex state, the simpler tools are fine.",
+          "Fire-and-forget async work. If you're just kicking off a function asynchronously and don't care about retries or durability, `Promise.resolve().then(work)` covers it.",
+          "The complexity of a job-queue system is overhead unless you actually need: retries, durability, scheduled jobs, complex workflows, observability, or scale that exceeds in-process async.",
+        ],
+      },
+      {
+        heading: "What I'd pick today",
+        paragraphs: [
+          "For a new TypeScript SaaS: probably Trigger.dev. The DX is the best and the durability-on-managed-infra story removes operational overhead.",
+          "For existing infrastructure with Redis: BullMQ. It costs nothing extra and the operational story is already in place.",
+          "For event-heavy systems with complex tracing needs: Inngest. The event-driven model and the observability are real differentiators.",
+          "These aren't the only options — there's also Trigger.dev's competitors (Hatchet, Restate, etc.), and at very high scale teams sometimes self-host more sophisticated systems (Temporal). The three above cover most production needs cleanly.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "The complexity of a job-queue system is overhead unless you actually need retries, durability, scheduled jobs, or scale that exceeds in-process async.",
+      },
+      {
+        quote:
+          "For existing infrastructure with Redis: BullMQ. It costs nothing extra and the operational story is already in place.",
+      },
+    ],
+    citations: [
+      {
+        label: "BullMQ — official documentation",
+        url: "https://docs.bullmq.io/",
+        relevance: "Self-hosted Redis-backed queue used in Social Command Center",
+      },
+      {
+        label: "Trigger.dev",
+        url: "https://trigger.dev/docs",
+        relevance: "Managed durable-workflow platform",
+      },
+      {
+        label: "Inngest",
+        url: "https://www.inngest.com/docs",
+        relevance: "Managed event-driven workflow platform",
+      },
+      {
+        label: "Vercel Cron",
+        url: "https://vercel.com/docs/cron-jobs",
+        relevance: "Simpler alternative for periodic-sweep workflows",
+      },
+    ],
+    faq: [
+      {
+        q: "When should I use BullMQ vs Trigger.dev?",
+        a: "BullMQ for self-hosted, high-volume, low-cost queueing where you already run Redis. Trigger.dev for code-defined durable workflows where you want managed durability and a great execution-timeline UI. Both are production-grade; the choice is operational model + workflow style.",
+      },
+      {
+        q: "What's the difference between a job queue and a workflow engine?",
+        a: "A job queue stores discrete units of work and retries them. A workflow engine persists the state of a multi-step process and resumes it after crashes. BullMQ is more queue-shaped; Trigger.dev and Inngest are more workflow-shaped. Modern queues blur the line with stepFunctions / flows.",
+      },
+      {
+        q: "Is BullMQ better than RabbitMQ or AWS SQS?",
+        a: "Different categories. BullMQ is Redis-backed and TypeScript-native — great for Node.js apps. RabbitMQ is a generic message broker with multi-language support. AWS SQS is fully managed but lacks BullMQ's richer feature set (priorities, repeating jobs, etc.). Pick by language fit + operational stack.",
+      },
+      {
+        q: "Do I need a job queue for my SaaS?",
+        a: "Maybe. If you have retries, scheduled work, long-running processes, or fan-out patterns, yes. If you have a few simple cron jobs and no complex async work, Vercel Cron or similar is enough. Don't over-engineer.",
+      },
+    ],
+  },
+
+  {
+    slug: "supabase-rls-vs-firestore-rules-comparison",
+    title:
+      "Supabase RLS vs Firestore Rules — comparing database-layer authorization",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 6,
+    description:
+      "Both Supabase RLS and Firestore Rules push authorization into the database. They look similar; they're not. Supabase RLS is SQL policy expressions; Firestore Rules is a JavaScript-like DSL. The choice is more about your data model than about the rules language.",
+    keywords: [
+      "Supabase RLS vs Firestore",
+      "Firestore security rules",
+      "Postgres RLS Firestore",
+      "Supabase vs Firebase",
+      "database authorization comparison",
+      "BaaS RLS",
+    ],
+    answerBox:
+      "Supabase RLS uses SQL policy expressions evaluated by Postgres. Firestore Rules use a JavaScript-like DSL evaluated by Firestore. Supabase wins on SQL feature richness, complex joins, and the broader Postgres ecosystem. Firestore wins on offline-first mobile apps and real-time subscriptions in the same primitive. Pick by data model and platform fit, not by which rules language reads better.",
+    lede:
+      "Database-layer authorization is the right pattern, regardless of which database you're using. Supabase implements it with Postgres RLS; Firebase implements it with Firestore Rules. The two look similar in goal but differ substantially in how they work, what they're good at, and what they can't do.",
+    sections: [
+      {
+        heading: "What each one is",
+        paragraphs: [
+          "Supabase RLS: Postgres Row Level Security. Policies are SQL expressions attached to tables. The policy filter is part of the query plan; rows that don't match the policy never leave the database.",
+          "Firestore Rules: a JavaScript-like DSL describing per-collection access rules. Rules can read other documents, call helper functions, and reference request context (auth state, request size, time).",
+          "Both achieve the same goal: \"the database is the gate, not the application.\" The mechanisms are very different.",
+        ],
+      },
+      {
+        heading: "Comparison table",
+        paragraphs: [
+          "Look at structural differences side by side.",
+        ],
+        table: {
+          caption: "Supabase RLS vs Firestore Rules",
+          headers: ["Aspect", "Supabase RLS", "Firestore Rules"],
+          rows: [
+            ["Database type", "Postgres (SQL, ACID, joins)", "Firestore (document, NoSQL)"],
+            ["Rules language", "SQL expressions", "JavaScript-like DSL"],
+            ["Joins in rules", "Native (JOIN in SQL)", "get() to fetch related docs (limited)"],
+            ["Complex queries", "Full SQL power", "Limited query model"],
+            ["Real-time", "Supabase Realtime (Postgres replication)", "Native (Firestore is real-time)"],
+            ["Offline-first mobile", "Possible via WatermelonDB / sync", "Native (Firestore caching)"],
+            ["Migrations", "SQL DDL", "Console + CLI; doc structure flexible"],
+            ["Cost model", "Per-row + bandwidth", "Per-read + write + bandwidth"],
+            ["Free tier", "Generous Postgres + storage", "Generous reads + writes"],
+            ["Best for", "Relational data, complex queries", "Document data, offline mobile"],
+          ],
+        },
+      },
+      {
+        heading: "Where Supabase RLS wins",
+        paragraphs: [
+          "Complex queries with joins. A rule that says \"a user can read this booking if they own the booking OR they're a staff member of the same gym\" is one line of SQL in RLS. In Firestore, you'd need to either denormalize (store the staff member's gym ID on every booking) or do multiple round trips (read booking, then read staff status separately).",
+          "Aggregations and reports. SQL's aggregate functions (SUM, COUNT, AVG, window functions) work natively. Firestore queries are much more limited; aggregations typically need to be precomputed.",
+          "Mature SQL ecosystem. Existing knowledge transfers; tooling exists (psql, pgAdmin, every ORM); migrations are SQL DDL. The whole Postgres world is yours.",
+          "Subscription-gate pattern (CleanSlate). A policy that says \"INSERT allowed only if the user's subscription is active\" is one SQL EXISTS. Firestore Rules can do similar via get(), but the join semantics are simpler in SQL.",
+        ],
+      },
+      {
+        heading: "Where Firestore Rules wins",
+        paragraphs: [
+          "Offline-first mobile apps. Firestore's client SDKs persist data locally and sync when network returns; conflict resolution is built-in. Supabase can do this via WatermelonDB or similar, but it's more setup.",
+          "Real-time subscriptions on documents. Firestore's real-time model is core to the product. Supabase Realtime works but is a separate concern from RLS.",
+          "Document-shaped data. If your model is genuinely document-shaped (nested data, arrays, polymorphic fields), Firestore's data model fits more naturally than mapping it to relational tables.",
+          "Reading rules. Firestore's DSL reads more like JavaScript and may be more approachable for teams without strong SQL background.",
+        ],
+      },
+      {
+        heading: "Where the comparison breaks down",
+        paragraphs: [
+          "Choosing between Supabase RLS and Firestore Rules is mostly the same decision as choosing between Postgres + Supabase and Firestore as a database. The rules-language ergonomics are secondary; the data-model fit dominates.",
+          "If your data is relational, query-heavy, and aggregation-heavy: Postgres + Supabase + RLS. If your data is document-shaped, mobile-offline-heavy, and read-mostly: Firestore + Firestore Rules.",
+        ],
+      },
+      {
+        heading: "What both share",
+        paragraphs: [
+          "The architectural insight: authorization belongs at the database, not at the API. Both implementations make this true; both prevent the bypass-the-UI attack vector that pure application-layer auth allows.",
+          "Both also share the testing-is-harder problem. Database-layer rules are harder to unit-test than application-layer functions. Both ecosystems have tooling (pg-tap for Postgres, Firestore emulator for Firebase); both are less ergonomic than \"call the function, assert the output.\" The right pattern is integration tests that run as specific users.",
+        ],
+      },
+      {
+        heading: "What I'd pick",
+        paragraphs: [
+          "For new SaaS with relational data and a web-first UX: Supabase + Postgres + RLS. The SQL ecosystem is unbeatable for query flexibility, and RLS handles the access patterns cleanly.",
+          "For mobile-first apps where offline matters: probably Firestore. The offline-first sync story is built in; rebuilding it on top of Postgres is real work.",
+          "For mixed: either can work with effort. Supabase is closing the offline-mobile gap with various sync solutions; Firestore is closing the query-flexibility gap with aggregations. Both are good products; the data-model question determines the answer more than the rules language.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "Choosing between Supabase RLS and Firestore Rules is mostly the same decision as choosing between Postgres and Firestore as a database.",
+      },
+      {
+        quote:
+          "Authorization belongs at the database, not at the API. Both implementations make this true.",
+      },
+    ],
+    citations: [
+      {
+        label: "Supabase Row Level Security",
+        url: "https://supabase.com/docs/guides/database/postgres/row-level-security",
+        relevance: "Postgres RLS in the Supabase platform context",
+      },
+      {
+        label: "Firestore Security Rules",
+        url: "https://firebase.google.com/docs/firestore/security/get-started",
+        relevance: "Firestore's database-layer authorization mechanism",
+      },
+      {
+        label: "PostgreSQL Row Security Policies (official)",
+        url: "https://www.postgresql.org/docs/current/ddl-rowsecurity.html",
+        relevance: "Underlying mechanism for Supabase RLS",
+      },
+      {
+        label: "Firestore Rules language reference",
+        url: "https://firebase.google.com/docs/reference/rules/rules",
+        relevance: "Detailed DSL syntax for Firestore Rules",
+      },
+    ],
+    faq: [
+      {
+        q: "Are Supabase RLS and Firestore Rules equivalent?",
+        a: "Same goal (database-level authorization), different mechanisms. RLS uses SQL policy expressions; Firestore Rules uses a JavaScript-like DSL. The choice usually comes from the data-model fit (relational vs document), not from the rules language preference.",
+      },
+      {
+        q: "Can I use Postgres RLS with offline-first mobile apps?",
+        a: "Yes, but with effort. The offline-sync layer needs to be added (WatermelonDB, PowerSync, custom sync) — Postgres + Supabase doesn't have native offline-first sync the way Firestore does. For mobile-first apps where offline matters most, Firestore's built-in story is meaningfully simpler.",
+      },
+      {
+        q: "Which is harder to test — RLS or Firestore Rules?",
+        a: "Both are harder than application-layer auth. Postgres has pg-tap for SQL-level policy tests; Firebase has the Firestore emulator for local rule testing. The right pattern in either ecosystem is integration tests that run as specific authenticated users.",
+      },
+      {
+        q: "When should I prefer application-layer auth over database-layer rules?",
+        a: "When the rule depends on cross-cutting context (rate limits, feature flags, multi-step business logic) rather than per-row access. Database-layer rules handle per-row access well; cross-cutting concerns are better in middleware. Use both as defense in depth.",
+      },
+    ],
+  },
+
+  {
+    slug: "express-vercel-catch-all-one-codebase-two-runtimes",
+    title:
+      "Express as a Vercel catch-all — one codebase, two runtime models",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 6,
+    description:
+      "Pilates Studio's API ships as both a long-running Express server (dev) and a Vercel serverless function (prod) without code changes. `api/[[...path]].ts` is the trick — the same Express app, wrapped to run in either environment.",
+    keywords: [
+      "Express on Vercel",
+      "serverless Express",
+      "Next.js catch-all API route",
+      "Vercel serverless function",
+      "Express adapter Vercel",
+      "Pilates Studio API",
+    ],
+    relatedProject: "pilates-studio",
+    answerBox:
+      "Pilates Studio's API ships as a Vercel serverless catch-all at `api/[[...path]].ts`. The same Express app runs as a long-lived server locally and as edge functions in production. The middleware stack stays the same, route definitions stay the same, the database adapter swaps. One codebase, two runtime models, zero rewrites.",
+    lede:
+      "Most teams pick one runtime model — long-running server or serverless functions — and stick with it for both dev and prod. Pilates Studio uses both. Local development runs the Express app as a long-lived server (fast iteration, hot reload). Production deploys to Vercel where the same app runs as serverless functions. The trick is one Next.js catch-all route.",
+    sections: [
+      {
+        heading: "What the catch-all does",
+        paragraphs: [
+          "Next.js 16's `api/[[...path]].ts` matches any path under `/api/`. The handler imports the Express app and forwards the incoming request to it.",
+          "Locally, the Next.js dev server runs the catch-all handler on every request. The Express app is in memory; cold-start is essentially zero.",
+          "In production on Vercel, the catch-all handler becomes a serverless function. Every request to any `/api/*` path invokes the function, which runs the Express app and returns the response.",
+        ],
+      },
+      {
+        heading: "Why this works",
+        paragraphs: [
+          "Express is request/response based. It doesn't care whether it's running in a long-lived process or a per-request function — it just needs the request object and the response object. The catch-all handler provides both.",
+          "Connection lifetime is the one thing that differs. Long-lived locally: one Express process, one database connection pool, one event loop. Per-request in production: each invocation gets its own context, the database connection is opened per-invocation (using Turso's HTTP-based libsql client, which is stateless).",
+          "The Prisma adapter swap (better-sqlite3 dev, libsql prod) handles this. better-sqlite3 keeps an in-process connection alive for the Express server's uptime. libsql is HTTP, stateless per call. Both speak SQLite dialect.",
+        ],
+        table: {
+          caption: "What stays the same vs what changes",
+          headers: ["Concern", "Dev (long-lived Express)", "Prod (Vercel function)"],
+          rows: [
+            ["Express app code", "Same", "Same"],
+            ["Middleware stack", "Same", "Same"],
+            ["Route definitions", "Same", "Same"],
+            ["Validation (Zod schemas)", "Same", "Same"],
+            ["DB adapter", "@prisma/adapter-better-sqlite3", "@prisma/adapter-libsql"],
+            ["DB connection lifetime", "Process-long (pool)", "Per-invocation (HTTP)"],
+            ["Process lifetime", "Long-lived (nodemon)", "Per-request (Vercel)"],
+            ["Cold start", "None (always warm)", "~100ms typical"],
+          ],
+        },
+      },
+      {
+        heading: "When this pattern shines",
+        paragraphs: [
+          "Hot reload during development. Long-lived Express with nodemon means file save → server restarts → next request hits the new code. The serverless-function dev experience (Vercel's local dev) is slower because of cold-start per request.",
+          "Production scale. Vercel functions scale to zero when not used and up to thousands of concurrent invocations when needed. A long-running Express server in production would need horizontal scaling configured manually.",
+          "Cost model. Functions are billed per execution; long-running servers are billed for uptime. For most SaaS workloads (low constant traffic with bursts), functions are cheaper.",
+        ],
+      },
+      {
+        heading: "What this trades away",
+        paragraphs: [
+          "Cold starts in production. Each Vercel function invocation starts cold (~100ms typical). For most user-facing requests this is invisible — the network round-trip dominates. For ultra-low-latency requirements, a long-running server is faster.",
+          "WebSocket / long-poll. Vercel functions are request/response; you can't keep a connection open indefinitely. Pilates Studio doesn't need WebSockets in the API (booking is request/response), so this isn't a constraint. Apps that need WebSockets need a different deployment model.",
+          "Stateful per-request data. The function has no shared memory across invocations. Anything stateful (rate-limit counters, in-memory caches) needs an external store (Redis, KV). Pilates Studio uses Vercel KV for these.",
+        ],
+      },
+      {
+        heading: "Why not just use Next.js API routes directly?",
+        paragraphs: [
+          "Could. The Express layer adds value for projects that already think in Express idioms: middleware composition, route-level validation, error handlers, an extensive ecosystem of Express middleware packages.",
+          "For Pilates Studio specifically, the API was written first as a standalone Express app (before the Next.js frontend existed). The catch-all pattern let me deploy that existing Express app on Vercel without rewriting it as Next.js route handlers.",
+          "For greenfield projects, Next.js route handlers are simpler and the catch-all isn't needed. For projects with existing Express codebases that you want to deploy on Vercel, the catch-all is the migration path.",
+        ],
+      },
+      {
+        heading: "Where this generalizes",
+        paragraphs: [
+          "Any Express-based Node.js API that you want to deploy on serverless infrastructure (Vercel, Netlify Functions, AWS Lambda). The catch-all pattern wraps the Express app once; the rest of the deployment is platform-specific.",
+          "Same pattern works for Fastify (Vercel has an adapter), Koa, NestJS, and other request/response frameworks. The principle is request → adapter → app → response, regardless of framework.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "Express is request/response based. It doesn't care whether it's running in a long-lived process or a per-request function.",
+      },
+      {
+        quote:
+          "For projects with existing Express codebases that you want to deploy on Vercel, the catch-all is the migration path.",
+      },
+    ],
+    citations: [
+      {
+        label: "Next.js — Catch-all dynamic routes",
+        url: "https://nextjs.org/docs/app/api-reference/file-conventions/dynamic-routes#catch-all-segments",
+        relevance: "The file convention behind api/[[...path]].ts",
+      },
+      {
+        label: "Vercel — Express deployment guide",
+        url: "https://vercel.com/guides/using-express-with-vercel",
+        relevance: "Official guidance for Express-on-Vercel patterns",
+      },
+      {
+        label: "Vercel KV",
+        url: "https://vercel.com/docs/storage/vercel-kv",
+        relevance: "Where stateful per-request data lives (rate limit counters, etc.)",
+      },
+      {
+        label: "Vercel Fluid Compute",
+        url: "https://vercel.com/blog/fluid-compute",
+        relevance: "Current default that improves cold-start across serverless functions",
+      },
+    ],
+    faq: [
+      {
+        q: "Can I deploy an Express app on Vercel?",
+        a: "Yes — via a Next.js catch-all route (`api/[[...path]].ts`) that forwards requests to the Express app. Same code, no rewrite. Locally you run the Express app long-lived; in production it runs as a Vercel function.",
+      },
+      {
+        q: "What's the cold-start cost of Express on Vercel?",
+        a: "~100ms typical for a moderate Express app. For most user-facing APIs this is invisible (network dominates). For ultra-low-latency requirements, a long-running server is faster.",
+      },
+      {
+        q: "Should I use Next.js route handlers or Express on Vercel for a new project?",
+        a: "Greenfield: Next.js route handlers are simpler and don't need the catch-all wrapper. Existing Express codebase you want to deploy on Vercel: catch-all is the migration path. Both are valid; pick by starting point.",
+      },
+      {
+        q: "How do you handle stateful concerns (rate limiting, caching) in serverless Express?",
+        a: "External state stores — Vercel KV for fast in-memory state, Redis if you need pub/sub or more complex semantics, Postgres for durable state. Anything that depends on per-process memory in long-running Express needs to move to external storage in serverless.",
+      },
+    ],
+  },
+
+  {
+    slug: "single-app-tsx-when-scope-discipline-beats-abstraction",
+    title:
+      "Single App.tsx — when scope discipline beats abstraction",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 5,
+    description:
+      "Kërçishta Garage's entire full-stack app — public site, contact form, admin CRM, MongoDB integration — fits in one `App.tsx`. The discipline isn't refusing to abstract; it's recognizing that splitting a one-and-a-half-day build would have been gold-plating.",
+    keywords: [
+      "single file React app",
+      "scope discipline",
+      "premature abstraction",
+      "single App.tsx",
+      "small project architecture",
+      "anti-abstraction",
+    ],
+    relatedProject: "websites",
+    answerBox:
+      "Kërçishta Garage's full-stack app — public site, contact form, admin CRM, MongoDB integration — fits in one `App.tsx`. The discipline is recognizing that splitting a one-and-a-half-day build would have been gold-plating. Right scope for the project; would be wrong for a larger one. Match the structure to the size, not to the platonic ideal.",
+    lede:
+      "There's a default in modern web development that says \"break everything into small files.\" Component per file, hook per file, type per file, service per file. For most production projects this is right. For a one-and-a-half-day brand site, it's gold-plating. Kërçishta Garage's whole app fits in one `App.tsx` because the alternative would have wasted time.",
+    sections: [
+      {
+        heading: "What fits in 600 lines",
+        paragraphs: [
+          "The Kërçishta `App.tsx` contains: the React component tree (public landing, services, booking, rates, the hidden /admin CRM), the Three.js Hyperspeed hero setup, the auth flow (passphrase + Bearer token), the MongoDB CRUD operations for the admin CRM, the contact form submission handler, and styling.",
+          "All of it. Roughly 600 lines. Readable in one sitting. No file-navigation friction during development.",
+        ],
+      },
+      {
+        heading: "Why this isn't sloppy",
+        paragraphs: [
+          "The project is one-and-a-half days. The product owner is one person (me, or whoever I hand it to). The maintenance cadence is monthly at most.",
+          "Breaking it into the \"right\" structure — components folder with one file per component, services folder with one file per CRUD operation, hooks folder, types folder — would have added 30-60 minutes of file-shuffling without producing better code. The result would be the same logic spread across 30 files instead of compactly in one.",
+          "Splitting also adds friction. Every cross-file import is a mental tax. For a single-developer single-day build, that tax doesn't pay back.",
+        ],
+      },
+      {
+        heading: "When this is wrong",
+        paragraphs: [
+          "Multi-developer projects. The moment two people work on the same file regularly, conflicts and merge friction destroy any saved time. Split.",
+          "Long-running projects. Past three months of active development, a single file becomes its own kind of friction — navigation, search, IDE performance. Split.",
+          "Projects where code reuse across modules matters. If the same component or service is used in multiple places, splitting it out and importing makes sense. Single-file keeps you copying.",
+          "Test discipline that benefits from per-module testing. Splitting often clarifies what to test in isolation.",
+        ],
+        table: {
+          caption: "Single-file vs split: when each wins",
+          headers: ["Factor", "Single file wins", "Split files win"],
+          rows: [
+            ["Team size", "Solo, one short build", "Two or more developers"],
+            ["Lifetime", "Days to weeks", "Months to years"],
+            ["Test discipline", "Manual testing fine", "Per-module unit tests required"],
+            ["Reuse across modules", "No reuse", "Components used in multiple places"],
+            ["Reader navigation", "Cmd+F in one file", "File tree + go-to-definition"],
+            ["IDE performance", "Fine up to ~1000 lines", "Better past that"],
+          ],
+        },
+      },
+      {
+        heading: "The deeper rule",
+        paragraphs: [
+          "Match structure to project size, not to abstract ideals. \"Best practice\" is contextual — best for what kind of project, at what team size, over what time horizon. A pattern that's right for a multi-team SaaS is wrong for a weekend brand site, and vice versa.",
+          "Defaulting to maximum structure on every project produces over-engineering. Defaulting to no structure on every project produces unmaintainable messes. The discipline is reading the project's scope and matching structure to it.",
+        ],
+      },
+      {
+        heading: "Where I'd draw the line",
+        paragraphs: [
+          "Under ~1000 lines: one file is fine if it makes sense. ~1000-3000 lines: time to split, even for solo projects. Past 3000: definitely split, ideally by feature or domain, with consistent boundaries.",
+          "These aren't hard limits — they're heuristics. The real test is whether the file is still readable in one sitting, navigable with Cmd+F, and easy to extend. When those break down, split.",
+        ],
+      },
+      {
+        heading: "What I'd repeat",
+        paragraphs: [
+          "Choosing scope-appropriate structure on every project. Sometimes that's one App.tsx for a brand site; sometimes it's 21 Prisma models and a three-services pattern for Pilates Studio. The principle is the same — fit the structure to the scope, not to a theoretical maximum.",
+          "The cost of over-structure is real. Time spent navigating files instead of writing logic. Time spent reasoning across boundaries instead of seeing things in one place. For small projects, that cost dominates the benefits. Skip the structure; ship the project.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "Defaulting to maximum structure on every project produces over-engineering. Defaulting to no structure produces messes. The discipline is reading the scope and matching.",
+      },
+      {
+        quote:
+          "Kërçishta's whole app fits in one App.tsx because the alternative would have wasted time.",
+      },
+    ],
+    citations: [
+      {
+        label: "React component patterns documentation",
+        url: "https://react.dev/learn/your-first-component",
+        relevance: "Reference for the standard component-per-file pattern",
+      },
+      {
+        label: "MongoDB Atlas",
+        url: "https://www.mongodb.com/atlas",
+        relevance: "Where Kërçishta's admin CRM data lives",
+      },
+    ],
+    faq: [
+      {
+        q: "Is a single-file React app sloppy?",
+        a: "Not if the project is small, single-developer, and short-lived. \"Best practice\" is contextual — a pattern that's right for a multi-team SaaS is wrong for a weekend brand site. Match structure to scope.",
+      },
+      {
+        q: "When should I split a React component into multiple files?",
+        a: "When two or more developers work on the same code regularly, when the project lifetime is months or years, when components are reused across modules, or when the single file passes readability limits (~1000-3000 lines, depending on density).",
+      },
+      {
+        q: "What's the right size limit for a single-file React app?",
+        a: "Heuristic: 1000 lines fine; 1000-3000 starts feeling tight; past 3000, definitely split. The real test is readability — can a new reader make sense of it in one sitting? When that breaks, time to split.",
+      },
+      {
+        q: "Is monolithic file architecture worse than modular?",
+        a: "Neither is universally worse. Monolithic wins when scope is small and team is solo. Modular wins when scope is large or team is many. The wrong move is defaulting to one approach regardless of project shape.",
+      },
+    ],
+  },
+
+  // -------------------------------------------------------------------------
+  // Final 2 — solo-dev reflective + GDPR
+  // -------------------------------------------------------------------------
+  {
+    slug: "gdpr-soft-delete-retention-crons",
+    title:
+      "GDPR-compliant soft delete with retention crons — the audit-friendly cleanup pattern",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 6,
+    description:
+      "advance.al's account-deletion flow soft-deletes user data (sets a flag, hides from queries) and a daily cron permanently purges after 30 days. GDPR's right-to-erasure is satisfied; the operational benefits of recoverable deletes are preserved. Here's the pattern that works for most SaaS.",
+    keywords: [
+      "GDPR soft delete",
+      "data retention cron",
+      "right to erasure pattern",
+      "GDPR-compliant SaaS",
+      "data minimization Node",
+      "account deletion flow",
+    ],
+    relatedProject: "advance-al",
+    answerBox:
+      "advance.al's user-deletion flow soft-deletes (sets `deleted_at`, removes from queries via middleware) and a daily Vercel cron permanently purges any soft-deleted user older than 30 days. GDPR right-to-erasure satisfied within the legal window; operational benefit of recoverable deletes preserved during the grace period. The pattern works for most SaaS handling EU user data.",
+    lede:
+      "GDPR's right to erasure says a user can request their data be deleted, and you have to comply within roughly 30 days. Most teams implement this as immediate hard delete, which loses operational benefits (recovering from accidental deletes, audit reconstruction). A soft-delete-plus-retention-cron pattern keeps both — the user is functionally deleted immediately, and the data is permanently gone within the legal window.",
+    sections: [
+      {
+        heading: "What soft delete means in advance.al",
+        paragraphs: [
+          "User-initiated account deletion: API endpoint sets `users.deleted_at = NOW()`. The user is logged out, their session is invalidated, their profile is removed from search results, their job applications are anonymized in employer views (\"deleted user\" placeholder).",
+          "Functionally, the user is gone within seconds. No more notifications, no more search visibility, no more login.",
+          "Internally, the data still exists for 30 days. A daily cron job hard-deletes any user with `deleted_at` older than 30 days — purging the user row, cascading deletes to related tables, and confirming that no PII remains.",
+        ],
+      },
+      {
+        heading: "Why not just hard-delete immediately?",
+        paragraphs: [
+          "Recoverable accidents. Users sometimes delete their account, regret it within hours, and want to recover. With soft delete + 30-day window, support can restore them. With immediate hard delete, the data is gone — recovery requires asking them to start over.",
+          "Audit reconstruction. \"What did this user do before they deleted their account?\" is sometimes a legitimate compliance question. Soft delete preserves the data for the legal window; hard delete loses it.",
+          "Anti-abuse. Users who delete + recreate accounts to evade bans or spam policies can be tracked during the grace window. Hard delete makes this gaming trivial.",
+        ],
+      },
+      {
+        heading: "What \"functionally deleted\" requires",
+        paragraphs: [
+          "Middleware in the API filters every read query to exclude soft-deleted users. `SELECT * FROM users WHERE id = ?` becomes `SELECT * FROM users WHERE id = ? AND deleted_at IS NULL` automatically. Bypassing this filter requires explicit intent (admin recovery flow, audit query).",
+          "Session invalidation: the user's JWT is added to a revocation list. Any further requests with that JWT get 401. Vercel KV or Redis holds the revocation list with a TTL matching the JWT expiry.",
+          "Search exclusion: the embedding worker re-runs to remove the user from match indexes. They no longer appear in any employer's candidate search.",
+          "Notification cessation: their entries are removed from any pending notification queues. They never get another email or SMS from the platform.",
+        ],
+        table: {
+          caption: "Soft delete vs hard delete coverage",
+          headers: ["Concern", "Soft delete (immediate)", "Hard delete (cron, after 30 days)"],
+          rows: [
+            ["User is logged out", "Yes", "(already done)"],
+            ["Hidden from search", "Yes (middleware filters)", "(row no longer exists)"],
+            ["No further notifications", "Yes (queue cleanup)", "(already done)"],
+            ["Job applications anonymized in employer view", "Yes (placeholder)", "Permanent"],
+            ["Data physically present in DB", "Yes (grace period)", "No"],
+            ["Recoverable via support", "Yes", "No"],
+          ],
+        },
+      },
+      {
+        heading: "How the retention cron works",
+        paragraphs: [
+          "Daily Vercel cron at off-peak hours. Query: `SELECT id FROM users WHERE deleted_at < NOW() - INTERVAL '30 days'`. For each result: cascade delete from related tables (applications, profiles, embeddings, transactions), then delete the user row.",
+          "The deletion is idempotent — running the cron twice in a day produces the same result. Foreign key cascades are configured at the schema level so a single DELETE on the user row removes related data atomically.",
+          "Post-deletion verification: a follow-up query confirms no rows reference the deleted user ID. If the verification finds orphaned references, an alert fires. This catches schema-evolution mistakes where a new table was added without cascade configuration.",
+        ],
+      },
+      {
+        heading: "What does GDPR actually require?",
+        paragraphs: [
+          "GDPR Article 17 (right to erasure): users can request deletion, and you must comply \"without undue delay\" — typically interpreted as within 30 days of request.",
+          "GDPR doesn't require immediate hard delete. It requires deletion within the legal window. The 30-day soft-delete-then-hard-delete pattern is compliant; what's not compliant is failing to delete at all, or continuing to use the data for purposes the user didn't consent to during the window.",
+          "Documentation: the privacy policy must explain the deletion timeline and the grace window. Users have to know they can recover within the window.",
+        ],
+      },
+      {
+        heading: "Where this generalizes",
+        paragraphs: [
+          "Any SaaS handling EU user data. Same pattern works in healthcare (with shorter or longer windows depending on regulation), finance (longer windows often required for transaction records), and government (specific industry rules).",
+          "The pattern: explicit deletion request → immediate functional removal (logout, search hide, notification stop) → grace window with reversibility → hard delete via cron. The exact window varies by regulation; the structural pattern is the same.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "GDPR doesn't require immediate hard delete. It requires deletion within the legal window.",
+      },
+      {
+        quote:
+          "Users sometimes delete their account, regret it within hours, and want to recover. With soft delete + 30-day window, support can restore them.",
+      },
+    ],
+    citations: [
+      {
+        label: "GDPR Article 17 — right to erasure",
+        url: "https://gdpr-info.eu/art-17-gdpr/",
+        relevance: "Authoritative reference for the right-to-be-forgotten requirement",
+      },
+      {
+        label: "EU GDPR official text",
+        url: "https://eur-lex.europa.eu/eli/reg/2016/679/oj",
+        relevance: "Full GDPR text for compliance verification",
+      },
+      {
+        label: "Vercel Cron Jobs",
+        url: "https://vercel.com/docs/cron-jobs",
+        relevance: "The retention cron runs on Vercel's scheduler",
+      },
+    ],
+    faq: [
+      {
+        q: "How does GDPR right-to-erasure work for SaaS?",
+        a: "Users can request their data be deleted; you must comply within a reasonable window (typically 30 days, depending on jurisdiction). Immediate hard delete is one valid approach; soft delete with a retention cron that hard-deletes within the window is also valid and operationally easier.",
+      },
+      {
+        q: "Why not just hard-delete user data immediately on request?",
+        a: "Loses recoverability for users who delete by mistake; complicates audit reconstruction; makes anti-abuse harder. Soft delete with a 30-day window keeps the operational benefits while still being GDPR-compliant.",
+      },
+      {
+        q: "What happens to a user's data during the grace window?",
+        a: "Functionally invisible: logged out, hidden from search, no notifications, anonymized in cross-user views. Internally still present so support can recover on user request. After the window, hard-deleted by cron.",
+      },
+      {
+        q: "How do you verify GDPR cleanup actually happened?",
+        a: "Post-deletion verification query that confirms no rows reference the deleted user ID. Alert on orphaned references — these catch schema-evolution mistakes where new tables were added without proper cascade configuration.",
+      },
+    ],
+  },
+
+  {
+    slug: "solo-shipping-architecture-trade-offs-10-projects",
+    title:
+      "What 10 production projects taught me about solo shipping",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 8,
+    description:
+      "Lessons from running 10 production projects solo. The architectural decisions that paid back, the ones that didn't, and the patterns that survive across React, Express, React Native, Microsoft Business Central. A reflective summary of the trade-offs that matter.",
+    keywords: [
+      "solo developer lessons",
+      "solo shipping architecture",
+      "production project trade-offs",
+      "10 projects retrospective",
+      "freelance dev experience",
+      "solo SaaS patterns",
+    ],
+    answerBox:
+      "10 solo projects across React, Express, React Native, Business Central. The decisions that paid back: layer discipline (route → service → data), boundary types (Cents, E164), database-level authorization (RLS), test budget on unhappy paths, runtime config over build steps. The decisions that didn't: over-architecting too early, over-testing trivial code, building admin UIs for tenants when a JSON file would do.",
+    lede:
+      "10 projects later, the patterns that hold up across every shape of work look different than I'd have guessed at the start. Some defaults I'd ship with again on day one. Some defaults I'd skip until the project earned them. This is the retrospective.",
+    sections: [
+      {
+        heading: "What paid back from day one",
+        paragraphs: [
+          "Layer discipline (route → service → data, with import enforcement). This pays back the day after you write it — even on a one-week project. The cost is small; the structural protection against accidental coupling is real.",
+          "Boundary types (money as cents, phones as E.164, timestamps as ISO strings). TypeScript branded types make these costless after the first definition. They eliminate entire bug categories permanently.",
+          "Database-level authorization. RLS in Supabase or equivalent in Firestore. The day you have any user data, you should have policies. Not as a defense in depth — as the actual auth gate.",
+          "Test budget on unhappy paths. Skip the obvious-correct, cover what breaks. 100 well-aimed tests beat 1000 permissive ones.",
+        ],
+      },
+      {
+        heading: "What I'd defer",
+        paragraphs: [
+          "Multi-environment infrastructure. Local dev, staging, production used to be the default; for small projects it's overhead. One environment plus feature flags works for most things until the team grows.",
+          "Custom admin UIs. The Social Command Center approach (brand-as-filesystem-config) generalizes — for many internal tools, a JSON file plus a CLI is faster to build and use than a CRUD UI.",
+          "Microservices. Solo or small team: monolith. The microservices tax is real and pays back only at team-scale coordination problems that don't apply at small scale.",
+          "Over-abstracted component libraries. Tailwind plus a few primitives plus per-project component composition beats designing a reusable design system upfront, until you're shipping 5+ products that need shared identity.",
+        ],
+        table: {
+          caption: "Pays back day one vs defer until earned",
+          headers: ["Pattern", "Day-one default", "Why"],
+          rows: [
+            ["Layer discipline (route → service → data)", "Yes", "Cheap, immediate protection against coupling"],
+            ["Boundary types (Cents, E164)", "Yes", "Eliminates bug categories permanently"],
+            ["Database-level auth", "Yes", "The day you have user data, you need it"],
+            ["Test discipline (unhappy paths)", "Yes", "Cheap, scales with project"],
+            ["Multi-environment infra (dev/staging/prod)", "Defer", "Overhead for small projects"],
+            ["Custom admin UIs", "Defer", "JSON + CLI is faster for internal tools"],
+            ["Microservices", "Defer", "Tax pays back only at scale"],
+            ["Component library / design system", "Defer", "Per-project composition is faster"],
+          ],
+        },
+      },
+      {
+        heading: "What changed my mind",
+        paragraphs: [
+          "AI as a first-class layer, not an add-on. I started with \"add an AI feature to an existing app.\" By the time I shipped KeepItUp, advance.al, Ëndërrat, Reel Farmer — the AI is the layer the rest of the app composes around. Multi-provider routing, cost telemetry, prompt versioning, and evaluation discipline are infrastructure now, not afterthoughts.",
+          "Database-level rules over middleware-level rules. The CleanSlate RLS-as-subscription-gate pattern was a small experiment that ended up changing how I think about authorization broadly. The check should live where the data lives.",
+          "Runtime config over build-time variants. Used to ship per-tenant builds; the GymApp pattern of runtime-fetched branding is meaningfully cheaper at every scale.",
+          "Idempotency as a default, not as a refinement. Cron jobs, webhook handlers, retry loops — assume re-runs will happen. Build the operations to be safe under re-run. Add this on day one, not after the first duplicate-charge incident.",
+        ],
+      },
+      {
+        heading: "What I keep getting wrong",
+        paragraphs: [
+          "Estimating. I am consistently optimistic on timelines by 30-50%. Most projects took longer than I thought; the failure mode is forgetting the unsexy work (deploy, security review, browser-testing, docs, mobile-specific edge cases).",
+          "Over-investing in V1 features. Real users surface different priorities than projected users. I've spent weeks on features that turned out to matter less than a tiny UX touch I'd dismissed.",
+          "Documentation. Always behind. Always less than I should.",
+        ],
+      },
+      {
+        heading: "What 10 projects worth of code looks like",
+        paragraphs: [
+          "Total lines of code committed: low six figures. Total deployable surfaces: 25+ (each project has multiple — admin web + mobile app + API + workers). Total tests: in the low thousands. Total customer-facing incidents: small handful, almost all caught early because of test discipline and gate patterns.",
+          "Most of the code is unsurprising. The interesting parts are the architectural decisions that hold up — layer discipline, boundary types, database-level auth, multi-provider AI routing. Those are the patterns I'd default to on project 11.",
+        ],
+      },
+      {
+        heading: "What I'd tell someone starting solo",
+        paragraphs: [
+          "Pick layered defaults early — they're cheap and they compound. Skip the over-architecture impulse — it's expensive and doesn't compound until you have a team to coordinate. Build for the unhappy paths — the happy ones take care of themselves. Test what breaks, not what's obviously correct.",
+          "And ship. Ten production projects beats one polished one for learning what actually matters.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "100 well-aimed tests beat 1000 permissive ones.",
+      },
+      {
+        quote:
+          "Pick layered defaults early — they're cheap and they compound. Skip the over-architecture impulse — it's expensive and doesn't compound until you have a team to coordinate.",
+      },
+    ],
+    citations: [
+      {
+        label: "jurgenhalili.dev portfolio",
+        url: "https://jurgenhalili.dev",
+        relevance: "The 10 projects this retrospective is drawn from",
+      },
+    ],
+    faq: [
+      {
+        q: "What patterns survive across solo projects of different shapes?",
+        a: "Layer discipline (route → service → data), boundary types (Cents, E164), database-level authorization, test budget on unhappy paths, runtime config over build-time variants, idempotency as a default. These pay back from day one regardless of framework.",
+      },
+      {
+        q: "What should solo developers skip until earned?",
+        a: "Multi-environment infrastructure for small projects, custom admin UIs when JSON + CLI works, microservices at small team size, component libraries before you have multiple products that need shared identity. Defer these until the project earns them; otherwise they're overhead.",
+      },
+      {
+        q: "How important is test discipline for solo projects?",
+        a: "Critical. Solo developers can't catch all regressions manually across multiple projects. The test suite is the safety net for refactors and the documentation of expected behavior. Test the unhappy paths; skip the obvious-correct.",
+      },
+      {
+        q: "What's the most underrated solo-dev skill?",
+        a: "Scope discipline. The ability to look at a feature request and decide whether the right answer is a single App.tsx file, a three-services data layer, a multi-tenant runtime config, or no feature at all. Matching structure to scope across projects is the meta-skill.",
+      },
+    ],
+  },
+
+  {
+    slug: "freelance-developer-rate-card-germany",
+    title:
+      "How freelance software developer rates work in Germany — Stundensatz reality check",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 6,
+    description:
+      "Most clients hiring freelance developers in Germany don't know what a fair Stundensatz looks like. Rates vary by stack, seniority, market, and contract shape. Here's the honest 2026 picture for the senior end of full-stack + AI + Business Central work.",
+    keywords: [
+      "freelance developer rate Germany",
+      "Stundensatz software engineer",
+      "freelance hourly rate 2026",
+      "Werkvertrag pricing",
+      "freelance Germany cost",
+      "developer freelance rate Kiel",
+    ],
+    answerBox:
+      "Senior full-stack engineers in Germany typically charge €90-€150/hour depending on stack and specialty. AI-integration adds €20-€40/hour to that floor. Microsoft Business Central tier-3 contractors charge €120-€180. Werkvertrag (fixed-deliverable) translates these into project prices that vary 30-50% based on scope clarity. Don't quote a number without scoping the work first.",
+    lede:
+      "A client asking \"how much per hour\" before describing the project is asking the wrong question first. The right number depends on stack, seniority, market, contract shape, and how clearly the work is scoped. Here's the honest 2026 picture for senior full-stack work in Germany.",
+    sections: [
+      {
+        heading: "The 2026 Stundensatz bands",
+        paragraphs: [
+          "Junior full-stack (1-3 years experience, one stack): €50-€80/hour. Mid-level (3-5 years, multiple stacks): €70-€110/hour. Senior (5+ years, full-stack across web + mobile + AI): €90-€150/hour. Specialist niche (Microsoft BC, advanced AI, regulated industries): €120-€200/hour.",
+          "These are practical ranges for the German market, primarily for direct-to-client work. Agency-routed work runs higher because the agency takes a margin. Toptal-routed work runs in similar bands to direct but with the platform taking 15-25%.",
+          "Rates vary by city. Berlin, Munich, Hamburg, Frankfurt are at the top of each band. Kiel, Bremen, Leipzig, Dresden are typically 10-20% lower for similar work — though remote-friendly contracts have largely flattened this.",
+        ],
+        table: {
+          caption: "Indicative 2026 Stundensatz bands in Germany",
+          headers: ["Tier", "Stundensatz", "Profile"],
+          rows: [
+            ["Junior", "€50-€80", "1-3 years, one stack, less independent"],
+            ["Mid-level", "€70-€110", "3-5 years, multiple stacks, owns features"],
+            ["Senior full-stack", "€90-€150", "5+ years, web + mobile + deploy + AI"],
+            ["Specialist (BC / regulated)", "€120-€200", "Niche depth + market scarcity"],
+            ["Through major agencies", "+25-50% markup", "Markup goes to agency overhead"],
+          ],
+        },
+      },
+      {
+        heading: "What raises the rate",
+        paragraphs: [
+          "Stack breadth. A developer who can ship admin web + mobile + API + deploy solo is worth more than one who needs to subcontract every layer.",
+          "AI integration. Multi-provider routing, vector search, agent runtimes — these specialize the developer and command €20-€40 over the full-stack baseline.",
+          "Production track record. Multiple shipped projects with public artifacts (case studies, repos, live deploys) reduce risk to the client. Less risk = higher rate.",
+          "Regulated industries. Healthcare, finance, government work require compliance documentation and audit trails. Niche depth + smaller available pool = higher rate.",
+          "Microsoft Business Central tier-3 specifically. The pool of contractors who can ship AL extensions + REST/OAuth2 integrations + run a NAV→BC migration end-to-end is small and well-paid.",
+        ],
+      },
+      {
+        heading: "What lowers the rate",
+        paragraphs: [
+          "Single-stack only. A freelancer who can ship React but needs help with the backend, or ship backend but needs a designer, charges less because the client has to coordinate multiple people.",
+          "No public artifacts. Without a portfolio that shows real production work, the client is taking on more risk. The rate reflects that.",
+          "Long-term consistent contracts. A freelancer with one stable client for 80% time often quotes lower hourly to keep the engagement, accepting lower per-hour for higher revenue stability.",
+          "Off-shore competition. Clients comparing German-market rates against off-shore rates sometimes refuse to pay German-market prices. This is a sourcing problem, not a fair-rate problem.",
+        ],
+      },
+      {
+        heading: "Werkvertrag (fixed-deliverable) pricing",
+        paragraphs: [
+          "Hourly rates translate to fixed prices via the developer's velocity estimate. Senior full-stack at €120/hour delivering a 4-week MVP at 6 hours/day of focused work: ~€57,600. The Werkvertrag is typically signed for €50K-€80K depending on scope clarity and overhead margin.",
+          "Werkvertrag pricing has a risk premium built in. If the project's scope is well-defined and the developer is confident in the estimate, the premium is small (10-15%). If the scope is fuzzy, the premium grows; some Werkverträge are 30-50% above the equivalent hourly time-and-materials estimate.",
+          "For clients who want predictable cost: Werkvertrag with clear deliverables. For clients who want flexibility on scope: hourly. Don't expect to have both at the same price.",
+        ],
+      },
+      {
+        heading: "What clients should expect from a quote",
+        paragraphs: [
+          "A real quote includes: scoping questions about platforms, stacks, integrations, deploy targets; a deliverable list (what's in, what's not); a timeline with milestones; the rate model (hourly vs Werkvertrag); and a clear statement of what changes the price (new scope, scope changes, hardware needs).",
+          "A quote without these isn't a quote — it's a number. Treat it as such.",
+        ],
+      },
+      {
+        heading: "The honest framing",
+        paragraphs: [
+          "Freelance rates in Germany aren't a fixed number. They're a function of what the work is, who's doing it, how clearly it's scoped, and how the contract is shaped. The bands above are practical for the senior end of full-stack + AI + Business Central work; they shouldn't be read as a price list.",
+          "When in doubt, ask for a project-specific proposal rather than a number in the abstract. The freelancer who quotes a number without scoping is selling time; the one who asks scoping questions before quoting is solving the problem.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "A client asking \"how much per hour\" before describing the project is asking the wrong question first.",
+      },
+      {
+        quote:
+          "A quote without scoping is a number, not a quote. Treat it as such.",
+      },
+    ],
+    citations: [
+      {
+        label: "IHK — Stundensatz-Berechnung für Freiberufler",
+        url: "https://www.ihk.de/themenfelder/recht-steuern/selbstaendigkeit/stundensatzberechnung",
+        relevance: "Standard German freelance rate-calculation guidance",
+      },
+      {
+        label: "Bundesverband Selbständige in Deutschland",
+        url: "https://www.bvsd.de/",
+        relevance: "Trade association for German freelancers",
+      },
+    ],
+    faq: [
+      {
+        q: "What's a fair Stundensatz for a senior software engineer in Germany in 2026?",
+        a: "€90-€150/hour for senior full-stack work direct-to-client. AI-integration adds €20-€40 to that floor. Microsoft Business Central tier-3 contractors charge €120-€180. Specialists in regulated industries can go higher. Below ~€80/hour, the math against Festanstellung doesn't work for senior people.",
+      },
+      {
+        q: "Why do freelance rates in Germany vary so much by stack?",
+        a: "Different stacks have different talent supply. Full-stack across web + mobile + AI is a small pool; pure frontend is a large pool. Microsoft Business Central tier-3 is a tiny pool. Market rate reflects supply, demand, and the value the work generates for the client.",
+      },
+      {
+        q: "Should I pay an agency or hire a freelancer directly?",
+        a: "Agencies charge a 25-50% markup over equivalent freelance rates. The markup pays for project management, multiple specialists in parallel, formal delivery process. Worth it if you need those things; not worth it if a single experienced freelancer can ship the same scope.",
+      },
+      {
+        q: "Is Werkvertrag (fixed-price) or hourly better for software projects?",
+        a: "Werkvertrag for projects with clear scope and stable requirements. Hourly for projects where requirements are evolving. Werkvertrag includes a risk premium that grows with scope uncertainty; hourly trades the premium for client risk on cost overruns.",
+      },
+    ],
+  },
+
+  {
+    slug: "freelance-engineer-portfolio-what-to-show",
+    title:
+      "What a freelance engineer's portfolio should actually show — beyond the screenshot grid",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 6,
+    description:
+      "Most freelance engineering portfolios are a screenshot grid plus three lines of project description. That tells the client nothing about whether the engineer can ship. Here's what a portfolio should actually demonstrate, with examples from real production work.",
+    keywords: [
+      "freelance engineer portfolio",
+      "developer portfolio examples",
+      "engineering case study",
+      "freelance portfolio Germany",
+      "developer hiring evidence",
+      "software engineer portfolio 2026",
+    ],
+    answerBox:
+      "A freelance engineer's portfolio should demonstrate: end-to-end ownership (problem → ship), real production traffic or paying users, public artifacts (repos, deployed URLs, test counts), and one paragraph of architectural choice per project explaining the non-obvious decisions. Screenshots are decoration; case studies with specifics are evidence.",
+    lede:
+      "Open most freelance engineer portfolios and you'll see a grid of project screenshots, a sentence per project, and a contact form. None of it tells the client whether this person can actually ship. A portfolio that evaluates well looks different — it shows the work, not just the visuals of the work.",
+    sections: [
+      {
+        heading: "What's missing from screenshot-grid portfolios",
+        paragraphs: [
+          "Was this shipped? Or is it a Figma mockup labeled as a project? A screenshot doesn't distinguish.",
+          "Does it have real users? A portfolio piece can be a personal project no one uses, or a production app handling real traffic. The screenshot doesn't tell you.",
+          "Did the engineer build it solo or as part of a team? Single contribution within a 10-engineer project is very different from solo end-to-end. Screenshots elide this.",
+          "What architectural decisions were made? \"I built X\" with no detail leaves the client guessing whether the engineer thought about the hard parts.",
+        ],
+      },
+      {
+        heading: "What to show instead",
+        paragraphs: [
+          "Live URLs. If it's a web app, link to it. If it's a mobile app, link to the App Store / Play Store listing. If it's private (NDA, internal tool), say so explicitly rather than implying it's public.",
+          "Public repos. Not every project has one (NDA work doesn't), but the ones that do should be linked. The most recent commit's diff tells a client more than a portfolio paragraph.",
+          "Test counts and CI status. \"594 tests across Vitest + Playwright\" is a verifiable claim. \"I write tests\" is not. Specifics beat vague.",
+          "One paragraph per project on the architectural decisions. Not the happy-path description — the non-obvious decisions. \"Used Prisma's driver-adapter pattern to run better-sqlite3 in dev and Turso in prod with zero schema changes\" tells me more than \"Built with Next.js and Postgres.\"",
+        ],
+        table: {
+          caption: "Portfolio evidence vs portfolio decoration",
+          headers: ["Element", "Evidence", "Decoration"],
+          rows: [
+            ["Screenshots", "Required, but secondary", "Most portfolios are 90% this"],
+            ["Live URL", "Essential", "Often missing"],
+            ["Public repo (where possible)", "Strongest signal", "Rarely shown"],
+            ["Test count / CI badge", "Specific, verifiable", "Vague claims of \"quality\""],
+            ["Architecture paragraph", "What separates real engineering", "Often replaced by tech-stack tag list"],
+            ["Solo vs team contribution", "Critical context", "Often omitted"],
+            ["Production users / traffic", "Validates the work", "Often hidden behind \"used by clients\""],
+          ],
+        },
+      },
+      {
+        heading: "What case studies should answer",
+        paragraphs: [
+          "What problem was this solving? Real problem, real audience, not \"a CRUD app for learning purposes.\"",
+          "What did you build? Specifically, in terms a hiring engineer would recognize. Stack, architectural decisions, integration points, deploy target.",
+          "What was hard about it? Every real project has friction points. Surfacing them honestly is a hiring signal — the engineer thought through the hard parts and can articulate them.",
+          "What would you do differently? Retrospective awareness is a hiring signal. \"I'd embed each section of a CV separately instead of one blob per profile\" tells a client this engineer thinks past the ship date.",
+          "Where can it be verified? Live URL, repo, test count, customer testimonial — pick what's available.",
+        ],
+      },
+      {
+        heading: "How long should case studies be?",
+        paragraphs: [
+          "Long enough to convey the work. 500-1500 words per project is typical for the senior end. Skim-readable structure (clear headers, pull quotes, code snippets, screenshots that support specific points) helps the reader find what they need.",
+          "Short case studies (under 200 words) read as marketing copy. Long ones (over 3000 words) read as essays. The sweet spot is enough to demonstrate depth without burying the reader.",
+        ],
+      },
+      {
+        heading: "What about NDA-bound work?",
+        paragraphs: [
+          "Be explicit. \"This project is under NDA, I can describe the architecture but not show the code or the live URL.\" Honest framing is a hiring signal.",
+          "Where possible, describe the work in shape and impact terms that don't violate the NDA. \"A multi-tenant SaaS for [industry] with 5K paying users\" doesn't reveal client details but conveys scope.",
+          "If everything in your portfolio is NDA-bound, build one public side project. Anything substantive — a real GitHub repo, a real deployed URL — closes the gap.",
+        ],
+      },
+      {
+        heading: "The portfolio shape that hires well",
+        paragraphs: [
+          "Five to ten projects, each with a full case study. Tech stack list per project. Live URL or NDA notice. Public repo where possible. Architecture paragraph that highlights non-obvious decisions. One pull quote with a specific stat or claim. Sources / further reading.",
+          "Across the projects, range matters. Variety of stacks, variety of problem types, variety of solo vs team contributions. The portfolio that says \"I can ship\" across many shapes wins more hires than one that says \"I can ship one thing well.\"",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "\"594 tests across Vitest + Playwright\" is a verifiable claim. \"I write tests\" is not.",
+      },
+      {
+        quote:
+          "If everything in your portfolio is NDA-bound, build one public side project. Anything substantive closes the gap.",
+      },
+    ],
+    citations: [
+      {
+        label: "jurgenhalili.dev portfolio (worked example)",
+        url: "https://jurgenhalili.dev",
+        relevance: "10 production projects with full case studies",
+      },
+      {
+        label: "GitHub — public repositories as portfolio evidence",
+        url: "https://github.com",
+        relevance: "Where most freelance engineers' real work artifacts live",
+      },
+    ],
+    faq: [
+      {
+        q: "What should a freelance engineer's portfolio include?",
+        a: "Live URLs, public repos where possible, test counts with CI status, architectural decision paragraphs, real production-user context, and explicit framing of solo vs team contribution. Screenshots are decoration; specifics are evidence.",
+      },
+      {
+        q: "How long should portfolio case studies be?",
+        a: "500-1500 words per project. Long enough to convey real depth (problem, build, hard parts, retrospective), short enough to skim. Under 200 reads as marketing; over 3000 reads as an essay.",
+      },
+      {
+        q: "Can you put NDA work in a portfolio?",
+        a: "Yes, with explicit framing. Describe the architecture and impact without revealing client details or code. \"Multi-tenant SaaS for [industry], 5K paying users, multi-region deploy\" conveys scope without violating NDA.",
+      },
+      {
+        q: "How many projects should a portfolio have?",
+        a: "Five to ten with full case studies, with variety in stack and problem type. Quality over quantity — three deeply-written case studies beat ten thin ones.",
+      },
+    ],
+  },
+
+  {
+    slug: "what-good-ai-engineering-looks-like",
+    title:
+      "What good AI engineering looks like — beyond the demo",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 7,
+    description:
+      "Most teams shipping their first AI feature focus on getting the model to produce something. Good AI engineering is everything that surrounds that — eval frameworks, cost telemetry, multi-provider routing, failure-mode handling, prompt versioning. The model call is the smallest part.",
+    keywords: [
+      "AI engineering best practices",
+      "production AI architecture",
+      "LLM application patterns",
+      "AI feature deployment",
+      "AI ops",
+      "AI engineering vs ML engineering",
+    ],
+    answerBox:
+      "Good AI engineering is the surrounding system, not the model call. Eval frameworks for measuring correctness on held-out sets, cost telemetry per call, multi-provider routing for resilience, prompt versioning, structured output enforcement, failure-mode handling, observability. The model is the smallest line of code; the engineering is everything around it.",
+    lede:
+      "The line between \"I wrapped an OpenAI call\" and \"I shipped a production AI feature\" is wide. Wider than most teams realize before they ship. Here's the surrounding system that turns a model call into a feature you can actually maintain.",
+    sections: [
+      {
+        heading: "What separates demo from production",
+        paragraphs: [
+          "The model call is the same. The user types a prompt; you call the API; the response comes back. That's the demo.",
+          "Production adds: input validation (what happens with a 200KB prompt? an empty one? a non-English one?); output enforcement (schema-validated structured responses, retries on validation failure); cost telemetry (per call, per user, per feature); multi-provider routing (fallback on outage, route by task strength); eval framework (held-out test set, regression measurement); failure-mode handling (rate limits, content policy violations, model hallucinations); observability (tracing per call, error breakdown, latency percentiles).",
+          "The demo can fit in 20 lines. Production usually fits in 2000.",
+        ],
+      },
+      {
+        heading: "The eval framework",
+        paragraphs: [
+          "How do you know your AI feature works? \"It looked good when I tried it\" is not an answer. A held-out evaluation set of inputs with known-good outputs (manually labeled by someone with judgment) lets you measure correctness as a number.",
+          "Run the eval every time you change the prompt, the model, the surrounding logic, or the input pipeline. Compare against the previous run. Improvements show up as higher pass rates on the eval set; regressions show up as lower.",
+          "Without an eval set, prompt changes feel like vibes. With one, they're measurable. advance.al's matching engine has held-out candidate/job pairs labeled correctly; every model swap or weight change runs against them.",
+        ],
+      },
+      {
+        heading: "Structured output enforcement",
+        paragraphs: [
+          "Free-form text responses are unpredictable. \"Extract this person's skills\" might return a comma-separated list, a JSON array, a sentence describing skills, or an apology that the model doesn't know. Production code has to handle all of these.",
+          "Better: enforce structured output via the provider's JSON mode plus an explicit schema. The model is forced to produce valid JSON matching your schema; the downstream code can rely on shape. OpenAI's structured outputs and Anthropic's prompt-engineering-for-JSON both work. Gemini has its own JSON mode.",
+          "The schema is the contract. Production code reads schema-typed outputs, not string-parsed ones.",
+        ],
+        table: {
+          caption: "Demo-grade vs production-grade AI engineering",
+          headers: ["Concern", "Demo", "Production"],
+          rows: [
+            ["Input validation", "None", "Length checks, sanitization, content policy"],
+            ["Output format", "Free-form text", "Schema-enforced JSON with retries"],
+            ["Cost tracking", "None", "Per-call telemetry, daily aggregations"],
+            ["Provider lockin", "Hardcoded OpenAI", "Internal client routing per-stage"],
+            ["Eval", "Manual try-it-and-see", "Held-out test set, regression measurement"],
+            ["Observability", "Console.log", "Structured traces, latency percentiles"],
+            ["Failure handling", "Crashes", "Retry, fallback, human-in-loop where needed"],
+          ],
+        },
+      },
+      {
+        heading: "Cost telemetry isn't optional",
+        paragraphs: [
+          "An AI feature without per-call cost tracking is a runaway-bill incident waiting to happen. The first time someone's CI loop oscillates and the agent burns through $30,000 in a weekend, you'll want the per-call records.",
+          "Capture per call: provider, model, stage, input tokens, output tokens, latency, cost USD, trace ID. Aggregate to daily-spend-per-tenant, daily-spend-per-stage, cost-per-successful-action. Alert on daily spend > 3σ above 30-day average.",
+        ],
+      },
+      {
+        heading: "Multi-provider routing",
+        paragraphs: [
+          "Single-provider lock-in is fragile. Provider has an outage; your agent dies. Provider changes pricing; your costs spike. Provider has a blind spot your task lives in; your output quality drops.",
+          "Route per-stage based on empirical performance. Claude for code reasoning; OpenAI for structured extraction; Gemini for long-context and budget overflow. Behind one internal client that handles selection, budget gates, cost telemetry. The boring infrastructure that pays back the day a provider has an outage.",
+        ],
+      },
+      {
+        heading: "Failure-mode handling",
+        paragraphs: [
+          "What happens when the model is wrong? In good systems, there's a retry layer with a different prompt or model; a fallback to a deterministic path for known failure cases; a human-review queue for cases the system can't resolve.",
+          "In bad systems, the user sees a stack trace. Don't ship bad systems.",
+          "Failure modes to handle explicitly: rate limits (backoff + fallback), content policy violations (return polite refusal, log for review), model hallucinations (confidence threshold + verification step), schema validation failures (retry with stricter framing, then fail), network errors (transient retry, alert on persistent).",
+        ],
+      },
+      {
+        heading: "What hiring should look for",
+        paragraphs: [
+          "An AI engineer who walks you through their cost telemetry, eval framework, and multi-provider routing is operating at production grade. An AI engineer who shows you a Streamlit demo with a single OpenAI call is operating at demo grade. Both are real categories of work; the second category isn't ready for production yet.",
+          "Ask: how do you know your AI feature works? What does your eval look like? How do you handle a model deprecation? How do you measure cost? Walk me through your last production AI bug. The answers tell you which category you're hiring.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "The demo can fit in 20 lines. Production usually fits in 2000.",
+      },
+      {
+        quote:
+          "Without an eval set, prompt changes feel like vibes. With one, they're measurable.",
+      },
+    ],
+    citations: [
+      {
+        label: "Anthropic prompt engineering documentation",
+        url: "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview",
+        relevance: "Reference for prompt patterns used in production",
+      },
+      {
+        label: "OpenAI structured outputs",
+        url: "https://platform.openai.com/docs/guides/structured-outputs",
+        relevance: "Schema-enforced JSON responses",
+      },
+      {
+        label: "Hugging Face evaluate library",
+        url: "https://huggingface.co/docs/evaluate",
+        relevance: "Standard tooling for AI evaluation",
+      },
+      {
+        label: "LangSmith — observability for LLM apps",
+        url: "https://www.langchain.com/langsmith",
+        relevance: "One option for production AI observability",
+      },
+    ],
+    faq: [
+      {
+        q: "What does production AI engineering involve beyond calling the model?",
+        a: "Input validation, structured output enforcement, cost telemetry per call, multi-provider routing, evaluation framework against held-out test sets, prompt versioning, observability, failure-mode handling (rate limits, hallucinations, content policy, network errors). The model call is the smallest part.",
+      },
+      {
+        q: "How do you know an AI feature actually works?",
+        a: "Build a held-out evaluation set of inputs with known-good outputs labeled manually. Run the eval on every change to prompt, model, or surrounding logic. Compare pass rates over time. Without this, prompt changes are vibes; with it, they're measurable.",
+      },
+      {
+        q: "What's the difference between AI engineering and ML engineering?",
+        a: "ML engineers typically train models. AI engineers typically integrate existing models (LLMs, embeddings, vision) into production systems. For most 2026 production work, you want an AI engineer — model training is rare, model integration is constant.",
+      },
+      {
+        q: "Should production AI features use multiple LLM providers?",
+        a: "Usually yes, behind an internal client. Different providers have different strengths and different failure modes; routing per-stage based on empirical performance beats picking one provider for everything. Also protects against provider outages and pricing changes.",
+      },
+    ],
+  },
 ];
 
 export function getNote(slug: string): Note | undefined {
