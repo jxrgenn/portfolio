@@ -512,3 +512,140 @@ Drift signal: per-candidate top-N match-list stability. Daily job picks stratifi
 The 7-dimension explainable score on top of cosine (title, skills, experience, location, education, salary, availability) protects dashboard UX — dimension formulas don't depend on embedding model. Cosine numbers shift after migration; dimension breakdowns stay stable; user-visible "candidate scored 78" doesn't make employers think the platform broke.
 
 Re-embedding pass: two-phase migration. Phase 1: write `embedding_v2` alongside `embedding` over time. Phase 2: at 95% coverage, switch read traffic + keep old column for 1 week rollback option. Cost: ~$20-50 for 10K profiles + 5K jobs at current pricing. Cheap relative to getting it wrong. Next maturity step: pre-deployment shadow comparison — run both versions in parallel for a week before flipping read traffic.
+
+### White-label as a runtime config, not a build step — how one app becomes many
+
+URL: https://jurgenhalili.dev/notes/white-label-runtime-config-vs-build-step
+Date: 2026-05-14. 7 min read.
+
+GymApp's member app is one React Native binary shared by every gym. At launch, the app fetches the tenant's branding row (primary_color, logo_url, app_identifier) and the React tree reads from GymConfigContext. The app becomes that gym's app at runtime, not build time. One binary, N tenants, one App Store account.
+
+Build-time white-labeling: new tenant = new build = new App Store submission = new review cycle. Multiply by N tenants and operational overhead scales linearly. Runtime: insert a row in gyms table. Done. Assets live on CDN; first launch caches locally; per-tenant weight typically <5MB. Multi-tenancy enforced by gymId foreign key on every domain model + middleware-scoped queries that filter automatically. Per-tenant features as feature flags on the gym row, never as per-tenant code branches.
+
+Trade: structurally-different per-tenant apps still need per-tenant builds. For 80% of white-label cases where tenants want their colors + logo + features, runtime config is the right call.
+
+### Socket.io + Redis pub/sub across PM2 cluster workers — live occupancy without polling
+
+URL: https://jurgenhalili.dev/notes/socketio-redis-pubsub-pm2-cluster
+Date: 2026-05-14. 7 min read.
+
+Socket.io stores connection state in process memory by default. Across PM2 cluster (multiple Node processes) or multiple boxes behind a load balancer, emits from one worker can't reach connections on another — vanilla setup loses half the emits.
+
+`@socket.io/redis-adapter` replaces in-memory bus with Redis pub/sub. Every emit publishes to Redis; every worker subscribes. Worker 1 receives turnstile webhook → emits `occupancy:updated` on `gym:${gymId}` room → Redis adapter publishes → all workers deliver to locally-connected clients. Client doesn't care which worker holds its WebSocket.
+
+GymApp live-occupancy flow: NFC tap → scanner-bridge POSTs `/api/visits` → API authenticates + inserts visit + increments counter + emits to gym room → every staff dashboard + member home tab + lobby TV updates within ~50ms median. Rooms scoped to gymId — security boundary. Single Redis instance serves Socket.io adapter + rate-limit token bucket + cache + embedding-worker queue. Same pattern works for SSE if you only need server-to-client.
+
+### node-hid as a hardware-abstraction layer — decoupling NFC scanners from the API
+
+URL: https://jurgenhalili.dev/notes/node-hid-nfc-scanner-bridge-pattern
+Date: 2026-05-14. 6 min read.
+
+GymApp's scanner-bridge is a small Node service on a Raspberry Pi at each gate. Uses `node-hid` to read card UIDs off USB NFC readers and POSTs `/api/visits` with the UID. Bridge knows hardware (USB device discovery, HID frame parsing, vendor protocols). API knows business logic (member lookup, visit insert, occupancy emit). Neither knows the other's details.
+
+Auth via per-gym API key in the bridge's env file, sent in Authorization header. Key scoped to visits endpoint only — least-privilege. Bridge runs under systemd, auto-starts on boot. Updates push over SSH; the API never updates the Pi. Network outage handling: bridge queues visits to local SQLite, drains on reconnect, configurable max-age discards stale queued visits.
+
+Pattern generalizes to payment terminal integrations, IoT sensors, thermal-printer receipts, scale integrations — anywhere hardware specifics shouldn't leak into the main API.
+
+### Brand-as-filesystem-config — adding a tenant without a code change
+
+URL: https://jurgenhalili.dev/notes/social-command-center-brand-as-filesystem-config
+Date: 2026-05-14. 7 min read.
+
+Social Command Center adds a brand by creating `brands/<slug>/` with `config.json` + `knowledge-base/` (markdown files describing products, voice, audience, recent campaigns). Commit + push. Next BullMQ cron run picks up the new directory. Six-stage pipeline walks each brand: Brand Discovery → Research → Strategy → Content Gen → Quality Gate → Post Creation.
+
+Why filesystem not database: knowledge base is mostly long-form text. Markdown in git gets you version history, diff-on-PR review, branch-based experiments, grep across all brands, no admin UI to build. Trade: brands are a code-deploy concern (push to change). For operator-run platform with 7 brands, faster than any UI. For self-service hundreds of tenants, you'd want a database.
+
+Quality gate: AI-checks-AI with explicit criteria from knowledge base ("is this on-brand? hook + payoff + CTA? avoid negative-pattern phrases?"). Posts that fail go back to Content Gen with feedback; two retries; mark `needs-review` after. State machine — discovery → research → strategy → content gen → quality gate → awaiting_image → scheduled → posted — every post at known state at all times. Postiz REST API handles platform-specific publishing.
+
+Zero-API-cost path: Claude Code slash commands (`/analyze-brand`, `/generate-content-plan`, `/generate-content`) read the knowledge base directly from disk and POST `/api/import-content`. Operator can generate 12 weeks of content for all 7 brands without touching OpenAI bill.
+
+### Audit middleware that never blocks the real write — best-effort logging done right
+
+URL: https://jurgenhalili.dev/notes/audit-middleware-never-blocks-real-write
+Date: 2026-05-14. 6 min read.
+
+Pilates Studio's audit middleware records every admin write — actor, resource, IP, user-agent, before/after diff — to `audit_log` table. Audit insert is best-effort: failures logged locally, real operation still commits. Losing a booking because audit insert was slow is not acceptable user-facing behavior.
+
+Wrong design: wrap every write in a transaction, audit insert inside, audit failure rolls back real write. Right design: route handler completes normally + commits, middleware runs after, computes audit payload, fires INSERT, catches errors, moves on. 99%+ complete audit log; recoverable gaps; user never blocked.
+
+When you need stronger guarantees (healthcare, finance, regulatory audit): use background-queued audit writes — durable queue, retry until audit row exists. Pilates Studio doesn't have that requirement; best-effort sidecar is right tradeoff. Pattern generalizes to any sidecar concern (analytics events, notification dispatch, webhook outbound calls) that shouldn't fail the main operation. Be explicit which concerns are critical-path.
+
+### Booking-flow status transitions — auto-promoting from the waitlist on cancellation
+
+URL: https://jurgenhalili.dev/notes/booking-flow-status-transitions-waitlist
+Date: 2026-05-14. 6 min read.
+
+Pilates Studio booking states: pending → confirmed → attended | cancelled → refunded. Waitlist states: waiting → promoted | expired. Postgres enums via Prisma; every transition logged for audit reconstruction.
+
+Auto-promotion: when confirmed → cancelled, same transaction runs follow-up — find oldest `waiting` entry for same class, atomically transition to `promoted`, create `confirmed` booking row, fire confirmation email + SMS within seconds. Atomicity matters: two simultaneous cancellations would otherwise both try to promote the same waitlist entry. Postgres serializes; exactly one promotion per cancellation.
+
+Cron sweep (every 5 min) belt-and-suspenders for missed real-time promotions. Promoted member gets two-hour cancellation window; if they cancel, seat goes back to waitlist for next-up member (same logic, different trigger). Operator never manually reshuffles attendance. "Runs itself" is the whole point of SaaS for one-location boutique studio. Pattern generalizes to any queue with priority order + capacity constraints — restaurant reservations, conference workshops, therapy sessions.
+
+### Discipline as the product — architectural rules that survive every refactor
+
+URL: https://jurgenhalili.dev/notes/discipline-as-the-product
+Date: 2026-05-14. 7 min read.
+
+CleanSlate's product is the architectural discipline. Rules enforced structurally — TypeScript types + ESLint imports + RLS policies, not conventions:
+
+(1) Route files dispatch — they don't do. Every Next.js route is two lines (parse input, call service, return response). Services do the work. Boundary enforced because there's nowhere else to put logic.
+
+(2) Services own all data ops. No Supabase calls outside services folder. ESLint no-restricted-imports blocks components from importing the Supabase client at compile time. Architectural enforcement beats discipline-enforcement.
+
+(3) Money is always cents. €20 plan = 2000. Stored, transmitted, operated on as integer cents. TypeScript branded type `Cents = number & { __brand: 'Cents' }` makes wrong-type compile errors. Display formatting at UI boundary.
+
+(4) Phones are E.164. `+49301234567` always. Validation rejects non-E.164 at boundary. Display formatting at UI.
+
+(5) RLS scopes every query. `auth.uid()` filter on every Supabase policy. `from('jobs').select()` doesn't need `.eq('user_id', userId)` — policy adds it.
+
+(6) `(marketing)` vs `(app)` route groups in Next 16. Structurally impossible to render marketing pages requiring auth or auth pages on marketing domain.
+
+Customer pays for software working reliably for 3 years, not for architectural discipline. The discipline makes that promise affordable to keep.
+
+### Four Vercel cron endpoints — the minimum for a SaaS that runs itself
+
+URL: https://jurgenhalili.dev/notes/four-vercel-crons-saas-runs-itself
+Date: 2026-05-14. 6 min read.
+
+CleanSlate's operator never logs in for routine admin. Four crons handle everything: (1) trial-reminders daily — finds users in 3-day window before trial end + emails; (2) overdue-invoices daily — nudges `past_due` subscriptions + auto-cancels after 3 nudges (then RLS gate prevents new writes); (3) recurring-jobs daily — generates next week's bookings from active recurring schedules; (4) pre-job-sms hourly — sends reminders for jobs within 24h, marks confirmed.
+
+Idempotency is the discipline. Every cron must be runnable twice in a row without wrong results. Vercel retries on failure; non-idempotent handlers produce duplicates. Strategies: upsert by stable keys (client_id + scheduled_date), per-record last-action timestamps, per-action confirmed flags. Cron auth via shared secret in Authorization header (Vercel includes automatically); unauthorized requests get 401.
+
+Why cron not queue: these are periodic sweeps of database state, not event-triggered jobs. State is the trigger. Queues (BullMQ, Trigger.dev) are right when events drive work; crons are right for "sweep state space periodically and act on what matches." Operator-hours-per-customer is the SaaS scaling cap. Four crons removes that cap for routine ops.
+
+### MMKV vs AsyncStorage on the cold-start hot path — when synchronous storage wins
+
+URL: https://jurgenhalili.dev/notes/mmkv-vs-asyncstorage-cold-start-hot-path
+Date: 2026-05-14. 6 min read.
+
+AsyncStorage's `getItem(key): Promise<string | null>` crosses the JavaScript-to-native bridge on every read. Cold-start sequence with auth + draft + recent state needs 5-6 reads minimum — 20-50ms of bridge waits before UI can do anything useful. Loading screen between launch and first useful render gives users impression of slowness.
+
+MMKV (Tencent's mobile key-value store + Marc Rousavy's `react-native-mmkv` binding) is synchronous + encrypted + memory-mapped. `mmkv.getString('auth')` returns immediately, no promise. ~30x faster than AsyncStorage. Dabei uses MMKV for auth (session token, user ID, name), draft hangouts (partially-composed state), last-known map region (lat/lng + zoom), recently-viewed hangouts ring buffer.
+
+What doesn't go in MMKV: bulk data (lists, full profiles, message history — belongs in Supabase + React Query cache), hardware-backed secrets (refresh tokens, biometric keys — belongs in expo-secure-store on iOS keychain). Migration: lazy — check MMKV first, fallback to AsyncStorage if missing, copy + delete. Self-cleaning over a few app launches. Don't aggressive-migrate.
+
+Expo support: works in bare workflow + EAS dev client; doesn't work in Expo Go (requires native linking). Dabei uses EAS dev client specifically because MMKV is non-negotiable for cold-start UX.
+
+### Vibe Checks as a first-class entity — when a social mechanic is the product
+
+URL: https://jurgenhalili.dev/notes/vibe-checks-first-class-entity
+Date: 2026-05-14. 7 min read.
+
+Dabei's vibe check is a one-tap rating any attendee can submit during or up to 48 hours after a hangout. Trinary (good/neutral/off), optional comment. Stored as rows in `vibe_checks` table with unique constraint on (submitter_id, target_id, hangout_id).
+
+`submit_vibe_check` Postgres RPC enforces atomically: submitter is verified attendee (RSVP + check-in), hangout has ended or is ongoing, within 48-hour window, no existing rating from this submitter for this target/hangout, target was at the hangout. All checks in one transaction; race conditions impossible because Postgres serializes.
+
+`profiles.is_trusted` flips to true automatically when user accumulates 15+ positive vibe checks from 10+ unique people. Unique-people requirement matters — without it, one friend rating 15 times = trusted. With it, real popularity required. Implemented as Postgres trigger on `vibe_checks` table that recomputes target stats after every insert.
+
+Trinary not stars: star ratings inflate (everyone is 4.7). Trinary preserves distinction + lower submission friction + meaningfully higher participation rate. Aggregate displayed on profile, not individual ratings — naming who downvoted is unhelpful and harmful. Pattern generalizes to attendance-verified reputation in any app where shared experiences are the trust signal.
+
+### Splitting the data layer into reads, writes, and actions — the three-services pattern
+
+URL: https://jurgenhalili.dev/notes/three-services-data-layer-hangout-crud-queries-actions
+Date: 2026-05-14. 7 min read.
+
+Dabei's hangout data layer is three small services instead of one 1500-line god-service: `hangout-crud` (writes — create, update, delete with Zod validation), `hangout-queries` (reads — list, fetch, search, with caching where applicable), `hangout-actions` (cross-entity transactional logic — RSVP writes RSVP row + increments counter + sends notification + updates user stats, all in one transaction).
+
+Why split: (1) reads and writes have different concerns (projection vs validation), mixing them risks every change affecting both; (2) business logic that crosses entities doesn't fit cleanly in CRUD or queries; (3) tests targeting one service are clean — reads testable with DB snapshots, writes with input fixtures + final state, actions with cross-entity integration. A single fat service forces tests to mock half of itself; tests become tautological.
+
+RLS reasoning becomes local — each service touches narrow set of tables, so policy change only requires auditing services that use that table. Lighter than CQRS (no separate data stores; both reads and writes hit same Supabase + same RLS policies). Trade: three files per entity instead of one; each small enough to hold in head, boundaries match how operations actually differ. Right pattern for projects past trivial size where single per-entity services start becoming unwieldy.

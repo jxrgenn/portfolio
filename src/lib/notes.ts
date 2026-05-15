@@ -4252,6 +4252,1454 @@ export const notes: readonly Note[] = [
       },
     ],
   },
+
+  // -------------------------------------------------------------------------
+  // Cluster D — GymApp + Social Command Center (multi-tenant patterns)
+  // -------------------------------------------------------------------------
+  {
+    slug: "white-label-runtime-config-vs-build-step",
+    title:
+      "White-label as a runtime config, not a build step — how one app becomes many",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 7,
+    description:
+      "Most white-label apps build a different binary per tenant. GymApp does it at runtime — a `GymConfigContext` reads the tenant's branding from the API on launch and the React Native app becomes that gym's app. One codebase, one App Store binary, one deploy pipeline.",
+    keywords: [
+      "white-label app",
+      "multi-tenant React Native",
+      "runtime branding config",
+      "Expo over-the-air",
+      "tenant-aware mobile",
+      "white-label SaaS",
+    ],
+    relatedProject: "gym-app",
+    answerBox:
+      "GymApp's member app is one React Native binary shared by every gym. At launch, the app fetches the tenant's branding row (primary_color, logo_url, app_identifier) and the React tree reads from `GymConfigContext`. The app becomes that gym's app at runtime, not at build time. One binary, N tenants, one App Store account.",
+    lede:
+      "Most white-label apps ship a different build per tenant. New brand color means a new build means a new App Store submission means a new review cycle. GymApp skips all of that by treating branding as runtime config — the React Native app fetches its tenant's brand on launch and the rest of the tree just reads from context.",
+    sections: [
+      {
+        heading: "Why build-time white-labeling is the trap",
+        paragraphs: [
+          "The naive approach: per-tenant build with environment variables baked in at compile time. A new tenant means a new build, a new submission to Apple and Google, a new review cycle (which can take days), and ongoing per-tenant maintenance forever.",
+          "Multiply by N tenants and you have N apps to maintain, N App Store listings to update, N review cycles to plan around. The operational overhead scales linearly with tenant count.",
+        ],
+      },
+      {
+        heading: "What runtime white-labeling looks like",
+        paragraphs: [
+          "One binary. On first launch, the app asks the user which gym they belong to (or the user signed up via a deep link with the gym slug). The slug becomes the authentication context; subsequent API calls include the gym ID.",
+          "The API returns a `gym` payload that includes branding: primary_color, secondary_color, logo_url, hero_image_url, app display name. A React provider (`GymConfigContext`) hangs this payload at the root of the app. Every screen reads colors and assets from context, not from imports.",
+          "Add a new tenant: insert a row in the `gyms` table with the branding values. Done. No build, no submission, no review cycle.",
+        ],
+        table: {
+          caption: "Build-time vs runtime white-label trade-offs",
+          headers: ["Aspect", "Build-time white-label", "Runtime white-label"],
+          rows: [
+            ["Onboarding a new tenant", "New build + App Store submission", "INSERT row in gyms table"],
+            ["Branding update", "New build + review cycle", "API write — instant"],
+            ["App Store presence", "N listings", "1 listing"],
+            ["Per-tenant maintenance", "Linear in N", "Constant"],
+            ["Asset bundling", "Per build", "CDN-served at runtime"],
+            ["Build pipeline complexity", "N matrix", "1 build"],
+          ],
+        },
+      },
+      {
+        heading: "How do you serve per-tenant assets fast?",
+        paragraphs: [
+          "Logo, hero image, and any custom illustration live on a CDN. The brand payload returned by the API includes URLs, not the assets themselves.",
+          "The first launch of a fresh app install for a tenant pulls these assets once and caches them locally. Subsequent launches load from cache; the brand payload only triggers a re-download when an asset URL changes.",
+          "Local cache uses Expo's filesystem APIs plus a small SQLite store mapping asset URLs to local file paths. The total per-tenant asset weight is typically under 5MB; caching is fast.",
+        ],
+      },
+      {
+        heading: "Multi-tenancy enforcement",
+        paragraphs: [
+          "Every domain model has a `gymId` foreign key. Middleware-scoped queries automatically filter by the authenticated user's `gymId`. Super-admins can hop tenants explicitly via a different middleware path.",
+          "The discipline matters: if a query forgets the tenant filter, a user from one gym could potentially see another gym's data. Architectural enforcement (middleware that adds the filter automatically) is stronger than discipline-enforcement (every developer remembering to add the filter).",
+          "This is the multi-tenant equivalent of CleanSlate's RLS-as-subscription-gate pattern: the constraint lives at the data layer, not at the UI layer.",
+        ],
+      },
+      {
+        heading: "What about per-tenant features?",
+        paragraphs: [
+          "Branding is config. Features are feature flags. If Gym A wants the leaderboard feature and Gym B doesn't, the `gyms` row has a `features_enabled` array and the React tree conditionally renders based on it.",
+          "The discipline is to keep features additive — turning a feature on for a new tenant doesn't risk breaking it for existing tenants. Per-tenant code paths are the worst version of this; flags scoped to whole features are the right version.",
+        ],
+      },
+      {
+        heading: "What this pattern trades away",
+        paragraphs: [
+          "True per-tenant native customization is harder. If Gym A wants a fundamentally different app structure (different navigation, different core flows, not just different colors), runtime config doesn't help. You'd be back to per-tenant builds.",
+          "For most white-label cases, this isn't a real constraint — tenants want their colors and logo, not a structurally different product. For the edge cases that need it, you can carve out per-tenant feature paths within the same binary, gated by the feature flag system.",
+        ],
+      },
+      {
+        heading: "Where this generalizes",
+        paragraphs: [
+          "Any multi-tenant React Native app that ships to consumer app stores. Course-marketplace apps. Booking apps. Membership apps. Anywhere the product is structurally the same but the brand needs to be per-tenant.",
+          "Not for: tenants that need different App Store listings (separate review categories, different ratings, distinct competitive positioning). For those, per-tenant builds are still the right answer. Runtime white-labeling is for the 80% of cases where the binary is the same product wearing different colors.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "Add a new tenant: insert a row in the gyms table with the branding values. Done. No build, no submission, no review cycle.",
+      },
+      {
+        quote:
+          "Architectural enforcement (middleware that adds the tenant filter automatically) is stronger than discipline-enforcement.",
+      },
+    ],
+    citations: [
+      {
+        label: "Expo — over-the-air updates",
+        url: "https://docs.expo.dev/eas-update/introduction/",
+        relevance: "Updates the React Native bundle without store submission",
+      },
+      {
+        label: "React Context API documentation",
+        url: "https://react.dev/reference/react/createContext",
+        relevance: "How GymConfigContext hangs branding at the root of the tree",
+      },
+      {
+        label: "Expo FileSystem API",
+        url: "https://docs.expo.dev/versions/latest/sdk/filesystem/",
+        relevance: "Local caching of per-tenant assets",
+      },
+    ],
+    faq: [
+      {
+        q: "Can one React Native app be white-labeled for multiple tenants?",
+        a: "Yes — at runtime. The app fetches the tenant's branding on launch and the React tree reads colors, logos, and feature flags from context. One binary, one App Store listing, N tenants supported by N database rows.",
+      },
+      {
+        q: "What's wrong with per-tenant build white-labeling?",
+        a: "Operational overhead scales linearly with tenant count. New tenant means new build, new submission, new review cycle. Branding update means another submission. Multiply by tenant count and you have N apps to maintain forever.",
+      },
+      {
+        q: "How does runtime white-labeling handle assets like logos and hero images?",
+        a: "CDN-hosted; URLs in the tenant's brand payload. App caches them locally on first launch and invalidates on URL change. Total per-tenant asset weight typically under 5MB.",
+      },
+      {
+        q: "How do you enforce multi-tenancy in a runtime white-label app?",
+        a: "Foreign key on every domain model (`gymId` or equivalent) plus middleware-scoped queries that automatically filter by the authenticated user's tenant. Architectural enforcement beats discipline.",
+      },
+    ],
+  },
+
+  {
+    slug: "socketio-redis-pubsub-pm2-cluster",
+    title:
+      "Socket.io + Redis pub/sub across PM2 cluster workers — live occupancy without polling",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 7,
+    description:
+      "GymApp shows live gym occupancy in real time across every dashboard and every member phone. The plumbing is Socket.io with a Redis pub/sub adapter so events fan out across PM2 cluster workers. A turnstile tap reaches every connected client without anyone polling.",
+    keywords: [
+      "Socket.io Redis adapter",
+      "PM2 cluster Socket.io",
+      "real-time occupancy",
+      "Socket.io scaling",
+      "Redis pub/sub Node",
+      "real-time fanout",
+    ],
+    relatedProject: "gym-app",
+    answerBox:
+      "Socket.io alone scales to one process. Across a PM2 cluster (N web workers on one box, or multiple boxes), connections bind to one worker and don't see events emitted by other workers. The Redis pub/sub adapter (`@socket.io/redis-adapter`) routes every emit through Redis, so any worker can publish and every worker sees the message. GymApp uses this for live occupancy fanout — turnstile tap reaches every dashboard and every phone without polling.",
+    lede:
+      "Live occupancy is the feature that turns a gym admin dashboard from \"a list of stale numbers\" into something staff actually look at during a shift. The implementation is unglamorous — Socket.io with a Redis pub/sub adapter — but getting it to work correctly across a cluster is the part most tutorials skip.",
+    sections: [
+      {
+        heading: "Why vanilla Socket.io doesn't scale",
+        paragraphs: [
+          "Socket.io stores connection state in process memory by default. A client connects to worker 1; worker 1 holds the WebSocket. If worker 2 emits an event for that client, worker 2 doesn't have the connection, so the emit is silently dropped.",
+          "This works fine in development with a single Node process. It breaks the moment you scale to a PM2 cluster (multiple Node processes sharing CPU on one box) or multiple boxes behind a load balancer. Suddenly half your emits don't reach anyone.",
+        ],
+      },
+      {
+        heading: "What does the Redis adapter do?",
+        paragraphs: [
+          "`@socket.io/redis-adapter` replaces the default in-memory event bus with one backed by Redis pub/sub. Every emit goes through Redis; every worker subscribes to the same channels.",
+          "Worker 1 receives a turnstile webhook → emits `occupancy:updated` with the new count → adapter publishes to Redis → all workers (including worker 1 itself) receive the message → workers deliver the event to their locally-connected clients. The client doesn't care which worker holds its WebSocket; the event arrives.",
+        ],
+        table: {
+          caption: "Socket.io scaling without and with the Redis adapter",
+          headers: ["Setup", "Within-worker emit", "Cross-worker emit", "Across-box emit"],
+          rows: [
+            ["Single process", "Works", "N/A", "N/A"],
+            ["PM2 cluster, no adapter", "Works", "Lost", "Lost"],
+            ["PM2 cluster + Redis adapter", "Works", "Works", "Works"],
+            ["Multi-box + Redis adapter", "Works", "Works", "Works"],
+          ],
+        },
+      },
+      {
+        heading: "What does the live-occupancy flow look like in GymApp?",
+        paragraphs: [
+          "Member taps an NFC card at the turnstile. The scanner-bridge service (a tiny `node-hid` daemon) POSTs to `/api/visits` with the card UID. The API authenticates the gym, inserts the visit, increments the gym's live-occupancy counter.",
+          "The same handler emits `occupancy:updated` on a per-gym room (`gym:${gymId}`). The Redis adapter fans the emit out. Every connected client subscribed to that room receives the update — every staff dashboard, every member-phone home tab, every TV display in the lobby.",
+          "Latency: median ~50ms from turnstile tap to client update. The user-visible effect is that the occupancy counter on the dashboard ticks up almost simultaneously with the member walking through the gate.",
+        ],
+      },
+      {
+        heading: "Rooms and channel discipline",
+        paragraphs: [
+          "Socket.io's room concept maps perfectly to multi-tenant gym data. Every connected client joins a `gym:${gymId}` room based on their authenticated context. Emits target the room, not all connected clients.",
+          "This is also the security boundary. A staff member of Gym A connected to the same Socket.io server as a staff member of Gym B doesn't see Gym B's events — different room.",
+          "The discipline: every emit specifies a room. There's never a global broadcast. Even system-wide events (\"server is restarting in 30 seconds\") emit to specific admin rooms, not to every client.",
+        ],
+      },
+      {
+        heading: "What does the Redis topology look like?",
+        paragraphs: [
+          "Single Redis instance shared by the whole API tier. Same Redis that powers the rate-limit token bucket, the cache, and the embedding-worker queue. It's the lowest-cost messaging substrate; running a separate dedicated message queue (RabbitMQ, NATS) would be overkill.",
+          "Redis runs in highly-available mode (managed Redis with automatic failover). The Socket.io adapter handles transient Redis disconnects — emits buffer briefly during failover, then drain when Redis comes back. The occupancy counter is eventually-consistent but the worst-case window is sub-second.",
+        ],
+      },
+      {
+        heading: "Where this pattern generalizes",
+        paragraphs: [
+          "Any feature that needs near-real-time fanout to many connected clients. Live dashboards. Multi-user collaborative apps. Chat. Game state. Anywhere you'd otherwise build a polling layer that hits the database every few seconds and degrades user experience.",
+          "Socket.io is one library. Server-Sent Events (SSE) is a simpler alternative if you only need server-to-client (no client-to-server messages). The Redis adapter pattern applies to either — fanout across workers via a pub/sub substrate is the architectural insight, not the specific transport.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "Vanilla Socket.io scales to one process. The Redis adapter is the patch that makes it work in production.",
+      },
+      {
+        quote:
+          "Latency: ~50ms from turnstile tap to client update. The occupancy counter ticks up almost simultaneously with the member walking through the gate.",
+      },
+    ],
+    citations: [
+      {
+        label: "Socket.io official documentation",
+        url: "https://socket.io/docs/v4/",
+        relevance: "The library that powers real-time fanout",
+      },
+      {
+        label: "@socket.io/redis-adapter",
+        url: "https://socket.io/docs/v4/redis-adapter/",
+        relevance: "The pub/sub adapter that scales Socket.io across workers",
+      },
+      {
+        label: "PM2 cluster mode",
+        url: "https://pm2.keymetrics.io/docs/usage/cluster-mode/",
+        relevance: "Node.js process manager that runs the cluster",
+      },
+      {
+        label: "Redis Pub/Sub documentation",
+        url: "https://redis.io/docs/manual/pubsub/",
+        relevance: "Reference for the underlying messaging mechanism",
+      },
+    ],
+    faq: [
+      {
+        q: "Does Socket.io work in a PM2 cluster out of the box?",
+        a: "No. Vanilla Socket.io stores connection state in process memory. PM2 cluster mode runs multiple Node processes; emits from one process don't reach connections on another. You need the Redis adapter (or another pub/sub adapter) for cross-worker fanout.",
+      },
+      {
+        q: "What's the latency overhead of the Redis Socket.io adapter?",
+        a: "A few milliseconds per emit — the round-trip through Redis pub/sub. For real-time use cases (live dashboards, chat) this is invisible. For sub-millisecond requirements (high-frequency trading) it isn't appropriate, but those use cases don't typically use Socket.io anyway.",
+      },
+      {
+        q: "Can I use Server-Sent Events instead of Socket.io for live updates?",
+        a: "Yes, if you only need server-to-client and don't need WebSocket's bidirectionality. SSE is simpler to deploy (just HTTP, no WebSocket upgrade) and works fine for live-dashboard fanout. Use the same Redis pub/sub pattern to scale SSE across workers.",
+      },
+      {
+        q: "How do you secure Socket.io rooms in a multi-tenant app?",
+        a: "Use rooms scoped to tenant ID. Authenticated clients join only their tenant's room on connect. Emits always target a specific room — never a global broadcast. This makes cross-tenant data leaks structurally impossible.",
+      },
+    ],
+  },
+
+  {
+    slug: "node-hid-nfc-scanner-bridge-pattern",
+    title:
+      "node-hid as a hardware-abstraction layer — decoupling NFC scanners from the API",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 6,
+    description:
+      "GymApp's scanner-bridge is a tiny Node service that reads card UIDs off a USB NFC reader via node-hid and POSTs to the API. The Raspberry Pi at the gate doesn't know any backend internals. The API doesn't know any hardware specifics. Both sides can change independently.",
+    keywords: [
+      "node-hid NFC",
+      "hardware abstraction Node",
+      "RFID Node.js",
+      "NFC reader API",
+      "scanner-bridge pattern",
+      "Raspberry Pi gym entry",
+    ],
+    relatedProject: "gym-app",
+    answerBox:
+      "GymApp's scanner-bridge runs as a small Node service (typically on a Raspberry Pi at the gate). It uses `node-hid` to read card UIDs off a USB NFC reader and POSTs `/api/visits` with the UID. The API authenticates against the gym's API key, finds the member, records the visit, emits the live-occupancy event. The bridge knows hardware; the API knows business logic. Neither knows the other's details.",
+    lede:
+      "Hardware integrations in SaaS products age badly when they're tightly coupled to the application. The scanner-bridge pattern keeps the hardware layer dumb on purpose — it knows how to read a USB device and how to make an HTTP POST. Everything else is the API's problem.",
+    sections: [
+      {
+        heading: "Why decouple at all?",
+        paragraphs: [
+          "Hardware changes. The NFC reader vendor goes out of business. A new gym wants to use a different RFID frequency. A different gym wants barcode scanning instead of NFC. If hardware specifics live inside the main API, every hardware change is an API deployment.",
+          "Decoupling means the bridge is the only part that knows about USB devices, vendor protocols, and frame parsing. The API knows that visits happen — the mechanism is opaque.",
+        ],
+      },
+      {
+        heading: "What does node-hid give you?",
+        paragraphs: [
+          "`node-hid` is a Node binding for the HID (Human Interface Device) protocol that USB peripherals use. NFC readers, RFID readers, barcode scanners, and many other industrial input devices speak HID.",
+          "The library exposes `HID.devices()` to list connected devices, `new HID.HID(vendorId, productId)` to open a specific one, and a `data` event that fires when the device reports.",
+          "For an NFC reader, the data event fires with a buffer when a card is tapped. The buffer's structure is vendor-specific but typically includes the card UID at known byte offsets. Parsing is a few lines.",
+        ],
+        table: {
+          caption: "What the bridge owns vs what the API owns",
+          headers: ["Concern", "Bridge", "API"],
+          rows: [
+            ["USB device discovery", "Yes", "No"],
+            ["HID frame parsing", "Yes", "No"],
+            ["Card UID extraction", "Yes", "No"],
+            ["HTTP request to /api/visits", "Yes", "No"],
+            ["Member lookup by UID", "No", "Yes"],
+            ["Visit insert + occupancy emit", "No", "Yes"],
+            ["Gym auth (per-gym API key)", "Sends key", "Verifies key"],
+          ],
+        },
+      },
+      {
+        heading: "What runs the bridge?",
+        paragraphs: [
+          "A Raspberry Pi at the gate, mounted next to the turnstile. The bridge is a Node process managed by systemd that auto-starts on boot. It reads from the USB reader, POSTs to `/api/visits`, logs the result to a local file for audit purposes.",
+          "The Pi is the gym's only hardware concern. Bridge code is installed once; updates push over SSH or a config-management tool (Ansible, the gym's IT vendor, whatever fits the operation). The API never updates the Pi.",
+        ],
+      },
+      {
+        heading: "How does the bridge authenticate?",
+        paragraphs: [
+          "Each gym has a long-lived API key stored in the bridge's environment file. Every POST includes the key in an `Authorization` header. The API validates the key and identifies the gym.",
+          "Rotating a key: generate a new one in the admin web; SSH to the Pi; update the env file; restart the service. The old key stays valid for a grace period so there's no downtime during rotation.",
+          "API keys are scoped to the visit endpoint, not to the whole API. A compromised bridge key can only insert visits, not modify members or read other gyms' data. This is least-privilege auth at the integration layer.",
+        ],
+      },
+      {
+        heading: "What happens during network outages?",
+        paragraphs: [
+          "The bridge keeps reading USB events and queues visit POSTs to a local SQLite file. When network returns, the queue drains. Members are never blocked at the gate during a brief outage.",
+          "Long outages (hours) require operational decisions — at some point old queued visits should be discarded rather than replayed. The bridge has a configurable max-age (default 1 hour); anything older gets dropped with a log entry.",
+          "This is one of the few places where the bridge has business logic, and only because it's downstream of network failure. Everything else stays on the API.",
+        ],
+      },
+      {
+        heading: "Where this pattern generalizes",
+        paragraphs: [
+          "Any hardware integration that's commodity-replaceable. The bridge wraps a specific vendor's protocol and presents a uniform HTTP interface. Replacing the vendor is a bridge update, not an API update.",
+          "Examples: payment terminal integrations, IoT sensors, thermal-printer receipts, scale integrations for retail. The pattern is the same — tiny dedicated service per hardware family, HTTP integration to the main API, vendor specifics quarantined.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "If hardware specifics live inside the main API, every hardware change is an API deployment.",
+      },
+      {
+        quote:
+          "The Pi is the gym's only hardware concern. The API never updates the Pi.",
+      },
+    ],
+    citations: [
+      {
+        label: "node-hid — Node.js HID binding",
+        url: "https://github.com/node-hid/node-hid",
+        relevance: "The library powering the scanner bridge",
+      },
+      {
+        label: "USB HID specification overview (USB-IF)",
+        url: "https://www.usb.org/hid",
+        relevance: "Protocol used by most industrial input devices",
+      },
+      {
+        label: "systemd documentation",
+        url: "https://systemd.io/",
+        relevance: "Service manager that auto-starts the bridge on boot",
+      },
+    ],
+    faq: [
+      {
+        q: "Can a Node.js app read from a USB NFC reader?",
+        a: "Yes — via the node-hid library, which speaks the HID protocol most NFC readers use. Open the device by vendor/product ID, subscribe to data events, parse the UID from the buffer.",
+      },
+      {
+        q: "Why not put the NFC reading logic directly in the main API?",
+        a: "Because the API runs on cloud servers and the NFC reader is at the gate. Even if you could expose the USB device over the network, you don't want vendor-specific HID parsing inside the business-logic API. Decoupling keeps both sides clean.",
+      },
+      {
+        q: "What hardware runs the scanner bridge?",
+        a: "A Raspberry Pi (or any small Linux box with USB) at each gate. Node + systemd, auto-starts on boot, connects to the USB reader and to the API. Cheap to deploy; one per gym entrance.",
+      },
+      {
+        q: "What if the gym's internet goes down?",
+        a: "The bridge queues visits to a local SQLite file. When network returns, the queue drains. Members aren't blocked at the gate during brief outages. Configurable max-age discards stale queued visits.",
+      },
+    ],
+  },
+
+  {
+    slug: "social-command-center-brand-as-filesystem-config",
+    title:
+      "Brand-as-filesystem-config — adding a tenant without a code change",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 7,
+    description:
+      "Social Command Center adds a new brand by dropping a JSON config and a knowledge-base directory. The orchestrator picks up the new brand on the next BullMQ cron run. Adding a tenant is a filesystem operation; the system was designed around it from day one.",
+    keywords: [
+      "multi-tenant SaaS filesystem config",
+      "BullMQ orchestration",
+      "brand-as-config",
+      "AI content pipeline tenancy",
+      "knowledge-base directory pattern",
+      "Postiz scheduler API",
+    ],
+    relatedProject: "social-command-center",
+    answerBox:
+      "Social Command Center adds a brand by dropping a JSON config + a knowledge-base directory into the brands folder. The weekly BullMQ cron picks up new brands on the next run; the six-stage pipeline (Brand Discovery → Research → Strategy → Content Gen → Quality Gate → Post Creation) walks each one. Adding a tenant is a filesystem operation; there's no admin UI for it on purpose.",
+    lede:
+      "Multi-tenant systems usually grow an admin UI for adding tenants. Forms, validation, role assignment, all the usual scaffolding. Social Command Center went the other direction — adding a brand is a filesystem operation, because the operator who runs the platform is also the one adding the brands, and a JSON file is faster to edit than a form to fill.",
+    sections: [
+      {
+        heading: "What does \"adding a brand\" actually look like?",
+        paragraphs: [
+          "Create a directory under `brands/` with the brand's slug. Drop in `config.json` (basic metadata — name, voice, target audience, posting cadence). Drop in a knowledge-base subdirectory with markdown files describing the brand: products, history, target customers, voice guidelines, recent campaigns.",
+          "Commit and push. The next BullMQ cron run sees the new directory, treats it as a new tenant, and the pipeline starts processing.",
+          "There's no UI. The operator works from a code editor, the knowledge-base files are versioned in git alongside the platform code, changes go through a normal PR flow.",
+        ],
+        table: {
+          caption: "Brand directory layout",
+          headers: ["Path", "Purpose"],
+          rows: [
+            ["brands/<slug>/config.json", "Core metadata (name, voice, audience, cadence)"],
+            ["brands/<slug>/knowledge-base/products.md", "Product catalog and positioning"],
+            ["brands/<slug>/knowledge-base/voice.md", "Voice guidelines, tone, do's and don'ts"],
+            ["brands/<slug>/knowledge-base/audience.md", "Target customer descriptions"],
+            ["brands/<slug>/knowledge-base/campaigns/*.md", "Recent campaign briefs"],
+            ["brands/<slug>/output/", "Generated content (gitignored)"],
+          ],
+        },
+      },
+      {
+        heading: "How does the BullMQ pipeline see a new brand?",
+        paragraphs: [
+          "The weekly cron job lists the `brands/` directory. For each brand directory, it checks the brand's state in the database (have we generated content for this week? has anything in their knowledge base changed?). New brands have no state, so they start from stage 1.",
+          "The six stages — Brand Discovery → Research → Strategy → Content Gen → Quality Gate → Post Creation — each have their own queue. Brand-discovery for a new brand reads the knowledge-base files, summarizes the brand's positioning, and writes a discovery record. Research uses the discovery record to pull current-events context. Strategy plans the week's content arc. Content Gen produces the actual posts. Quality Gate filters anything that fails brand-voice checks. Post Creation queues approved posts for upload.",
+          "Each stage is its own BullMQ queue with retry policies, dead-letter handling, and concurrency limits. A brand can be at different stages at different times.",
+        ],
+      },
+      {
+        heading: "Why filesystem and not database?",
+        paragraphs: [
+          "The knowledge base is mostly long-form text. Storing it in a database means either a `TEXT` column (you've reinvented filesystem files with worse tooling) or a CMS (you've added a different system to maintain).",
+          "Markdown files in git get you: version history out of the box, diff-on-PR for review, branch-based experiments (try a new voice for a brand in a feature branch), grep across all brands, no separate admin UI to build.",
+          "The trade: brands are a code-deploy concern. Adding one means a push; changing voice guidelines means a push. For a platform managed by one operator across seven brands, this is faster than any UI. For a platform meant to support hundreds of self-service tenants, you'd want a database.",
+        ],
+      },
+      {
+        heading: "How does the quality gate work?",
+        paragraphs: [
+          "After content generation, each post passes through a Quality Gate stage. The gate runs an LLM check against the brand's voice guidelines (\"is this on-brand?\"), against a set of generic-quality heuristics (\"does this post have a hook? a payoff? a CTA?\"), and against any negative-pattern lists from the knowledge base (\"never say X\").",
+          "Posts that fail the gate get sent back to the Content Gen stage with the failure reasoning, and the model tries again with the feedback. Two retries; after that the post is marked needs-review and the operator decides.",
+          "The gate isn't AI-trusts-AI — it's AI-checks-AI with explicit criteria from the knowledge base. The criteria are auditable; the decisions are inspectable.",
+        ],
+      },
+      {
+        heading: "Where the posts actually land",
+        paragraphs: [
+          "Approved posts wait in `awaiting_image` state until the operator drags an image into the dashboard. Once the image is attached, the post auto-schedules via the Postiz REST API at the brand's configured cadence.",
+          "The state machine — discovery → research → strategy → content gen → quality gate → awaiting_image → scheduled → posted — is explicit. Every post is at a known state at every moment. Failures happen at specific stages with specific reasons.",
+        ],
+      },
+      {
+        heading: "The zero-API-cost path",
+        paragraphs: [
+          "There are three Claude Code slash commands — `/analyze-brand`, `/generate-content-plan`, `/generate-content` — that read the knowledge base directly from disk and POST to `/api/import-content`. The operator can generate twelve weeks of content for all seven brands without touching the OpenAI bill.",
+          "This is the unglamorous payoff of brand-as-filesystem-config: the same knowledge base that powers the production pipeline can be invoked from any tool that can read files. The CLI workflow doesn't replace the automated pipeline; it's a faster path for bulk content generation when the operator wants control.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "Adding a tenant is a filesystem operation; there's no admin UI for it on purpose.",
+      },
+      {
+        quote:
+          "The same knowledge base that powers the production pipeline can be invoked from any tool that can read files.",
+      },
+    ],
+    citations: [
+      {
+        label: "BullMQ — official documentation",
+        url: "https://docs.bullmq.io/",
+        relevance: "The job queue powering the six-stage pipeline",
+      },
+      {
+        label: "Postiz API documentation",
+        url: "https://docs.postiz.com/",
+        relevance: "Scheduler the platform posts approved content through",
+      },
+      {
+        label: "Claude Code slash commands",
+        url: "https://docs.claude.com/en/docs/claude-code/slash-commands",
+        relevance: "Bulk content workflow that reads the same knowledge base",
+      },
+    ],
+    faq: [
+      {
+        q: "Can multi-tenant SaaS use filesystem-based configuration instead of a database?",
+        a: "For small operator-run platforms, yes — and the file-based pattern is faster to work with than building an admin UI. Adding a tenant becomes a git commit, with version history and branch-based experimentation. For larger self-service tenant counts, you'd want a database.",
+      },
+      {
+        q: "How does a knowledge-base-driven AI content pipeline work?",
+        a: "Markdown files describe each brand's products, voice, audience, and recent campaigns. The orchestration walks each brand through a multi-stage pipeline (discovery, research, strategy, content gen, quality gate). Each stage reads the knowledge base and either produces output or fails into the next retry.",
+      },
+      {
+        q: "What's a quality gate in an AI content pipeline?",
+        a: "A stage that checks generated content against explicit brand criteria — voice, tone, negative patterns, structural quality. Failed content goes back to generation with feedback; success moves to the next stage. The gate is AI-checks-AI with explicit criteria, not AI-trusts-AI.",
+      },
+      {
+        q: "How do you schedule posts from a content pipeline?",
+        a: "Use a scheduler API like Postiz or Buffer that handles the per-platform publishing. The pipeline approves content and queues posts via the scheduler API; the scheduler handles the actual publish at the configured cadence.",
+      },
+    ],
+  },
+
+  // -------------------------------------------------------------------------
+  // Cluster E — Pilates Studio + CleanSlate technical deep cuts
+  // -------------------------------------------------------------------------
+  {
+    slug: "audit-middleware-never-blocks-real-write",
+    title:
+      "Audit middleware that never blocks the real write — best-effort logging done right",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 6,
+    description:
+      "Pilates Studio's audit middleware records every admin write — actor, resource, IP, user-agent — but a failed audit insert never blocks the booking. Losing a booking to a slow audit table isn't an acceptable failure mode. Here's the pattern that makes audit logs reliable without making them critical-path.",
+    keywords: [
+      "audit logging pattern",
+      "best-effort logging",
+      "audit middleware Express",
+      "audit trail SaaS",
+      "non-blocking audit",
+      "transactional audit log",
+    ],
+    relatedProject: "pilates-studio",
+    answerBox:
+      "Pilates Studio's audit middleware records every admin write — actor, resource, IP, user-agent — to an `audit_log` table. The audit insert is best-effort: if it fails, the error is logged but the real operation still commits. Losing a booking to a slow audit table is not an acceptable failure mode. The audit table is for post-hoc review, not for blocking writes.",
+    lede:
+      "Audit logging is the kind of feature that everyone agrees they should have until someone has to design how it integrates with the actual write path. The wrong design makes every write depend on the audit log succeeding; the right design makes the audit log a best-effort sidecar.",
+    sections: [
+      {
+        heading: "What the audit log captures",
+        paragraphs: [
+          "Every admin write. Who did it (actor — user ID, role). What they did (resource type, resource ID, action — create / update / delete). Where they did it from (IP, user-agent). When (timestamp). What changed (diff between before and after states, stored as JSON).",
+          "This is roughly 100-300 bytes per audit row. For Pilates Studio's volume (hundreds of admin writes per day), the table grows in the tens of MB per year — easily manageable.",
+        ],
+      },
+      {
+        heading: "The wrong design",
+        paragraphs: [
+          "Wrap every write in a transaction. Inside the transaction: do the real write, then insert the audit row. Commit. If the audit insert fails for any reason — connection timeout, constraint violation, locking conflict — the whole transaction rolls back and the real write is lost.",
+          "This sounds appealing because it guarantees the audit log matches the real state. In practice, the audit log is the second priority. Losing a booking because the audit insert was slow is unacceptable user-facing behavior; the audit log is for after-the-fact compliance, not for blocking the present.",
+        ],
+      },
+      {
+        heading: "The right design",
+        paragraphs: [
+          "Express middleware wraps every admin write. The middleware runs after the route handler completes successfully. It computes the audit payload, fires an INSERT to the audit table, catches any error, logs it locally, and moves on.",
+          "The real operation has already committed by the time the audit insert runs. If the audit insert fails, the system is in a state where the operation succeeded but the audit record didn't. That's recoverable: the application logs capture enough context to backfill the audit row manually if it ever matters. The user doesn't see anything.",
+        ],
+        table: {
+          caption: "Comparing audit-log integration patterns",
+          headers: ["Pattern", "User experience on audit failure", "Audit completeness"],
+          rows: [
+            ["Audit inside the write transaction", "Failed user write", "100% complete (when nothing fails)"],
+            ["Audit as best-effort sidecar", "Successful user write; audit gap", "99%+ complete"],
+            ["Audit via background queue", "Successful user write; eventual audit", "99.9%+ with retry"],
+            ["No audit", "Always successful", "0%"],
+          ],
+        },
+      },
+      {
+        heading: "Why \"best-effort\" is the right tradeoff",
+        paragraphs: [
+          "The audit log's job is post-hoc review. \"Who deleted this booking?\" is a question asked hours, days, or months after the deletion happened. A 99%+ complete log answers the question well enough for the human investigator to piece things together.",
+          "Compare to the real-time UX of \"the booking didn't save because audit logging is slow.\" A user retries; the system is broken; trust evaporates. The cost-benefit is asymmetric — audit gaps are recoverable, blocked writes aren't.",
+        ],
+      },
+      {
+        heading: "When you do need stronger guarantees",
+        paragraphs: [
+          "Some industries (healthcare, finance, government) have regulatory requirements that audit logs must be complete. For those, the right pattern is background-queued audit writes — the real operation succeeds, an audit-write job goes onto a queue, the queue is durable, retries until the audit row exists.",
+          "Pilates Studio doesn't have regulatory audit requirements. CleanSlate, advance.al, and the rest of the platforms on this site mostly don't either. For the cases that do, the upgrade from \"best-effort sidecar\" to \"queued and retried\" is straightforward: same middleware, same payload, different sink.",
+        ],
+      },
+      {
+        heading: "What this generalizes to",
+        paragraphs: [
+          "Any sidecar concern that shouldn't fail the main operation. Analytics events. Notification dispatch. Webhook outbound calls. The pattern is the same — main operation commits first, sidecar runs after, sidecar failure is logged and never blocks.",
+          "The discipline: be explicit about which concerns are critical-path and which aren't. Critical-path concerns belong inside the transaction. Sidecar concerns belong in middleware that runs after. Mixing them is how you get unexpected blocking failures.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "Losing a booking because the audit insert was slow is unacceptable user-facing behavior; the audit log is for after-the-fact compliance, not for blocking the present.",
+      },
+      {
+        quote:
+          "Audit gaps are recoverable. Blocked writes aren't.",
+      },
+    ],
+    citations: [
+      {
+        label: "PostgreSQL transaction documentation",
+        url: "https://www.postgresql.org/docs/current/tutorial-transactions.html",
+        relevance: "Reference for the transaction boundary discussion",
+      },
+      {
+        label: "Express.js middleware guide",
+        url: "https://expressjs.com/en/guide/using-middleware.html",
+        relevance: "Where the audit middleware hooks into the request lifecycle",
+      },
+    ],
+    faq: [
+      {
+        q: "Should audit logging be inside the write transaction?",
+        a: "Usually not. The audit log's job is post-hoc review; making the user-facing write depend on the audit insert succeeding is the wrong trade. Best-effort audit logging in middleware that runs after the main operation is the right default.",
+      },
+      {
+        q: "What if the audit log has regulatory requirements?",
+        a: "Use a background queue with durable storage and retry semantics. The real operation succeeds; the audit-write goes onto the queue; the queue retries until the audit row exists. Stronger completeness guarantees than best-effort sidecar, still doesn't block the main operation.",
+      },
+      {
+        q: "What should an audit log capture?",
+        a: "Actor (user ID, role), action (create / update / delete + resource type + resource ID), context (IP, user-agent, timestamp), and a diff of what changed. Roughly 100-300 bytes per row. Easy to keep around for years.",
+      },
+      {
+        q: "How do you backfill missing audit rows after a failure?",
+        a: "Application logs should capture enough context (the user, the resource, the action) that a missing audit row can be reconstructed by hand or by script if someone ever asks. In practice, audit gaps are rare and most don't matter.",
+      },
+    ],
+  },
+
+  {
+    slug: "booking-flow-status-transitions-waitlist",
+    title:
+      "Booking-flow status transitions — auto-promoting from the waitlist on cancellation",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 6,
+    description:
+      "Pilates Studio's booking state machine handles cancellations by auto-promoting the first person on the waitlist. The transition is atomic, the notification is automatic, and admins don't manually reshuffle attendance. The pattern is small but it's the difference between \"yet another booking app\" and a system that runs itself.",
+    keywords: [
+      "booking system state machine",
+      "waitlist auto-promotion",
+      "atomic state transition",
+      "booking cancellation flow",
+      "Pilates studio software",
+      "class scheduling SaaS",
+    ],
+    relatedProject: "pilates-studio",
+    answerBox:
+      "Pilates Studio's booking state machine has clear transitions: confirmed → cancelled → (trigger) waitlist promotion → confirmed. The transition happens inside one transaction, the next-up waitlist entry is found by created_at order, the promoted member gets an automatic email + SMS. Admins never manually reshuffle attendance. The state machine, not procedural code, is what makes this reliable.",
+    lede:
+      "Booking systems live or die on how well they handle the unhappy paths. Cancellations, no-shows, waitlist promotions, repeated reschedules — these are where most booking apps reveal that the developer thought through the happy path and assumed everything else would sort itself out. Pilates Studio's state machine is what's left after I worked through every unhappy path I could think of.",
+    sections: [
+      {
+        heading: "What the booking states are",
+        paragraphs: [
+          "Booking states: `pending` (member started a booking but hasn't paid or confirmed), `confirmed` (paid and reserved), `cancelled` (member or admin cancelled before the class), `attended` (member showed up), `no_show` (didn't show), `refunded` (admin refunded after cancellation).",
+          "Waitlist states are simpler: `waiting` (queued), `promoted` (got a seat, now has a confirmed booking), `expired` (didn't take the seat in time and was bumped back).",
+          "Both are stored as Postgres enums via Prisma. Every transition is logged; the audit trail is rich enough to reconstruct what happened from any point in time.",
+        ],
+        table: {
+          caption: "Booking + waitlist state transitions",
+          headers: ["From", "To", "Trigger", "Side effects"],
+          rows: [
+            ["pending", "confirmed", "Payment succeeds", "Confirmation email + SMS"],
+            ["pending", "cancelled", "Payment fails / user abandons", "None"],
+            ["confirmed", "cancelled", "User or admin cancels", "Refund evaluated; waitlist promotion fires"],
+            ["confirmed", "attended", "Admin marks attended at class start", "Visit row created"],
+            ["confirmed", "no_show", "Admin marks no-show", "Charge retained per policy"],
+            ["cancelled", "refunded", "Admin issues refund", "Stripe / LemonSqueezy refund"],
+            ["waiting", "promoted", "Confirmed booking cancels in same class", "Confirmation email + SMS to promoted member"],
+            ["waiting", "expired", "Class started before promotion processed", "Member stays in waiting state for future classes"],
+          ],
+        },
+      },
+      {
+        heading: "How does waitlist auto-promotion work?",
+        paragraphs: [
+          "When a confirmed booking transitions to cancelled, the same transaction runs a follow-up query: find the oldest `waiting` entry for the same class, atomically transition that entry to `promoted`, and create a `confirmed` booking row for the member.",
+          "All of this happens inside one Postgres transaction. If the promotion query fails (rare — typically a race with another transition), the cancellation still commits. The next cron-driven sweep picks up unfilled seats and runs promotion again.",
+          "The atomicity matters. Without it, two simultaneous cancellations could both try to promote the same waitlist entry; one wins, one fails. With it, the database serializes the access and exactly one waitlist member is promoted per cancellation.",
+        ],
+      },
+      {
+        heading: "What the promoted member sees",
+        paragraphs: [
+          "An email + SMS within seconds: \"You're in. Class at 18:00 on Thursday is yours. Reply CANCEL to drop.\" The member doesn't need to manually accept; the system has them confirmed.",
+          "Two-hour cancellation window: if the promoted member cancels via the SMS reply or in the app, the seat goes back to the waitlist for the next-up member. This is the same state-machine logic, fired from a different entry point.",
+        ],
+      },
+      {
+        heading: "What about the cron sweep?",
+        paragraphs: [
+          "A periodic job (every 5 minutes) checks for classes with open seats and non-empty waitlists. It runs the same promotion logic for each. This catches any cases where a real-time promotion failed or was missed.",
+          "The cron is belt-and-suspenders. The real-time promotion handles the common case (cancel → instant promote). The cron handles the long tail (transient failures, orphaned states, classes that opened seats for other reasons).",
+        ],
+      },
+      {
+        heading: "Why this pattern matters",
+        paragraphs: [
+          "The studio operator never manually reshuffles attendance. A cancellation comes in at 6:45pm for a 7:00pm class; by 6:45:03pm, a waitlist member has been notified and is on their way. Without this, the studio either runs the class with an empty seat (lost revenue) or someone has to manually call down the waitlist (admin overhead).",
+          "The mechanical part is the state machine. The product win is that it runs itself. \"Runs itself\" is the whole point of SaaS for a one-location boutique studio — the operator pays for software so they don't have to be the system.",
+        ],
+      },
+      {
+        heading: "What this generalizes to",
+        paragraphs: [
+          "Any queue with priority order and capacity constraints. Restaurant reservations with cancellation lists. Conference workshop sign-ups with waitlists. Therapy session bookings. Anywhere demand exceeds supply for time-bounded slots.",
+          "The pattern: explicit state enum, atomic transitions, side-effects triggered by transitions, cron sweep for missed events. Each piece is small; the combination is what makes the system trustworthy.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "The studio operator never manually reshuffles attendance. A cancellation at 6:45pm; by 6:45:03pm, a waitlist member has been notified.",
+      },
+      {
+        quote:
+          "\"Runs itself\" is the whole point of SaaS for a one-location boutique studio — the operator pays for software so they don't have to be the system.",
+      },
+    ],
+    citations: [
+      {
+        label: "PostgreSQL enum types",
+        url: "https://www.postgresql.org/docs/current/datatype-enum.html",
+        relevance: "Storage for booking and waitlist states",
+      },
+      {
+        label: "Prisma schema reference — enums",
+        url: "https://www.prisma.io/docs/orm/prisma-schema/data-model/models#enums",
+        relevance: "Type-safe state representation in the ORM layer",
+      },
+    ],
+    faq: [
+      {
+        q: "How do you handle booking cancellations in a way that promotes waitlist members?",
+        a: "Atomic state transition inside one transaction: cancel the existing booking, find the oldest waiting entry for the same class, promote it to confirmed, fire confirmation notifications. A cron sweep handles any cases where the real-time promotion missed.",
+      },
+      {
+        q: "Should booking and waitlist states be in the same enum?",
+        a: "Separate enums for clarity. A booking has its own lifecycle (pending → confirmed → attended / cancelled). A waitlist entry has its own (waiting → promoted / expired). Transitions cross between them at specific moments, but conflating them in one state machine makes the model harder to reason about.",
+      },
+      {
+        q: "Do you need a cron job if real-time promotion works?",
+        a: "Yes — as a safety net. The cron handles transient failures, race conditions, and any orphaned states. The real-time promotion handles the common case; the cron handles the long tail. Both together are what makes the system trustworthy.",
+      },
+      {
+        q: "How do you notify a promoted waitlist member?",
+        a: "Transactional email + SMS within seconds of promotion. Resend for email, Telnyx or Twilio for SMS. Include a reply option to cancel if the member can no longer make it — that triggers the same transition for the next waitlist member.",
+      },
+    ],
+  },
+
+  // -------------------------------------------------------------------------
+  // Cluster E — CleanSlate
+  // -------------------------------------------------------------------------
+  {
+    slug: "discipline-as-the-product",
+    title:
+      "Discipline as the product — architectural rules that survive every refactor",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 7,
+    description:
+      "CleanSlate is a SaaS for solo cleaners that earns its margin from architectural discipline. Route files dispatch to services. Services own all data ops. Components never touch Supabase. Money is always cents. Phones always E.164. Rules that survive refactors aren't conventions — they're types and middleware.",
+    keywords: [
+      "architectural discipline",
+      "SaaS architecture patterns",
+      "boundary types",
+      "service layer pattern",
+      "discipline product",
+      "Next.js service layer",
+    ],
+    relatedProject: "cleanslate",
+    answerBox:
+      "CleanSlate's product is the architectural discipline that makes it maintainable. Rules enforced structurally: route files dispatch to services; services own all data ops; components never touch Supabase; money is always cents; phones are E.164; RLS scopes every query to the user. These aren't conventions — they're TypeScript types, middleware, and database policies. The wrong thing is structurally impossible.",
+    lede:
+      "Most SaaS apps die from a thousand small inconsistencies. Money is sometimes a number, sometimes a string with a currency symbol. Phones are sometimes formatted, sometimes raw. Service calls sometimes go through the service layer, sometimes inline. After two years, the codebase is unmaintainable. CleanSlate's product is the discipline that makes none of this possible.",
+    sections: [
+      {
+        heading: "Route files dispatch — they don't do",
+        paragraphs: [
+          "Every Next.js route handler in CleanSlate is two lines: parse the input, call a service function, return the response. The service does the work. The route is a thin layer of HTTP-to-domain translation.",
+          "This sounds like overhead. The point is the boundary. Routes can change (new HTTP shape, different framework, different deployment target) without touching the domain logic. Services can change (different data layer, different validation) without touching the HTTP layer. The boundary is enforced because there's nowhere else to put the work — there's no logic to put in the route file.",
+        ],
+      },
+      {
+        heading: "Services own all data ops",
+        paragraphs: [
+          "No Supabase client calls outside the services folder. The TypeScript imports enforce this — components import from `@/services/...`, services import from `@/lib/supabase`, components have no path to import Supabase directly. The lint rule plus the import-restriction config make a violation a compile error.",
+          "Why this matters: data shape changes happen at the service boundary. If a component reaches around the service to query Supabase directly, every component that does this becomes another place to update when the schema changes. With the discipline, the service is the only place that knows about data shape.",
+          "Same pattern as the React Server Components debate, generalized: data fetching lives in the data layer, not in the UI layer.",
+        ],
+        table: {
+          caption: "What each layer can and can't import",
+          headers: ["Layer", "Can import from", "Cannot import from"],
+          rows: [
+            ["Components", "@/services, @/lib/types, @/lib/utils", "@/lib/supabase, @/lib/db"],
+            ["Routes", "@/services, @/lib/validation", "@/lib/supabase, components"],
+            ["Services", "@/lib/supabase, @/lib/types", "components, routes"],
+            ["Lib (utilities)", "@/lib (siblings)", "Anything in app/ or components/"],
+          ],
+        },
+      },
+      {
+        heading: "Money is always cents",
+        paragraphs: [
+          "Currency values are stored, transmitted, and operated on as integer cents. A €20 plan is `2000`. A 5% discount is `100` cents subtracted, not `0.05 * 2000`.",
+          "This eliminates floating-point bugs in monetary math. `0.1 + 0.2 !== 0.3` is real; `10 + 20 === 30` is reliably real. Stripe, LemonSqueezy, and most payment APIs use integer cents for the same reason.",
+          "The TypeScript type is a branded type: `type Cents = number & { __brand: 'Cents' }`. A function that takes `Cents` won't accept a raw number; the compiler catches the bug at the type level. Display formatting happens at the UI boundary, where cents become \"€20.00\".",
+        ],
+      },
+      {
+        heading: "Phones are E.164",
+        paragraphs: [
+          "Same shape as money. Every phone number stored in the database is E.164 format (`+49301234567`). Validation rejects non-E.164 input at the boundary. Display formatting (\"+49 30 1234567\") happens at the UI.",
+          "The point: when SMS sending needs a phone number, it doesn't have to guess the format. When duplicate-detection needs to compare two phone numbers, the comparison is trivial. The discipline survives every refactor because the storage type is rigid.",
+        ],
+      },
+      {
+        heading: "RLS scopes every query",
+        paragraphs: [
+          "Every Supabase table has Row Level Security enabled with a policy that filters by `auth.uid()`. A service calling `from('jobs').select()` doesn't have to add `.eq('user_id', userId)` — the policy adds it automatically.",
+          "This is the data-layer equivalent of the service-layer enforcement. The discipline is structural: the database refuses to return rows that don't match the policy, regardless of what the application code asks for.",
+        ],
+      },
+      {
+        heading: "Why this is the product",
+        paragraphs: [
+          "CleanSlate is a €20-flat SaaS for solo cleaners in Germany. The customer doesn't pay for architectural discipline — they pay for the software working reliably for the next three years. The discipline is what makes that promise affordable for me to keep.",
+          "Without the discipline, every feature change requires re-reading half the codebase to understand what might break. With it, the rules are explicit, structural, and limited in number. New features fit the rules or they don't ship.",
+          "The marketing-vs-app split is the same pattern: `(marketing)` and `(app)` route groups in Next 16. You can't accidentally render a marketing page that requires auth, or render an auth page on the marketing domain. The split is structural.",
+        ],
+      },
+      {
+        heading: "What this generalizes to",
+        paragraphs: [
+          "Any solo or small-team SaaS where maintainability matters more than velocity. The discipline trades a small upfront design cost for years of compounding maintainability savings.",
+          "It doesn't generalize to large teams that need different code-ownership boundaries, or to early-stage startups iterating on product-market fit (where the discipline locks you into bad shapes). For the boring SaaS shape — clear domain, slow-changing requirements, long-tail maintenance — it's the right pattern.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "These aren't conventions — they're TypeScript types, middleware, and database policies. The wrong thing is structurally impossible.",
+      },
+      {
+        quote:
+          "The customer doesn't pay for architectural discipline — they pay for the software working reliably for the next three years. The discipline is what makes that promise affordable.",
+      },
+    ],
+    citations: [
+      {
+        label: "TypeScript branded types pattern",
+        url: "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html",
+        relevance: "How Cents and E164 become type-checked at compile time",
+      },
+      {
+        label: "Supabase Row Level Security",
+        url: "https://supabase.com/docs/guides/database/postgres/row-level-security",
+        relevance: "Data-layer scope enforcement",
+      },
+      {
+        label: "Next.js route groups",
+        url: "https://nextjs.org/docs/app/api-reference/file-conventions/route-groups",
+        relevance: "Structural separation of marketing and app",
+      },
+      {
+        label: "ESLint no-restricted-imports",
+        url: "https://eslint.org/docs/latest/rules/no-restricted-imports",
+        relevance: "Enforces layer boundaries at lint time",
+      },
+    ],
+    faq: [
+      {
+        q: "What does \"discipline as the product\" mean for SaaS?",
+        a: "The architectural rules that keep the codebase maintainable are the actual asset. A €20/month SaaS that lasts three years without rewrite earns more than a €40/month one that needs to be rebuilt every year. Discipline is the difference.",
+      },
+      {
+        q: "Why store money as integer cents instead of decimals?",
+        a: "Floating-point math is unreliable for currency. 0.1 + 0.2 !== 0.3 in JavaScript. Integer cents eliminate the class of bug entirely. Stripe, LemonSqueezy, and most payment APIs do this for the same reason.",
+      },
+      {
+        q: "How do you enforce that components never call the database directly?",
+        a: "TypeScript imports + ESLint no-restricted-imports. Components physically can't import the Supabase client; the lint config blocks it at compile time. Architectural rules enforced by tooling, not by code review.",
+      },
+      {
+        q: "Does architectural discipline slow down development?",
+        a: "Yes, marginally, in the first weeks. Then it compounds the other direction. After 3-6 months, the codebase that has discipline is faster to extend because every change has a clear place to land. Without discipline, every new feature triggers a small refactor; with it, features slot in.",
+      },
+    ],
+  },
+
+  {
+    slug: "four-vercel-crons-saas-runs-itself",
+    title:
+      "Four Vercel cron endpoints — the minimum for a SaaS that runs itself",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 6,
+    description:
+      "CleanSlate's operator never logs in to do admin. Four Vercel cron endpoints handle the work: trial reminders, overdue invoices, recurring job generation, and pre-job SMS. Each one is small, idempotent, and runs from the platform's scheduler. The product runs itself.",
+    keywords: [
+      "Vercel cron jobs",
+      "SaaS automation cron",
+      "scheduled jobs Next.js",
+      "operator-free SaaS",
+      "Vercel scheduled functions",
+      "automated SaaS workflows",
+    ],
+    relatedProject: "cleanslate",
+    answerBox:
+      "CleanSlate runs four Vercel cron endpoints to operate without admin intervention: (1) trial reminders email users approaching trial end, (2) overdue invoices nudge unpaid subscriptions, (3) recurring job generation creates next week's bookings, (4) pre-job SMS reminders go to end-customers. Each is a small idempotent route handler. The product runs itself; the operator focuses on selling and supporting.",
+    lede:
+      "Most SaaS apps need an admin to log in periodically and do something — reset trial counters, send reminders, generate next week's work. That admin time is friction; it bounds how many customers one operator can serve. CleanSlate's four cron endpoints remove the friction. The operator never touches admin; the platform does it.",
+    sections: [
+      {
+        heading: "What the four crons do",
+        paragraphs: [
+          "(1) Trial reminders. Daily. Finds users whose trial ends in 3 days and emails a polite \"your trial is ending, here's how to subscribe\" message. Idempotent — runs every day, only triggers per-user when the 3-day window applies.",
+          "(2) Overdue invoices. Daily. Finds subscriptions in `past_due` state and sends a nudge email + SMS. Caps at three nudges per overdue period; after that the subscription auto-cancels (the RLS policy then prevents new writes, see other note on subscription-gate-as-RLS).",
+          "(3) Recurring job generation. Daily. For every active client with a recurring schedule, generates the next week's job rows. Idempotent — only creates rows that don't already exist for the target dates.",
+          "(4) Pre-job SMS. Hourly. Finds jobs starting within the next 24 hours that haven't been SMS-confirmed yet; sends the reminder; marks the job as confirmed. Telnyx handles delivery + retries.",
+        ],
+        table: {
+          caption: "The four crons",
+          headers: ["Cron", "Schedule", "Purpose", "Idempotency strategy"],
+          rows: [
+            ["trial-reminders", "Daily 09:00", "Notify before trial ends", "Per-user 3-day window check"],
+            ["overdue-invoices", "Daily 09:30", "Nudge unpaid subs", "Per-subscription nudge counter"],
+            ["recurring-jobs", "Daily 22:00", "Generate next week's bookings", "Upsert by (client_id, scheduled_date)"],
+            ["pre-job-sms", "Hourly", "Remind end-customers of upcoming jobs", "Per-job confirmed flag"],
+          ],
+        },
+      },
+      {
+        heading: "Why cron and not a queue?",
+        paragraphs: [
+          "Each of these is a periodic sweep of database state, not an event-triggered job. A cron schedule maps perfectly: at a fixed time, check the state, do the work. There's no per-record event that fires; the state itself is the trigger.",
+          "Queues (BullMQ, Trigger.dev) are right when events drive work — a user signs up, a notification fires, a payment succeeds. Crons are right when the work is \"sweep this state space periodically and act on what matches.\"",
+        ],
+      },
+      {
+        heading: "Idempotency is the discipline",
+        paragraphs: [
+          "Every cron must be runnable twice in a row without producing wrong results. Vercel cron retries on failure; if a cron handler doesn't complete cleanly, the next scheduled run still has to do the right thing.",
+          "Trial reminders: idempotent because the 3-day window is a function of the user's trial-end timestamp and today's date. Running twice in a day sends two emails (mildly bad) — fix is a per-user \"last reminded\" timestamp checked before sending.",
+          "Recurring jobs: idempotent because the upsert by `(client_id, scheduled_date)` is a no-op when the row already exists. Running twice in a day creates the same rows once, not twice.",
+          "Pre-job SMS: idempotent because the per-job confirmed flag prevents double-SMS. Running twice in an hour sends one SMS, not two.",
+        ],
+      },
+      {
+        heading: "How do Vercel crons actually run?",
+        paragraphs: [
+          "Vercel's cron system invokes a normal Next.js route handler on the configured schedule. The handler runs as a serverless function — same runtime as any API route, same access to env vars and database.",
+          "The cron's authentication is a shared secret in the `Authorization` header that Vercel includes. The route checks the secret on every invocation; unauthorized requests get a 401. This prevents external triggering of cron endpoints.",
+          "Logs go to Vercel's standard log stream. Failures surface as 5xx responses; Vercel retries once per failure. After three consecutive failures, Vercel doesn't keep retrying — the alert is the operator's responsibility to notice.",
+        ],
+      },
+      {
+        heading: "What this trades away",
+        paragraphs: [
+          "Crons run at a fixed cadence. \"Send the trial reminder at exactly 72 hours before trial end\" isn't possible — it's \"send the reminder the next morning after the 72-hour mark passes.\" For most use cases this is fine; for cases where precision matters (medication reminders, real-time alerts), use a queue + scheduled-job system instead.",
+          "Crons also don't scale to thousands of per-user tasks at once. If recurring-job generation grew to need batching, you'd move it from a single cron handler to a cron that enqueues per-tenant tasks onto a queue. For CleanSlate's volume, a single cron does the whole sweep in seconds.",
+        ],
+      },
+      {
+        heading: "Why this matters for solo-operator SaaS",
+        paragraphs: [
+          "Every operator-hours-per-customer drain caps your customer count. \"I have to log in every Monday and run the report\" means you can't have more customers than your Mondays support. \"The platform sends the report every Monday\" means the platform scales with users, not with operator time.",
+          "Four crons gets CleanSlate to \"the platform runs itself for routine operations.\" The operator's time goes to selling, supporting, and improving the product — not to running the product.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "\"I have to log in every Monday and run the report\" means you can't have more customers than your Mondays support.",
+      },
+      {
+        quote:
+          "Every cron must be runnable twice in a row without producing wrong results. Idempotency is the discipline.",
+      },
+    ],
+    citations: [
+      {
+        label: "Vercel Cron Jobs documentation",
+        url: "https://vercel.com/docs/cron-jobs",
+        relevance: "The scheduled-function feature CleanSlate uses",
+      },
+      {
+        label: "Telnyx SMS API",
+        url: "https://developers.telnyx.com/docs/messaging",
+        relevance: "SMS delivery for pre-job and overdue-invoice notifications",
+      },
+      {
+        label: "Resend email API",
+        url: "https://resend.com/docs",
+        relevance: "Email delivery for trial reminders and overdue notices",
+      },
+      {
+        label: "LemonSqueezy webhook documentation",
+        url: "https://docs.lemonsqueezy.com/api/webhooks",
+        relevance: "Source of subscription state for the overdue-invoice cron",
+      },
+    ],
+    faq: [
+      {
+        q: "How many cron jobs does a typical SaaS need?",
+        a: "Three to five for most cases — trial reminders, overdue handling, periodic content generation, recurring task creation, and one for any platform-specific sweep. Below three, you're probably missing automation that should exist. Above ten, you might be using crons where queues would be cleaner.",
+      },
+      {
+        q: "Should cron handlers be idempotent?",
+        a: "Yes — every cron handler must be runnable twice in a row without wrong results. Cron systems retry on failure; if the handler isn't idempotent, retries produce duplicate writes. Strategies: upsert instead of insert, per-record last-run timestamps, per-action confirmed flags.",
+      },
+      {
+        q: "How do you secure a Vercel cron endpoint against external triggering?",
+        a: "Vercel sends a shared secret in the Authorization header on every cron invocation. The route handler verifies the secret on every call; unauthorized requests get a 401. The secret lives in environment variables; rotate periodically.",
+      },
+      {
+        q: "When should you use a queue instead of a cron?",
+        a: "When work is event-driven (user action triggers it) rather than state-driven (periodic sweep). Crons are right for \"look at the database every hour and act on what matches.\" Queues are right for \"this just happened, do something within seconds.\"",
+      },
+    ],
+  },
+
+  // -------------------------------------------------------------------------
+  // Cluster G — Dabei / React Native production patterns
+  // -------------------------------------------------------------------------
+  {
+    slug: "mmkv-vs-asyncstorage-cold-start-hot-path",
+    title:
+      "MMKV vs AsyncStorage on the cold-start hot path — when synchronous storage wins",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 6,
+    description:
+      "AsyncStorage is React Native's default key-value store, but it's async — every read goes through a bridge call. MMKV is synchronous, encrypted, and orders of magnitude faster on the cold-start path where auth state and draft data have to load before the first render.",
+    keywords: [
+      "react-native-mmkv",
+      "MMKV vs AsyncStorage",
+      "React Native cold start",
+      "synchronous storage RN",
+      "Expo MMKV",
+      "encrypted storage RN",
+    ],
+    relatedProject: "dabei",
+    answerBox:
+      "AsyncStorage is async — every read crosses the React Native bridge, adding latency to cold-start critical-path code that needs auth state, draft data, or feature flags before the first render. MMKV is synchronous, encrypted, and ~30x faster on the same data. Dabei uses MMKV for auth, draft hangouts, and any state the home tab depends on before the first paint.",
+    lede:
+      "React Native's default storage primitive is AsyncStorage, which is fine for most data. It's not fine for the data the home screen needs before it can render. Auth state, the most recent draft hangout, last-known map region — these have to load synchronously or the home tab flashes empty. MMKV is the answer.",
+    sections: [
+      {
+        heading: "Why AsyncStorage is the wrong tool for cold-start",
+        paragraphs: [
+          "AsyncStorage's API is `getItem(key): Promise<string | null>`. Every read crosses the JavaScript-to-native bridge, queues, and returns a promise. For a cold-start sequence that needs auth state before mounting the navigator, this means: launch app → mount root → call `getItem('auth')` → wait → render loading screen → resolve → re-render → finally mount the real navigator.",
+          "Each bridge hop costs 1-10ms depending on device, traffic, and time of day. The home screen needs auth state, the user's name, the draft hangout state — five or six reads minimum. Multiply, and cold-start spends 20-50ms in storage waits before the UI can do anything useful.",
+          "Worse: the loading screen between launch and first useful render gives users the impression of slowness, even when the actual data is tiny. Perceived performance suffers.",
+        ],
+      },
+      {
+        heading: "What MMKV gives you",
+        paragraphs: [
+          "MMKV is Tencent's open-source mobile key-value store. Synchronous reads — `mmkv.getString('auth')` returns immediately, no promise, no bridge round-trip. Encrypted by default. Backed by memory-mapped files for fast load on app launch.",
+          "`react-native-mmkv` (by Marc Rousavy) is the React Native binding. The API is similar to localStorage in the browser — synchronous getters/setters for strings, numbers, booleans. Backed by native storage; no JS bridge required for reads.",
+          "Speed: ~30x faster than AsyncStorage on the same workload, per Marc's published benchmarks. On modern devices the absolute difference is small (microseconds vs milliseconds), but on cold-start where dozens of reads can happen before first paint, the cumulative impact is real.",
+        ],
+        table: {
+          caption: "Storage primitives for React Native",
+          headers: ["Storage", "Sync/async", "Encryption", "Use case"],
+          rows: [
+            ["AsyncStorage", "Async (bridge)", "No", "Bulk non-critical data"],
+            ["MMKV", "Sync", "Yes (default)", "Auth, draft state, cold-start hot path"],
+            ["expo-secure-store", "Async (keychain-backed)", "Hardware (iOS)", "Secrets like JWTs, OAuth tokens"],
+            ["WatermelonDB / Realm", "Async (DB)", "Configurable", "Offline-first structured data"],
+          ],
+        },
+      },
+      {
+        heading: "What goes in MMKV in Dabei",
+        paragraphs: [
+          "Auth state — the user's session token + ID + name. Read synchronously on cold-start; the navigator can mount the authenticated routes immediately if auth is valid.",
+          "Draft hangouts — the partially-composed hangout the user was creating when they backgrounded the app. Read synchronously on cold-start so the create-hangout screen pre-populates with what they had.",
+          "Last-known map region — the lat/lng + zoom level of the user's most recent map view. Read synchronously so the home map opens at where they were, not at the default region.",
+          "Recently-viewed hangouts — a small ring buffer of hangout IDs for the activity feed. Synchronous read; subsequent fetches are async to update.",
+        ],
+      },
+      {
+        heading: "What doesn't go in MMKV",
+        paragraphs: [
+          "Bulk data. Lists of hangouts, full profile blobs, message history. MMKV is fast but it's a key-value store, not a database. Anything that benefits from query semantics or structured access belongs in Supabase (the source of truth) with a local cache via React Query or similar.",
+          "Secrets that need hardware-backed encryption. JWT refresh tokens on iOS belong in expo-secure-store, which backs them with the keychain. MMKV's encryption is software-level — fine for app data, not for keys that need OS-level protection.",
+        ],
+      },
+      {
+        heading: "Migration pattern",
+        paragraphs: [
+          "From AsyncStorage: on app launch, check MMKV for the key; if missing, check AsyncStorage; if found there, copy to MMKV and delete from AsyncStorage. Subsequent reads find it in MMKV.",
+          "The migration is one-pass and self-cleaning. Within a few app launches, all the user's data has migrated to MMKV and AsyncStorage is empty.",
+          "Don't migrate everything at once on a single launch — pick the keys that matter for cold-start (auth, drafts, recent state) and let the rest stay in AsyncStorage until it's accessed. Aggressive migration risks introducing bugs in places that didn't need to change.",
+        ],
+      },
+      {
+        heading: "What about Expo support?",
+        paragraphs: [
+          "react-native-mmkv works in Expo's bare workflow and in dev client. It doesn't work in Expo Go (Expo's sandbox-mode developer client) because it requires native code linking. For Expo-managed projects, this means you can use MMKV with an EAS Build dev client; you can't preview it in Expo Go.",
+          "Dabei uses an EAS dev client specifically because MMKV is non-negotiable for the cold-start experience.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "Cold-start spends 20-50ms in storage waits before the UI can do anything useful. The loading screen between launch and first useful render gives users the impression of slowness.",
+      },
+      {
+        quote:
+          "Pick the keys that matter for cold-start and let the rest stay in AsyncStorage until accessed. Aggressive migration risks introducing bugs in places that didn't need to change.",
+      },
+    ],
+    citations: [
+      {
+        label: "react-native-mmkv (Marc Rousavy)",
+        url: "https://github.com/mrousavy/react-native-mmkv",
+        relevance: "The library that powers Dabei's synchronous storage",
+      },
+      {
+        label: "MMKV — Tencent's key-value framework",
+        url: "https://github.com/Tencent/MMKV",
+        relevance: "Upstream native implementation",
+      },
+      {
+        label: "expo-secure-store",
+        url: "https://docs.expo.dev/versions/latest/sdk/securestore/",
+        relevance: "Hardware-backed secret storage on iOS",
+      },
+      {
+        label: "AsyncStorage (React Native community)",
+        url: "https://react-native-async-storage.github.io/async-storage/",
+        relevance: "The default async key-value store, with bridge-based access",
+      },
+    ],
+    faq: [
+      {
+        q: "Should I replace AsyncStorage with MMKV everywhere?",
+        a: "No. MMKV is the right tool for cold-start-critical data and any synchronous-access pattern. AsyncStorage is fine for the rest. Migrate the keys that matter for first-paint experience; leave bulk data where it is.",
+      },
+      {
+        q: "Is MMKV encrypted?",
+        a: "Yes — by default. You provide an encryption key when initializing the instance; data on disk is encrypted with AES. Note that this is software-level encryption, not hardware-backed like iOS keychain. For secrets that need hardware-level protection (refresh tokens, biometric secrets), use expo-secure-store.",
+      },
+      {
+        q: "Does react-native-mmkv work in Expo?",
+        a: "It works in Expo bare workflow and in EAS-built dev clients. It does not work in Expo Go because it requires native linking. If you're committed to Expo Go for development, you can't use MMKV; for any production app, bare workflow or a dev client is the right call.",
+      },
+      {
+        q: "What's the performance difference between MMKV and AsyncStorage?",
+        a: "About 30x faster on writes, similar margin on reads (Marc Rousavy's published benchmarks). On modern devices the absolute difference is microseconds vs milliseconds per operation. The cumulative impact on cold-start, where dozens of reads happen before first paint, is what matters.",
+      },
+    ],
+  },
+
+  {
+    slug: "vibe-checks-first-class-entity",
+    title:
+      "Vibe Checks as a first-class entity — when a social mechanic is the product",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 7,
+    description:
+      "Dabei's vibe checks are the feature that makes hangouts a live signal instead of a static event. A hangout can be live-rated mid-event; the `submit_vibe_check` RPC enforces attendance proof and a 48-hour rating window. Reputation is built from shared experiences, not follower counts.",
+    keywords: [
+      "social app reputation",
+      "vibe check RPC",
+      "live event rating",
+      "trust score mechanic",
+      "Supabase RPC pattern",
+      "attendance verification",
+    ],
+    relatedProject: "dabei",
+    answerBox:
+      "Dabei's vibe-check is a live rating any attendee can submit during or up to 48 hours after a hangout. The `submit_vibe_check` Postgres RPC enforces: the submitter was actually at the hangout (proof comes from RSVP + check-in row), the hangout has ended or is ongoing, the 48-hour window hasn't expired, and the submitter hasn't already rated this hangout. Reputation flows from these checks, not from follower counts.",
+    lede:
+      "Most social apps measure reputation by follower count, which rewards anyone who can get attention. Dabei measures reputation by vibe checks earned from people who showed up to your hangouts — a much harder signal to fake. The whole feature lives in one Postgres RPC, which is part of what makes it trustworthy.",
+    sections: [
+      {
+        heading: "What's a vibe check in product terms?",
+        paragraphs: [
+          "A vibe check is a quick, lightweight rating any hangout attendee can submit during or up to 48 hours after the event. It's not a star rating; it's a one-tap signal — \"the vibes were good\" or \"the vibes were off.\" Optional one-line comment.",
+          "The point is to let trust accumulate from real shared experiences. If you host a hangout and ten people each tap \"good vibes\" within 48 hours, your reputation goes up. If you crash a hangout and people downvote, your reputation goes down.",
+        ],
+      },
+      {
+        heading: "What's a vibe check in data terms?",
+        paragraphs: [
+          "A row in the `vibe_checks` table. Columns: `id`, `hangout_id`, `submitter_id`, `target_id` (the person being rated — usually the host, sometimes another attendee), `vibe` (positive / neutral / negative), `comment` (nullable), `created_at`.",
+          "Constraints: unique on `(submitter_id, target_id, hangout_id)` so each attendee can rate each other attendee at most once per hangout. Foreign keys to `hangouts`, `users`, and the `rsvps` table for attendance verification.",
+        ],
+      },
+      {
+        heading: "Why an RPC and not application code?",
+        paragraphs: [
+          "The submission has multiple checks that must all pass atomically: did this user RSVP to this hangout? Did they actually check in? Has the hangout ended (or is it ongoing)? Is the rating within the 48-hour window? Has this user already rated this target for this hangout?",
+          "Doing these checks in application code means five sequential queries plus a write — race conditions are real, and a malicious user could potentially submit a vibe-check by hitting the API faster than the checks can complete.",
+          "Doing them in a single Postgres RPC (`submit_vibe_check`) means the database evaluates everything in one transaction. All checks pass or none do. Race conditions become impossible because the database serializes the access.",
+        ],
+        table: {
+          caption: "What submit_vibe_check enforces",
+          headers: ["Check", "Why it matters"],
+          rows: [
+            ["Submitter is an attendee", "Can't rate hangouts you didn't go to"],
+            ["Hangout has ended or is ongoing", "Can't rate before the event"],
+            ["Within 48-hour window", "Stale ratings don't count"],
+            ["No existing rating from this user", "Each user rates each target once per hangout"],
+            ["Target was at the hangout", "Can't rate someone who wasn't there"],
+          ],
+        },
+      },
+      {
+        heading: "How does is_trusted work?",
+        paragraphs: [
+          "A user's `profiles.is_trusted` boolean flips to true automatically when they accumulate 15+ positive vibe checks from 10+ unique people.",
+          "The unique-people requirement matters. Without it, one friend could rate you 15 times across 15 hangouts and you'd be \"trusted.\" With it, you have to actually be liked by multiple people. Coordinated upvoting is hard.",
+          "The flip happens via a Postgres trigger on the `vibe_checks` table. After every insert, the trigger recomputes the target's stats and updates `is_trusted` if the threshold is met. The user sees the badge update on their next app launch.",
+        ],
+      },
+      {
+        heading: "What does the UI look like?",
+        paragraphs: [
+          "During or after a hangout, users get a soft prompt in the app: \"How were the vibes at [hangout name]?\" Three tap targets — good, neutral, off. Optional one-line comment.",
+          "The submission fires the `submit_vibe_check` RPC. Errors (already rated, outside window, wasn't an attendee) surface as friendly messages. Successful submissions show a brief confirmation and the user moves on.",
+          "The host sees aggregate vibe checks on their profile. Individual ratings aren't displayed; the aggregate is what matters. This is intentional — naming who downvoted you isn't useful and is harmful.",
+        ],
+      },
+      {
+        heading: "Why this isn't a star rating",
+        paragraphs: [
+          "Star ratings on social apps tend toward inflation. Everyone is a 4.7 average; the noise floor swallows any real signal. Trinary (good / neutral / off) is harder to game and easier to act on.",
+          "It's also faster to submit. One tap, done. The participation rate on vibe checks is meaningfully higher than the participation rate on star-rating systems I've worked with, because the friction is lower.",
+        ],
+      },
+      {
+        heading: "Where this generalizes",
+        paragraphs: [
+          "Any app where reputation matters and where you want it to come from real interactions, not from gaming the follower system. Skill-share apps. Local-community apps. Co-living app trust scores. Anywhere people show up to do things with each other.",
+          "The pattern: attendance-verified ratings + unique-rater thresholds + atomic enforcement at the database layer. Each piece is small; the combination makes the trust signal robust.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "Most social apps measure reputation by follower count, which rewards anyone who can get attention. Dabei measures reputation by vibe checks earned from people who showed up.",
+      },
+      {
+        quote:
+          "Doing the checks in a single Postgres RPC means the database evaluates everything in one transaction. Race conditions become impossible because the database serializes the access.",
+      },
+    ],
+    citations: [
+      {
+        label: "Supabase RPC documentation",
+        url: "https://supabase.com/docs/reference/javascript/rpc",
+        relevance: "How submit_vibe_check is invoked from client code",
+      },
+      {
+        label: "PostgreSQL triggers documentation",
+        url: "https://www.postgresql.org/docs/current/triggers.html",
+        relevance: "Mechanism behind the automatic is_trusted flip",
+      },
+      {
+        label: "Supabase Row Level Security",
+        url: "https://supabase.com/docs/guides/database/postgres/row-level-security",
+        relevance: "Tenant-scoped access for vibe_checks and related tables",
+      },
+    ],
+    faq: [
+      {
+        q: "Why use a Postgres RPC instead of application code for complex operations?",
+        a: "Atomicity. An RPC runs in a single database transaction; all checks pass or none do. Doing the same logic across multiple application-layer queries opens race conditions and makes the order-of-operations a potential vulnerability.",
+      },
+      {
+        q: "How do you prevent vote-stuffing on a reputation system?",
+        a: "Require attendance proof (RSVP + check-in for events), unique-rater thresholds (X ratings from Y distinct people), time-bounded windows (only rate within 48 hours of the event). Each of these constrains the gaming surface; together they make stuffing impractical.",
+      },
+      {
+        q: "Is a trinary rating (good/neutral/off) better than star ratings?",
+        a: "For social apps with high-frequency interactions, yes — lower friction means higher participation, and the simpler signal is harder to inflate. Star ratings tend toward 4.5-5.0 means and lose signal. Trinary preserves distinction.",
+      },
+      {
+        q: "How do you automatically update a reputation score after a rating?",
+        a: "Postgres trigger on insert/update. After every relevant row change, the trigger recomputes the target user's stats and updates the reputation column. The application doesn't have to remember to do it; the database guarantees it.",
+      },
+    ],
+  },
+
+  {
+    slug: "three-services-data-layer-hangout-crud-queries-actions",
+    title:
+      "Splitting the data layer into reads, writes, and actions — the three-services pattern",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 7,
+    description:
+      "Dabei's hangout data layer splits into three services — hangout-crud (writes), hangout-queries (reads), hangout-actions (orchestrated business logic). Clean read/write/action boundaries make RLS reasoning local and testing actually targeted instead of trying to mock a bloated service.",
+    keywords: [
+      "service layer pattern",
+      "CQRS lite",
+      "data layer architecture",
+      "Supabase service split",
+      "test-friendly architecture",
+      "React Native service layer",
+    ],
+    relatedProject: "dabei",
+    answerBox:
+      "Dabei's hangout data layer is three small services instead of one bloated one. hangout-crud owns writes (create, update, delete). hangout-queries owns reads (list, fetch, search). hangout-actions owns orchestrated business logic (RSVP a user + send notification + update counters in one transaction). Clean boundaries make RLS reasoning local; tests target the boundary instead of mocking a god-service.",
+    lede:
+      "Most React Native apps grow a single fat data-layer service per entity. By the time the codebase is a year old, the `HangoutService` is 1500 lines with 40 methods that touch every part of the app. Refactoring it gets harder every month. The three-services split is the discipline that prevents this from happening.",
+    sections: [
+      {
+        heading: "Why split a service at all?",
+        paragraphs: [
+          "Three reasons. First, reads and writes have different concerns. Reads care about projection (which columns), filtering, joining, caching. Writes care about validation, transactions, side effects. Mixing them in one service means every change risks affecting both.",
+          "Second, business logic that crosses entities (RSVP affects hangout counters, sends notifications, updates the user's stats) doesn't fit cleanly in either reads or writes. Putting it in writes pollutes write paths with cross-entity concerns. Putting it in reads makes no sense.",
+          "Third, tests. A service that only does reads is testable with database snapshots and assertion-on-projection. A service that only does writes is testable with input fixtures and assertion-on-final-state. A service that does both forces tests to mock half of itself; the tests become tautological.",
+        ],
+      },
+      {
+        heading: "What each service owns",
+        paragraphs: [
+          "`hangout-crud` — the boring CRUD. `createHangout(data)`, `updateHangout(id, data)`, `deleteHangout(id)`. Input validation via Zod, RLS policies do tenant scoping at the database, error handling is uniform. Roughly 200 lines per entity.",
+          "`hangout-queries` — read shapes. `getHangoutById(id)`, `listHangoutsNearMe(lat, lng, radius)`, `getMyHangouts(userId)`, `searchHangouts(query)`. Each query is a small focused function. Caching, when it exists, lives here.",
+          "`hangout-actions` — business logic that spans entities. `rsvpToHangout(userId, hangoutId)` (writes RSVP row + increments counter + sends notification). `cancelHangout(hangoutId)` (sets status + notifies attendees + processes refunds for paid events). The orchestration patterns live here, not scattered through CRUD.",
+        ],
+        table: {
+          caption: "What goes where",
+          headers: ["Operation", "Service"],
+          rows: [
+            ["Create a hangout", "hangout-crud"],
+            ["Update a hangout's description", "hangout-crud"],
+            ["Delete a hangout", "hangout-crud"],
+            ["Get a hangout by ID", "hangout-queries"],
+            ["List hangouts near user", "hangout-queries"],
+            ["Search hangouts", "hangout-queries"],
+            ["RSVP (write + notification + counter)", "hangout-actions"],
+            ["Cancel hangout (write + multi-notification + refunds)", "hangout-actions"],
+            ["Submit vibe check (cross-entity transactional)", "hangout-actions"],
+          ],
+        },
+      },
+      {
+        heading: "Why this makes RLS reasoning local",
+        paragraphs: [
+          "Each service touches a narrow set of tables. `hangout-crud` writes to `hangouts`. `hangout-queries` reads from `hangouts` plus joins. `hangout-actions` writes to multiple tables in transactions.",
+          "When I'm thinking about RLS policy for a table, I only have to think about which services touch that table and what they do. The mental model is small. Versus a bloated service where every method potentially touches every table, RLS reasoning becomes intractable.",
+          "Concretely: tightening a policy on `hangouts` table only requires testing the read paths in `hangout-queries` and the write paths in `hangout-crud` and `hangout-actions`. It doesn't require auditing every line of a 1500-line service.",
+        ],
+      },
+      {
+        heading: "Why this makes tests targeted",
+        paragraphs: [
+          "Read tests live alongside `hangout-queries`. Each test sets up a database state, calls a query function, asserts on the result. No mocking. No fixtures across multiple services. The test exactly maps to the read it covers.",
+          "Write tests live alongside `hangout-crud`. Each test calls a write function, asserts on the resulting database state. Again no mocking.",
+          "Action tests live alongside `hangout-actions`. These are integration-style — they set up state, call the action, and assert on the combined post-state (multiple tables changed, notification logged, counter updated). The cross-entity transactions are exactly what these tests cover.",
+          "Three test files per entity instead of one 2000-line test suite. Each one is fast to read and fast to extend.",
+        ],
+      },
+      {
+        heading: "What this trades away",
+        paragraphs: [
+          "Some operations span the artificial split. Creating a hangout might want to trigger an automatic notification — is that crud or action? My rule: if it's a single write with a single immediate side effect, it lives in crud. If it touches multiple tables or has business logic beyond \"insert row,\" it's an action.",
+          "There's also more code to navigate. Three files per entity instead of one. The trade is worth it because each of the three files is small enough to hold in head, and the boundaries match how the operations actually differ.",
+        ],
+      },
+      {
+        heading: "Where this generalizes",
+        paragraphs: [
+          "Any project past the size where a single per-entity service starts becoming unwieldy. For a tiny app, a single service is fine. For Dabei's scale (17 services across the data layer, each in three parts), the split pays back in maintenance and onboarding cost.",
+          "It's adjacent to CQRS (Command Query Responsibility Segregation) but lighter-weight. CQRS often involves separate data stores; this pattern just separates the access layer. The discipline scales with the project; CQRS adds complexity that small apps don't need.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "By the time the codebase is a year old, the HangoutService is 1500 lines with 40 methods that touch every part of the app.",
+      },
+      {
+        quote:
+          "Three test files per entity instead of one 2000-line test suite. Each one is fast to read and fast to extend.",
+      },
+    ],
+    citations: [
+      {
+        label: "CQRS pattern (Martin Fowler)",
+        url: "https://martinfowler.com/bliki/CQRS.html",
+        relevance: "Heavier inspiration for the read/write split",
+      },
+      {
+        label: "Supabase RLS documentation",
+        url: "https://supabase.com/docs/guides/database/postgres/row-level-security",
+        relevance: "Data-layer enforcement of access scope",
+      },
+      {
+        label: "Zod schema validation",
+        url: "https://zod.dev/",
+        relevance: "Input validation in hangout-crud and hangout-actions",
+      },
+    ],
+    faq: [
+      {
+        q: "How do you split a data-layer service?",
+        a: "Three concerns: reads (queries), writes (crud), orchestrated business logic (actions). Each becomes its own service. Reads and writes are mechanically simple; actions hold the cross-entity transactional logic. The split makes RLS reasoning local and testing targeted.",
+      },
+      {
+        q: "Is the three-services pattern the same as CQRS?",
+        a: "Lighter. CQRS typically involves separate read and write data stores with eventual consistency between them. The three-services pattern is just a service-layer split; both reads and writes hit the same database, the same Supabase tables, the same RLS policies. The complexity scales with project size.",
+      },
+      {
+        q: "Where does cross-entity transactional logic live?",
+        a: "In a third service — actions, orchestrators, workflows, whatever you call them. Multi-table writes belong here; single-table writes belong in CRUD. The boundary is whether the operation is one entity-level write or a coordinated business operation that spans entities.",
+      },
+      {
+        q: "Does the three-services split slow down development?",
+        a: "Slightly upfront, faster in the medium term. New developers can hold each small service in head; tests target boundaries cleanly; refactors are bounded. Compared to a bloated service that takes a week to understand before you can change it safely, the three-way split pays back fast.",
+      },
+    ],
+  },
 ];
 
 export function getNote(slug: string): Note | undefined {
