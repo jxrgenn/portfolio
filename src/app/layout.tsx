@@ -73,6 +73,13 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} h-full antialiased`}
     >
+      <head>
+        {/* IndieAuth rel="me" identity links — pair with sameAs[] in Person JSON-LD */}
+        <link rel="me" href="https://github.com/jxrgenn" />
+        <link rel="me" href="https://www.linkedin.com/in/jurgen-halili-b227a6255" />
+        <link rel="me" href="https://instagram.com/jxrgenn" />
+        <link rel="me" href="mailto:jurgenhalili1142@gmail.com" />
+      </head>
       <body className="min-h-full flex flex-col">
         <SmoothScroll />
         <AmbientBackground />
