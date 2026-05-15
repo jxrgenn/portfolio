@@ -1598,6 +1598,1530 @@ export const notes: readonly Note[] = [
       },
     ],
   },
+
+  // -------------------------------------------------------------------------
+  // Decision pages — Layer 1 batch 2
+  // -------------------------------------------------------------------------
+  {
+    slug: "hiring-freelance-react-native-developer-germany",
+    title:
+      "Hiring a freelance React Native developer in Germany — a scope template",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 8,
+    description:
+      "React Native projects fail more often on scope clarity than on technical skill. Here's a scope template I'd want from a client before quoting — platforms, native modules, deploy strategy, and the four questions that change the estimate by an order of magnitude.",
+    keywords: [
+      "hire freelance React Native developer Germany",
+      "freelance Expo developer",
+      "freelance mobile developer Germany",
+      "React Native contractor",
+      "freelance iOS Android developer",
+      "Expo Application Services",
+    ],
+    answerBox:
+      "React Native projects fail on scope, not skill. Before hiring, define: target platforms (iOS, Android, web?), Expo managed vs bare workflow, native modules required, deploy strategy (EAS / App Store Connect / Google Play), and offline-first requirements. These five answers change the estimate by an order of magnitude. Get them in writing before signing.",
+    lede:
+      "Most React Native projects I've seen go off the rails fail on scope clarity, not on technical execution. The framework is mature enough that any decent freelancer can ship a working app. What kills the project is the gap between what the client thought they were buying and what the freelancer thought they were building. This is the scope template I'd want before quoting.",
+    sections: [
+      {
+        heading: "What platforms are you actually shipping to?",
+        paragraphs: [
+          "iOS only, Android only, both, or both plus web? Each combination has different cost structures. iOS-only is the cheapest to develop and the most expensive to maintain (Apple's annual fee, App Store review cycles, TestFlight setup). Android-only is broader reach with more device fragmentation. Both means double the testing matrix and double the App Store accounts.",
+          "React Native's selling point is one codebase shipping to both — but \"one codebase\" hides a lot of per-platform conditionals. A client who wants pixel-perfect parity on every screen is paying for two designs that happen to share a codebase, not one design rendered twice.",
+          "If web is also in scope, you're now in React Native Web territory, which doubles the testing surface again. Most apps don't need this; some do (Dabei would benefit from it for desktop discovery). Ask explicitly.",
+        ],
+      },
+      {
+        heading: "Expo managed or bare workflow?",
+        paragraphs: [
+          "Expo managed workflow is the default for most new React Native projects. EAS Build handles the native compile, EAS Submit handles store submission, and you never touch Xcode or Android Studio for normal feature work. This is the right call for ~80% of projects.",
+          "Bare workflow is what you fall into when you need a native module Expo doesn't support, or when you have an existing native iOS/Android codebase you're partially migrating. The development experience is significantly slower (full local builds, manual signing setup, separate iOS and Android tooling).",
+          "A freelancer should be able to articulate which workflow is right for your project after a single conversation about your native-feature needs. If they default to bare without justification, they're optimizing for billable hours.",
+        ],
+      },
+      {
+        heading: "Which native modules do you actually need?",
+        paragraphs: [
+          "Common modules that move estimates: maps (react-native-maps for Dabei), camera, push notifications (expo-notifications), in-app purchases (RevenueCat or native), biometrics, deep linking, background tasks, HealthKit / Google Fit integration. Each one is a non-trivial setup with its own permissions story and edge cases.",
+          "Less obvious cost: anything that touches the filesystem (image upload, file picker, document signing) needs careful platform-specific handling. Anything that touches the OS (Bluetooth, audio sessions, screen recording) is a multi-week investment by itself.",
+          "The estimate shape: 0-2 native modules and the project fits a tight scope; 3-5 and the estimate doubles; 6+ and you're probably better off with a native iOS/Android team.",
+        ],
+        table: {
+          caption: "Native-module complexity tiers",
+          headers: ["Module category", "Examples", "Typical cost impact"],
+          rows: [
+            ["Trivial (Expo-supported)", "Camera, Image Picker, Location", "+0-1 week"],
+            ["Moderate", "Push notifications, Deep linking, Biometrics", "+1-2 weeks each"],
+            ["Heavy", "Maps with custom markers, In-app purchases, Background tasks", "+2-4 weeks each"],
+            ["Native-team territory", "Bluetooth, ARKit/ARCore, Custom audio pipeline", "Consider native iOS/Android"],
+          ],
+        },
+      },
+      {
+        heading: "What's the deploy and signing story?",
+        paragraphs: [
+          "App Store Connect and Google Play Console aren't free or fast. A freelancer needs to know who owns the developer accounts (you should — never let a freelancer hold the keys), who handles certificate management (EAS handles most of it but the certificates are yours), and what the rollout plan is.",
+          "TestFlight and internal-testing tracks exist for a reason. A freelancer who quotes \"two weeks to MVP\" without a TestFlight cycle in the timeline is selling fiction. Real React Native projects ship to a beta channel a week before production launch, fix the things actual users find, then promote.",
+        ],
+      },
+      {
+        heading: "Is the app offline-first or always-online?",
+        paragraphs: [
+          "This is the question that changes the architecture entirely. Always-online apps can lean on the network for state — every screen is a fetch from the backend. Offline-first apps need a local database (MMKV, SQLite, WatermelonDB), conflict resolution, and queue-and-replay logic for writes that happen while disconnected.",
+          "A client who says \"yes I want it to work offline\" without thinking through what that means is asking for at least 4-6 extra weeks of work. The freelancer's job is to surface this trade-off before quoting, not after.",
+          "Dabei's hot-path uses MMKV instead of AsyncStorage specifically because cold-start has to be instant — auth state and draft hangouts can't add async hops. That kind of decision is the difference between a fast app and a sluggish one, and a freelance React Native developer should be able to explain trade-offs like that without being prompted.",
+        ],
+      },
+      {
+        heading: "Red flags vs green flags",
+        paragraphs: [
+          "Use this as a quick filter when evaluating React Native freelance candidates.",
+        ],
+        table: {
+          caption: "RN freelancer signals",
+          headers: ["Signal", "Green flag", "Red flag"],
+          rows: [
+            ["Workflow choice", "Defaults to Expo, explains when to break out", "Always uses bare; doesn't know why"],
+            ["Native modules", "Asks which you need before quoting", "Promises everything in 4 weeks"],
+            ["Store deployment", "Knows EAS + App Store Connect end-to-end", "Hands you a build, says \"submit it\""],
+            ["Offline strategy", "Asks the question", "Doesn't think about it"],
+            ["State management", "Picks per-project (Zustand, Jotai, Redux Toolkit)", "Says \"Redux\" without context"],
+            ["Production examples", "Public app on App Store / Play", "Only side projects in their repo"],
+          ],
+        },
+      },
+      {
+        heading: "What this looks like in practice",
+        paragraphs: [
+          "Dabei (Kiel social pulse app, in progress on this site) is the worked example: Expo Router 5 on RN 0.83, Supabase backend with Realtime, react-native-maps, MMKV for hot-path caching, OTP auth, deep-link invite flow. The architecture is documented; the data layer is split into three services so RLS reasoning stays local; the tests cover the happy paths.",
+          "If you're hiring a freelance React Native developer in Germany, you want someone who can show you a similar shape — public architecture, real native-module integration, a deploy story that doesn't depend on you owning Xcode.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "A client who says \"yes I want it to work offline\" without thinking through what that means is asking for at least 4-6 extra weeks of work.",
+      },
+      {
+        quote:
+          "Real React Native projects ship to a beta channel a week before production launch, fix the things actual users find, then promote.",
+      },
+    ],
+    citations: [
+      {
+        label: "Expo documentation — managed vs bare workflow",
+        url: "https://docs.expo.dev/archive/managed-vs-bare/",
+        relevance: "The workflow choice that drives most cost decisions",
+      },
+      {
+        label: "EAS Build documentation",
+        url: "https://docs.expo.dev/build/introduction/",
+        relevance: "Cloud-native build pipeline for RN",
+      },
+      {
+        label: "react-native-maps",
+        url: "https://github.com/react-native-maps/react-native-maps",
+        relevance: "The map module Dabei uses",
+      },
+      {
+        label: "react-native-mmkv",
+        url: "https://github.com/mrousavy/react-native-mmkv",
+        relevance: "Synchronous encrypted storage for the cold-start hot path",
+      },
+    ],
+    faq: [
+      {
+        q: "How much does a React Native app cost to build in 2026?",
+        a: "Wildly variable by scope. A simple Expo-managed app with auth, a few screens, and a Supabase backend can ship in 4-6 weeks. An offline-first app with payments, push, maps, and biometrics takes 4-6 months. Anyone quoting a number without scoping the platforms, native modules, and offline story is selling a fiction.",
+      },
+      {
+        q: "Should I use React Native or native iOS/Android?",
+        a: "React Native for cross-platform apps with mostly-shared UI and standard native features. Native for apps that lean heavily on platform-specific APIs (ARKit, complex camera pipelines, Apple Watch / Wear OS extensions). Most consumer mobile apps fit React Native; specialty apps don't.",
+      },
+      {
+        q: "Is Expo managed workflow production-ready?",
+        a: "Yes. Many production apps ship on managed workflow without ever touching bare. The only reason to switch is a native module Expo doesn't support, and even then EAS's config plugins cover most cases. Bare workflow is the right answer for ~20% of projects, not 80%.",
+      },
+      {
+        q: "How long does App Store review take in 2026?",
+        a: "Typically 24-48 hours for routine updates, longer for first submissions or major changes. Plan for at least a week of buffer before any hard launch date. A freelancer who doesn't bake in review-cycle buffer is selling you optimism.",
+      },
+    ],
+  },
+
+  {
+    slug: "freelance-business-central-d365-germany-contractor",
+    title:
+      "Hiring a freelance Microsoft Dynamics 365 Business Central contractor in Germany — what to evaluate",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 8,
+    description:
+      "Microsoft Business Central freelancers split into three tiers — config-only, AL-extension, full-stack including integrations. Most German SMBs migrating off NAV need tier-three but hire tier-one. Here's how to tell which tier you're talking to and what to ask each.",
+    keywords: [
+      "freelance Business Central Germany",
+      "Dynamics 365 Business Central contractor",
+      "AL language developer",
+      "NAV to BC migration",
+      "freelance D365 BC consultant",
+      "Business Central API integration",
+      "Microsoft Dynamics contractor Germany",
+    ],
+    answerBox:
+      "Business Central freelancers split into three tiers — config-only (knows the UI), AL-extension (writes code), full-stack (AL + REST/OAuth2 integrations + NAV→BC migrations). German SMBs migrating off NAV almost always need tier three but often hire tier one. Ask about AL extension code samples, OAuth2 token refresh flow, and one real NAV→BC migration story before you sign.",
+    lede:
+      "Microsoft Business Central is one of the most underrated ERP platforms in the German SMB market — and the freelance contractor pool ranges from \"I clicked through the BC tutorials once\" to \"I've migrated four NAV instances and built custom AL extensions that handle €40M/year of invoicing.\" The hiring problem is telling them apart.",
+    sections: [
+      {
+        heading: "What are the three tiers of Business Central contractors?",
+        paragraphs: [
+          "Tier 1 — config-only. Can navigate the BC UI, set up Chart of Accounts, configure users and permissions, run reports. Useful for setup work; cannot write code. Typically charges €60-90/hour.",
+          "Tier 2 — AL extension developer. Writes code in AL (Microsoft's domain-specific language for BC extensions). Can build custom tables, pages, codeunits, reports. Knows the BC event model and how to extend without breaking upgrades. Typically charges €90-130/hour.",
+          "Tier 3 — full-stack BC + integrations. Tier 2 plus REST/OAuth2 integrations to external systems (CRM, shipping, banking, e-commerce), NAV→BC migration experience, and the architectural judgment to know when an AL extension is appropriate and when to integrate via Power Automate or a custom service. Typically charges €120-180/hour.",
+          "Most German SMBs migrating off Microsoft Dynamics NAV need Tier 3. Most freelance profiles claim Tier 3. The ratio of claim-to-reality is closer to four to one.",
+        ],
+        table: {
+          caption: "BC contractor tiers and what each can deliver",
+          headers: ["Tier", "Capability", "Typical project"],
+          rows: [
+            ["1 — Config-only", "UI configuration, basic reports", "BC setup for a small business with no customization"],
+            ["2 — AL extension", "Custom tables, pages, codeunits, reports", "Existing BC + custom workflow"],
+            ["3 — Full-stack + integrations", "AL + REST/OAuth2 + NAV migrations", "NAV→BC migration with external system integration"],
+          ],
+        },
+      },
+      {
+        heading: "How do you tell which tier you're talking to?",
+        paragraphs: [
+          "Ask for an AL extension code sample. Tier 1 freelancers will deflect (\"I usually pair with a developer for that\"). Tier 2 freelancers will show you a small extension. Tier 3 freelancers will walk you through their event-subscription patterns and how they handle Business Central upgrade compatibility.",
+          "Ask about OAuth2 token refresh. BC integrations to external systems use OAuth2 client credentials flow; token refresh handling is the part most contractors don't know off the top of their head. \"I'd have to look that up\" is fine; \"OAuth2 is a frontend thing\" is disqualifying.",
+          "Ask about one real NAV→BC migration. Specifics: what was the data volume, what custom tables were carried over, what went wrong, how long did it take. Migration storytelling is impossible to fake — anyone who's done one has scars to show.",
+        ],
+      },
+      {
+        heading: "What does a good BC project shape look like?",
+        paragraphs: [
+          "A reasonable engagement: discovery (1-2 weeks to map current state, identify customizations, surface integration needs); migration plan (1 week to document, get sign-off); execution (4-12 weeks depending on volume and customization); post-go-live support (2-4 weeks of stabilization at a reduced rate).",
+          "A bad shape: \"I'll have you live in three weeks\" without a discovery phase. Or hourly billing with no fixed milestones — BC migrations are exactly the kind of project where Werkvertrag (fixed-deliverable) contracts protect both sides.",
+        ],
+      },
+      {
+        heading: "The German-market specifics",
+        paragraphs: [
+          "Business Central in Germany overlays additional requirements: DATEV export for tax-advisor handoff, GoBD compliance for audit trails, ELSTER tax interface integration. A Tier-3 contractor working in the German market knows these by name; a Tier-2 might or might not.",
+          "Datenschutz is also non-negotiable. BC stores customer and supplier data; the contractor needs to know how to configure data minimization, retention policies, and the data subject request flow. Not every BC contractor working internationally knows the German specifics; ask explicitly.",
+        ],
+      },
+      {
+        heading: "Where to find Tier-3 contractors",
+        paragraphs: [
+          "Microsoft's official partner directory (search for \"Business Central\" within Germany) is a starting point but skews toward agencies. For freelance contractors specifically, the more reliable sources are: developer-focused communities (Microsoft Tech Community, BCTechDays presenters), GitHub (search for AL extensions on real GitHub profiles), and personal portfolios that show actual project examples — not slide decks.",
+          "Microsoft Business Central is on the skills track at jurgenhalili.dev (the engineering side of the portfolio) — alongside MERN + Next.js + RN, with the BC track focused on AL extensions and REST/OAuth2 integrations for SMBs migrating from NAV.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "Most German SMBs migrating off NAV need Tier 3. Most freelance profiles claim Tier 3. The ratio of claim-to-reality is closer to four to one.",
+      },
+      {
+        quote:
+          "Migration storytelling is impossible to fake — anyone who's done one has scars to show.",
+      },
+    ],
+    citations: [
+      {
+        label: "Microsoft Dynamics 365 Business Central documentation",
+        url: "https://learn.microsoft.com/en-us/dynamics365/business-central/",
+        relevance: "Official BC product documentation",
+      },
+      {
+        label: "AL language reference",
+        url: "https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/developer/devenv-programming-in-al",
+        relevance: "The DSL Tier-2 and Tier-3 contractors write in",
+      },
+      {
+        label: "Business Central API authentication (OAuth2)",
+        url: "https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/endpoints-apis-for-dynamics",
+        relevance: "Required reading for external-system integrations",
+      },
+      {
+        label: "Microsoft Partner Center directory",
+        url: "https://appsource.microsoft.com/en-us/marketplace/partner-dir",
+        relevance: "Starting point for finding BC contractors and agencies",
+      },
+    ],
+    faq: [
+      {
+        q: "What's the hourly rate for a freelance Business Central contractor in Germany?",
+        a: "Wide range. Tier 1 (config-only) typically €60-90/hour. Tier 2 (AL extension developers) €90-130/hour. Tier 3 (full-stack including integrations and migrations) €120-180/hour. Specialist NAV→BC migration consultants can go higher.",
+      },
+      {
+        q: "How long does a NAV to Business Central migration take?",
+        a: "Depends on customization depth and data volume. A typical SMB with light customization can migrate in 6-10 weeks including testing. Heavy customization with AL extensions to rebuild can stretch to 4-6 months. Anyone quoting under a month for a non-trivial migration is selling you optimism.",
+      },
+      {
+        q: "Do I need a Business Central specialist or a general ERP consultant?",
+        a: "Specialist. BC has its own object model, its own DSL (AL), and its own integration patterns. A general ERP consultant who hasn't shipped a BC project will spend three months learning what a BC specialist already knows.",
+      },
+      {
+        q: "Can a freelance Business Central contractor handle integrations to external systems?",
+        a: "Tier 3 can — REST APIs, OAuth2 client credentials flow, webhook handling, Power Automate / Logic Apps integration. Tier 1 and Tier 2 typically can't, or will need help. Confirm before you hire.",
+      },
+    ],
+  },
+
+  {
+    slug: "freelance-vs-agency-software-mvp-2026",
+    title:
+      "Freelance vs agency for a software MVP — a 2026 comparison",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 7,
+    description:
+      "An MVP can ship via a single experienced freelance engineer or via a software agency. The right answer depends on scope clarity, decision-maker availability, and your tolerance for project-management overhead. Here's the decision framework.",
+    keywords: [
+      "freelance vs agency MVP",
+      "freelance developer vs agency",
+      "software MVP development",
+      "MVP team sizing",
+      "freelance engineer MVP Germany",
+      "agency vs solo developer",
+    ],
+    answerBox:
+      "Solo freelance engineer wins when scope is clear, one decision-maker exists, and the project fits one person's working memory (typically up to 4 months of focused work). Agency wins when you need parallel streams of UI, backend, and DevOps, when the project spans 6+ months, or when you need formal compliance and structured delivery. The crossover is the point where coordination overhead exceeds execution speed.",
+    lede:
+      "An MVP is the small, focused first version of a product. Solo freelance engineers can build them. Software agencies can build them. The right choice depends less on the project itself and more on how clearly you can scope, how quickly you can decide, and how much project-management overhead you're willing to absorb.",
+    sections: [
+      {
+        heading: "When does a solo freelance engineer win?",
+        paragraphs: [
+          "Clear scope. One decision-maker who can answer questions inside a working day. A project that fits one person's working memory — typically up to 3-4 months of focused work. A stack the freelancer has shipped before. No regulatory complexity that requires legal sign-off on architecture decisions.",
+          "Solo wins on speed-of-iteration. There's no internal coordination tax. The freelancer reads your feedback at 9am and you have a deployed change by lunch. Compare to an agency where the same change goes through a PM, a designer, a developer, and a QA pass before it reaches you.",
+          "Most early-stage MVPs fit this shape. The exceptions are projects where parallel streams of work genuinely speed things up — UI design happening in parallel with backend work, multiple platforms shipping simultaneously, regulatory compliance running alongside development.",
+        ],
+      },
+      {
+        heading: "When does an agency win?",
+        paragraphs: [
+          "Multi-stream work. A complex MVP that has a custom design phase, a separate backend, and a separate mobile app benefits from specialists working in parallel. A solo freelancer becomes the bottleneck on whichever stream is currently active.",
+          "Long timelines (6+ months). Solo dev is fine for 3-4 months; past that, the project starts feeling like a single point of failure. Agencies have continuity — someone else can step in if a developer is sick or on vacation.",
+          "Structured delivery and compliance. If your project needs ISO 27001, SOC 2, or HIPAA compliance baked in from the start, agencies have the documentation overhead built in. A solo freelancer can deliver clean code; the compliance paperwork is a separate skill set.",
+        ],
+        table: {
+          caption: "Quick decision framework",
+          headers: ["Factor", "Lean solo", "Lean agency"],
+          rows: [
+            ["Scope clarity", "Clear, written, signed off", "Vague, evolving"],
+            ["Decision-makers", "One", "Multiple stakeholders"],
+            ["Timeline", "≤ 4 months", "6+ months"],
+            ["Parallel streams needed", "No", "Yes (design + backend + mobile)"],
+            ["Compliance overhead", "Low / none", "ISO 27001, SOC 2, HIPAA"],
+            ["Continuity matters", "No", "Yes — if a person quits, the project survives"],
+            ["Budget", "Tight", "Larger"],
+          ],
+        },
+      },
+      {
+        heading: "What's the actual cost comparison?",
+        paragraphs: [
+          "A solo experienced full-stack engineer in Germany at €100-150/hour, working efficiently on a 3-month MVP, delivers somewhere between €60K-€100K of project cost. An agency for the same MVP typically lands at €120K-€250K — because you're paying for the project manager, the designer, the backend developer, the frontend developer, the QA engineer, and the overhead.",
+          "The agency premium isn't pure waste — you're paying for parallelism and process. Whether that premium is worth it depends on whether you need those things or whether you'd rather move twice as fast with one person.",
+          "Some MVPs ship cheaper with an agency once you account for what a solo dev can't cover (custom illustration design, formal QA, multi-language testing). Most don't.",
+        ],
+      },
+      {
+        heading: "Hybrid models worth considering",
+        paragraphs: [
+          "Solo freelancer plus a part-time designer. The freelancer handles full-stack; you contract a designer for 20% time. This gets you most of the agency's design benefit at solo speed.",
+          "Solo freelancer plus a part-time QA pass. The freelancer ships the code; a separate QA contractor runs a structured testing pass before each release. Common pattern for projects in the 3-6 month range.",
+          "Agency starts, solo continues. Some clients use an agency for the initial scoping and architecture decisions (where parallel expertise helps), then hand off to a solo freelancer for ongoing development and maintenance. The trade-off is the handoff cost itself.",
+        ],
+      },
+      {
+        heading: "What I'd ask before signing either",
+        paragraphs: [
+          "For a solo freelancer: walk me through three projects you've shipped solo end-to-end. Specifically: requirements, deploy, monitoring, support. If the freelancer's portfolio is three projects where they wrote code but someone else owned everything around it, they're not really solo — they were a team member who was the only freelancer.",
+          "For an agency: tell me who'll actually do the work. Names, GitHub profiles, hourly availability. Many agencies do the sales pitch with senior people and the delivery with juniors. The mid-engagement substitution is the agency's most common failure mode.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "Solo wins on speed-of-iteration. There's no internal coordination tax. The freelancer reads your feedback at 9am and you have a deployed change by lunch.",
+      },
+      {
+        quote:
+          "Many agencies do the sales pitch with senior people and the delivery with juniors. The mid-engagement substitution is the agency's most common failure mode.",
+      },
+    ],
+    citations: [
+      {
+        label: "Y Combinator — Building MVPs (essay)",
+        url: "https://www.ycombinator.com/library/4A-a-minimum-viable-product-is-not-a-product-it-s-a-process",
+        relevance: "MVP scoping framework from YC",
+      },
+      {
+        label: "Vercel — Solo dev product launches",
+        url: "https://vercel.com/blog",
+        relevance: "Many of Vercel's customer stories are solo-dev MVPs",
+      },
+    ],
+    faq: [
+      {
+        q: "Can a solo freelance developer really ship a full MVP?",
+        a: "Yes, if scope is clear and the freelancer is genuinely full-stack. Every project on this site (jurgenhalili.dev) was built solo across stack — admin web, mobile app, API, deploys. The ceiling on what one person can ship is higher than most clients assume.",
+      },
+      {
+        q: "How long should an MVP take?",
+        a: "Depends on scope. A focused MVP with auth, a few core flows, and a deploy: 4-8 weeks for a solo experienced developer. A more ambitious MVP with payments, mobile, and multi-tenant: 3-4 months. Anyone quoting 'a few weeks' without scoping is selling, not estimating.",
+      },
+      {
+        q: "What's cheaper for an MVP — solo freelancer or agency?",
+        a: "Solo freelancer is typically 30-50% cheaper for equivalent scope, because you're not paying for project management, multiple specialists, or agency overhead. But you're also accepting solo-dev risk (continuity, parallel-stream constraints). Cost vs risk trade-off, not cost vs quality.",
+      },
+      {
+        q: "When should I prefer an agency over a freelancer?",
+        a: "When you need parallel streams (custom design + backend + mobile shipping simultaneously), when the timeline is 6+ months, when compliance is regulated, or when you need continuity guarantees that a solo dev can't provide.",
+      },
+    ],
+  },
+
+  {
+    slug: "solo-developer-vs-team-of-three-when-each-ships-faster",
+    title:
+      "Solo developer vs team of three — when each ships faster",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 7,
+    description:
+      "More people doesn't mean faster delivery. Coordination overhead grows non-linearly with team size, and a single experienced engineer often outpaces a three-person team on focused MVP work. Here's when each shape wins.",
+    keywords: [
+      "solo developer vs team",
+      "small team vs solo dev",
+      "engineering team sizing",
+      "MVP team size",
+      "Brooks's law",
+      "coordination overhead software",
+    ],
+    answerBox:
+      "Solo engineers ship faster than three-person teams on projects under ~4 months because coordination overhead grows non-linearly. Three engineers add roughly 2x execution but require 3x the coordination — daily standups, PR reviews, design syncs, conflict resolution. The crossover is when the work genuinely splits into three parallel streams that don't depend on each other.",
+    lede:
+      "Adding people to a project doesn't add their working hours to the total. It adds their working hours minus the coordination tax everyone now pays. For short, scoped projects, three people often ship slower than one. This is uncomfortable but true.",
+    sections: [
+      {
+        heading: "Why coordination overhead grows non-linearly",
+        paragraphs: [
+          "Two people can coordinate over coffee. Three people need a standup. Four people need a Slack channel and a weekly sync. Five people need a project manager. The coordination cost grows roughly with the square of headcount because every pair of people is a potential coordination point.",
+          "Brooks's Law — \"adding manpower to a late software project makes it later\" — captures this. The original 1975 framing was about onboarding cost, but the same dynamic applies at smaller scales. A new person on a small team needs to be brought up to speed, which slows the team while they ramp.",
+          "Specifically: in a three-person team, every code change touches at least one other person's mental model. Every PR needs review. Every architectural decision needs alignment. The execution speed of three people is rarely three times one person; it's typically 1.5-2x.",
+        ],
+        table: {
+          caption: "Approximate coordination overhead by team size",
+          headers: ["Team size", "Execution multiplier", "Coordination overhead"],
+          rows: [
+            ["1", "1×", "None"],
+            ["2", "1.7×", "Pair sync"],
+            ["3", "2.2×", "Daily standup + PR reviews"],
+            ["4-5", "2.8×", "Weekly planning, dedicated review queue"],
+            ["6+", "3.5×", "Project manager needed"],
+          ],
+        },
+      },
+      {
+        heading: "When solo wins",
+        paragraphs: [
+          "Projects that fit one person's working memory. The full mental model of a 4-month MVP can usually be held by one experienced engineer. Past that, the project starts requiring documentation, handoff, and external context just to think about.",
+          "Projects with one decision-maker and clear scope. Solo dev shines when you can make a call quickly and ship the consequence by end-of-day. Three people on the same call adds latency on every decision.",
+          "Projects where the stack is tightly integrated. A full-stack web app with auth, database, frontend, deploy — these benefit from one mind seeing the whole picture. Splitting it across three specialists adds handoff friction at every layer boundary.",
+        ],
+      },
+      {
+        heading: "When three people win",
+        paragraphs: [
+          "Parallel streams of work. A native iOS app + a native Android app + a backend API is three genuinely parallel streams. Solo dev means one stream at a time; three people means all three at once.",
+          "Long projects. Past the 6-month mark, solo dev fatigue and context-loss become real risks. Three people share the cognitive load and provide continuity.",
+          "Projects with formal compliance requirements. ISO 27001 audits, SOC 2 reports, HIPAA documentation — these are paperwork-heavy workstreams that benefit from a dedicated person who isn't also shipping features.",
+          "Projects requiring 24/7 oncall. One person can't be on call forever. Three is the minimum sustainable rotation; below that, the rotation eats into delivery capacity.",
+        ],
+      },
+      {
+        heading: "The hidden cost of team-of-three for MVPs",
+        paragraphs: [
+          "Three engineers on a focused MVP often produce more code than one — but more code isn't more value. The code grows in complexity to accommodate three people working on it: more abstractions to enable parallel work, more interfaces to define team boundaries, more configuration to support different working styles.",
+          "Six months in, the three-person codebase has visible signs of \"design by committee\" — patterns that nobody alone would have picked. A solo codebase has consistent opinions. Neither is automatically better, but they're different products.",
+        ],
+      },
+      {
+        heading: "What this means for hiring",
+        paragraphs: [
+          "If you're starting a project and the scope is clear, default to a solo experienced engineer. Add people when the work genuinely splits into independent streams, not because you assume parallelism speeds things up by default.",
+          "Concrete test: if a candidate engineer can sketch your project's full architecture on a whiteboard in 20 minutes, the project fits one person. If it takes 90 minutes and three diagrams, you probably need a team.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "Adding people to a project doesn't add their working hours to the total. It adds their working hours minus the coordination tax everyone now pays.",
+      },
+      {
+        quote:
+          "If a candidate engineer can sketch your project's full architecture on a whiteboard in 20 minutes, the project fits one person.",
+      },
+    ],
+    citations: [
+      {
+        label: "Brooks's Law — Wikipedia",
+        url: "https://en.wikipedia.org/wiki/Brooks%27s_law",
+        relevance: "Original formulation of why adding people slows projects",
+      },
+      {
+        label: "The Mythical Man-Month (Frederick Brooks, 1975)",
+        url: "https://en.wikipedia.org/wiki/The_Mythical_Man-Month",
+        relevance: "Foundational text on team coordination overhead",
+      },
+    ],
+    faq: [
+      {
+        q: "Is solo development always faster than team development?",
+        a: "No. Solo development is faster on small, focused, integrated projects. Team development wins when the work genuinely splits into parallel streams or when the timeline is long enough that solo-dev continuity risk becomes real.",
+      },
+      {
+        q: "How many engineers should I hire for an MVP?",
+        a: "Usually one. The exceptions are projects with native iOS + native Android + backend running in parallel, or projects with compliance overhead that needs a dedicated person. Most MVPs don't fit those exceptions.",
+      },
+      {
+        q: "What's the right team size for a 6-month project?",
+        a: "Two or three. Solo dev gets risky past 4 months because of context-loss and continuity risk. Past three engineers, coordination overhead starts dominating execution speed for projects of this size.",
+      },
+      {
+        q: "Can a solo developer maintain a project long-term?",
+        a: "Yes, if the codebase has discipline — clear architecture, real tests, deploy automation, documented decisions. Without those, any project (solo or team) becomes unmaintainable. With them, a single experienced engineer can maintain a 6-figure-revenue product indefinitely.",
+      },
+    ],
+  },
+
+  {
+    slug: "where-to-find-freelance-software-developers-germany-2026",
+    title:
+      "Where to find freelance software developers in Germany — 2026 guide",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 8,
+    description:
+      "Six channels for sourcing freelance software developers in Germany, ranked by signal quality. The pre-vetted platforms (Toptal, Malt) save you screening time but charge a margin. Direct sources (GitHub, personal portfolios) reward effort with better matches.",
+    keywords: [
+      "where to find freelance developers Germany",
+      "hire freelance developer Germany 2026",
+      "freelance developer marketplace Germany",
+      "freelance.de Malt Toptal",
+      "freelance software developer Kiel",
+      "hire developer remote Germany",
+    ],
+    answerBox:
+      "Six channels for sourcing freelance software developers in Germany, by signal quality: (1) personal portfolios with public case studies (best signal, hardest to find), (2) GitHub profile-driven outreach (high signal, low platform tax), (3) Toptal / Malt (pre-vetted, ~20% margin), (4) freelance.de / Freelancermap (German market, mixed quality), (5) LinkedIn direct (mixed), (6) Upwork (cheapest, lowest signal).",
+    lede:
+      "Most articles about hiring freelance developers in Germany list five platforms in alphabetical order and call it a day. This one ranks the channels by how much hiring signal you actually get per hour invested, because the platforms are not interchangeable.",
+    sections: [
+      {
+        heading: "Channel 1 — Personal portfolios with public case studies",
+        paragraphs: [
+          "Best signal, hardest to find. A freelance developer with a public portfolio that includes case studies — actual production work, with specifics about what they built, what their tests cover, what their deploy looks like — is a high-trust signal because nobody fakes that volume of detail.",
+          "How to find them: Google specific tech stacks plus \"freelance\" or \"hire\" — \"freelance Next.js developer Germany,\" \"hire freelance React Native developer,\" \"freelance Business Central contractor.\" The pages that show up with real case studies (not just a name and a contact form) are the ones to start with.",
+          "The downside: you have to do the screening yourself. The upside: you skip the platform margin and you talk to candidates who've already passed a self-selection bar.",
+        ],
+      },
+      {
+        heading: "Channel 2 — GitHub profile-driven outreach",
+        paragraphs: [
+          "High signal, low platform tax. Browse GitHub for repositories in your stack with recent commits and clear documentation. Look for developers in Germany (set the search filter or check profile locations). Reach out directly.",
+          "What to look for: pinned repositories that show range; commit history that's regular but not bot-like; READMEs that demonstrate technical writing ability; merged PRs to other projects that show collaboration skills.",
+          "Most developers who maintain real public repos are open to freelance contracts even if they don't advertise it. The success rate of direct outreach with a specific, scoped ask is significantly higher than blasting Upwork postings.",
+        ],
+      },
+      {
+        heading: "Channel 3 — Toptal and Malt (pre-vetted marketplaces)",
+        paragraphs: [
+          "Pre-vetted, ~20% margin. Toptal and Malt screen candidates before listing them. The screening isn't perfect, but it's a real filter — most candidates in these networks have shipped production work.",
+          "Toptal is broader (international) and more expensive. Malt is Europe-focused with strong Germany presence and slightly lower margin.",
+          "Trade-off: you pay the platform a margin (typically 15-25%) on top of the developer's rate. In exchange, you skip the screening time and get some platform-level recourse if things go wrong. Worth it for clients who don't want to spend time on initial filtering.",
+        ],
+        table: {
+          caption: "Channel comparison",
+          headers: ["Channel", "Signal quality", "Effort", "Platform margin"],
+          rows: [
+            ["Personal portfolios", "Excellent", "High", "None"],
+            ["GitHub outreach", "Very good", "Medium-high", "None"],
+            ["Toptal / Malt", "Good", "Low", "15-25%"],
+            ["freelance.de / Freelancermap", "Mixed", "Medium", "Subscription"],
+            ["LinkedIn", "Mixed", "Medium", "None"],
+            ["Upwork / Fiverr", "Low", "Low", "20%+ + bid race"],
+          ],
+        },
+      },
+      {
+        heading: "Channel 4 — freelance.de and Freelancermap",
+        paragraphs: [
+          "German market, mixed quality. These are the dominant German freelance platforms, with strong contractor presence in IT consulting, SAP, and Microsoft Business Central work. The vetting is lighter than Toptal/Malt; you'll see candidates ranging from senior consultants to people who set up a profile yesterday.",
+          "Useful for: SAP, BC, NAV, ABAP — German enterprise stacks where the contractor pool concentrates here. Less useful for: cutting-edge web stacks where the talent is on GitHub or personal portfolios.",
+        ],
+      },
+      {
+        heading: "Channel 5 — LinkedIn direct outreach",
+        paragraphs: [
+          "Mixed signal. LinkedIn has the broadest pool but the worst signal-to-noise. Most developers' LinkedIn profiles are a list of jobs and skills, not evidence of work.",
+          "Where LinkedIn does work: specific niche searches. \"Freelance Business Central developer in Germany who's worked with DATEV integrations\" is a Boolean search that LinkedIn handles. Just don't expect quality from generic searches.",
+          "Cold outreach response rates are low (5-15%). Tailor every message; mention something specific from the candidate's profile.",
+        ],
+      },
+      {
+        heading: "Channel 6 — Upwork / Fiverr",
+        paragraphs: [
+          "Cheapest, lowest signal. These platforms compete primarily on price, which selects for either junior developers building their portfolio or international freelancers competing on hourly rate. Quality candidates exist; finding them takes significant screening effort.",
+          "Use case: very small, well-scoped projects where you can verify the work in a day. Not recommended for anything that requires ongoing trust or production responsibility.",
+        ],
+      },
+      {
+        heading: "What I'd actually do",
+        paragraphs: [
+          "For a senior full-stack engagement: start with personal portfolios (search Google for the specific stack + Germany), then expand to GitHub profile outreach, then Malt if I haven't found someone in two weeks. Skip the high-volume platforms entirely.",
+          "For specialty work (Business Central, SAP, NAV migrations): freelance.de plus the Microsoft Partner Center directory.",
+          "Avoid mass-blasting Upwork postings hoping the right candidate appears. They probably won't.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "Most developers who maintain real public repos are open to freelance contracts even if they don't advertise it.",
+      },
+      {
+        quote:
+          "Cold outreach response rates are low. Tailor every message; mention something specific from the candidate's profile.",
+      },
+    ],
+    citations: [
+      {
+        label: "Malt freelance platform (Europe)",
+        url: "https://www.malt.de/",
+        relevance: "Europe-focused pre-vetted freelance marketplace",
+      },
+      {
+        label: "Toptal",
+        url: "https://www.toptal.com/",
+        relevance: "International pre-vetted freelance marketplace",
+      },
+      {
+        label: "freelance.de",
+        url: "https://www.freelance.de/",
+        relevance: "Dominant German freelance platform for enterprise contractors",
+      },
+      {
+        label: "Freelancermap",
+        url: "https://www.freelancermap.de/",
+        relevance: "German-market platform with SAP/BC/NAV contractor concentration",
+      },
+    ],
+    faq: [
+      {
+        q: "What's the best platform for hiring freelance developers in Germany?",
+        a: "There isn't one. Personal portfolios give the best signal but require effort to find. Malt and Toptal save screening time at a margin cost. freelance.de is strong for German-market enterprise stacks. The right channel depends on the specific stack and your tolerance for screening overhead.",
+      },
+      {
+        q: "Is it cheaper to hire freelancers through a platform or directly?",
+        a: "Direct is cheaper by the platform margin (typically 15-25%). The trade-off is screening time. For an experienced client hiring a clear specialty, direct is usually better. For an inexperienced client without screening expertise, the platform margin is worth paying.",
+      },
+      {
+        q: "Can I find freelance developers in Kiel specifically?",
+        a: "Probably not via search-by-city; the pool is small. Better: search for the specific stack you need (Next.js, React Native, AI, Business Central) with Germany as the country filter, then look at candidates' actual locations. Remote-friendly freelancers in Hamburg, Berlin, or smaller German cities are often the best fit for a Kiel-based client.",
+      },
+      {
+        q: "How do I know if a freelancer is legitimate?",
+        a: "Public artifacts. Real GitHub commits, real production deployments you can access, real case studies with specifics. A freelancer who can't show any of those is selling vibes. The check takes 15 minutes and saves you from most bad hires.",
+      },
+    ],
+  },
+
+  {
+    slug: "freelance-developer-due-diligence-checklist",
+    title:
+      "The freelance developer due-diligence checklist — code, tests, deploys, security",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 7,
+    description:
+      "A 20-minute due-diligence pass that catches most bad freelance hires before you sign. Four categories — code, tests, deploys, security — with specific things to look at in each.",
+    keywords: [
+      "freelance developer due diligence",
+      "freelance hire checklist",
+      "freelance developer evaluation",
+      "freelance engineer vetting",
+      "freelance code review hiring",
+      "freelance security check",
+    ],
+    answerBox:
+      "20-minute due-diligence pass that catches most bad freelance hires: (1) Open their most recent commit and read the diff. (2) Verify they ship with tests by looking at CI status or test command output. (3) Check that they own deploys (Vercel/Render/Fly account, env-var management, rollback story). (4) Confirm they think about security (CSP, secret rotation, dependency scanning). Each step is fast; together they catch the bottom 80% of bad candidates.",
+    lede:
+      "Most clients hiring freelance developers spend hours on portfolio reviews and culture-fit interviews, then sign without doing the 20 minutes of actual technical due diligence that would catch the bottom 80% of bad candidates. This is that 20 minutes.",
+    sections: [
+      {
+        heading: "Code — Read the most recent commit diff",
+        paragraphs: [
+          "Ask for a public repo. Any public repo with recent activity. Open it on GitHub, click the most recent commit, read the diff.",
+          "What you're looking for: focused changes (~10-100 lines, not 2000+), clear commit message, code that does one thing well. What you're filtering out: generated boilerplate, \"Update README.md\" with no content change, massive monolithic commits that suggest the developer doesn't think in small steps.",
+          "Read three or four recent commits in a row. The pattern tells you how this person works day-to-day. A series of focused commits with meaningful messages is a green flag. Five \"WIP\" commits followed by a 3000-line dump is a red flag.",
+        ],
+      },
+      {
+        heading: "Tests — Look for CI badges and specific test counts",
+        paragraphs: [
+          "On a real production codebase, you should see one of: a GitHub Actions badge in the README showing tests passing, a Codecov badge with coverage percentage, or specific test counts in the project description (\"594 tests across Vitest + Playwright\").",
+          "Run their test command if the repo is open enough. `pnpm test` or `npm test` should run and pass. If the repo has no tests at all, the freelancer doesn't write tests. Promises that they'll write tests on your project are unfounded.",
+          "Watch for test theater: a repo with one trivial \"hello world\" test in CI that exists to pass the badge check. Read the test files themselves. Are they testing real behavior or just imports?",
+        ],
+      },
+      {
+        heading: "Deploys — Verify they own the pipeline end-to-end",
+        paragraphs: [
+          "Ask which platform they deploy to (Vercel, Render, Fly, AWS, a VPS), how environment variables get managed, what happens if a deploy fails halfway, and how they get notified of production errors.",
+          "Concrete signals: their portfolio has live deploys you can access. They mention specific monitoring tools (Sentry, Vercel Analytics, Better Stack, BetterStack). They have a rollback story (\"on Vercel I just promote the previous deployment\" is a fine answer).",
+          "Red flag answer: \"I hand off the code and the client handles deployment.\" That means you're now also their DevOps team.",
+        ],
+        table: {
+          caption: "Deploy maturity tiers",
+          headers: ["Tier", "What they own", "Signal"],
+          rows: [
+            ["1", "Code only, client deploys", "Junior or hand-off mentality"],
+            ["2", "Code + deploy config (Vercel, Render, etc.)", "Standard freelance"],
+            ["3", "+ Monitoring (Sentry, error tracking)", "Production-grade"],
+            ["4", "+ Rollback, alerting, status pages", "Senior — owns the operational story"],
+          ],
+        },
+      },
+      {
+        heading: "Security — Check they think about it before you ask",
+        paragraphs: [
+          "Look for evidence of security thinking in their public work. A CSP block in the deployed app. A pre-commit hook for secret scanning. A dependency-update workflow (Dependabot, Renovate). A README that mentions threat-modeling.",
+          "Ask: \"How do you rotate a production secret if it leaks?\" A real answer involves immediate rotation, audit-log review, and a postmortem. A bad answer is silence.",
+          "Ask: \"What does your CI scan for?\" Tier-1 freelancers run nothing. Tier-2 run lint + tests. Tier-3 also run static analysis (Semgrep, CodeQL), dependency vulnerability scans (Trivy, Snyk), and secret scanners (Gitleaks).",
+        ],
+      },
+      {
+        heading: "What this looks like in practice",
+        paragraphs: [
+          "Across the 10 projects on jurgenhalili.dev: every one has a documented deploy story, every one has tests in CI (or a clear architectural reason why they don't), and the ones that handle sensitive data (CleanSlate, advance.al) have RLS policies and audit trails as architectural primitives — not as add-ons.",
+          "If you're running this checklist on a freelance candidate, you don't need them to match every box. You need them to think about every box. A candidate who has solid answers in three out of four categories and admits they're learning the fourth is more reliable than one who claims expertise in all four with no evidence in any.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "Most clients spend hours on portfolio reviews and culture-fit interviews, then sign without doing the 20 minutes of actual technical due diligence that would catch the bottom 80% of bad candidates.",
+      },
+      {
+        quote:
+          "Watch for test theater: a repo with one trivial \"hello world\" test that exists to pass the CI badge check.",
+      },
+    ],
+    citations: [
+      {
+        label: "GitHub Actions documentation",
+        url: "https://docs.github.com/en/actions",
+        relevance: "Where CI badges come from",
+      },
+      {
+        label: "Semgrep — static analysis",
+        url: "https://semgrep.dev/docs/",
+        relevance: "Tier-3 freelancers run this in CI",
+      },
+      {
+        label: "Sentry — error tracking",
+        url: "https://docs.sentry.io/",
+        relevance: "The most common production error tracker",
+      },
+      {
+        label: "Snyk vulnerability database",
+        url: "https://snyk.io/vuln/",
+        relevance: "Reference for dependency-vulnerability scanning",
+      },
+    ],
+    faq: [
+      {
+        q: "How long should freelance due diligence take?",
+        a: "20 minutes per candidate for the technical checks (code, tests, deploys, security). Plus 30 minutes for a scoping conversation. Plus reference checks if the engagement is significant. Anything more than that is over-investment; anything less is under-investment.",
+      },
+      {
+        q: "What's the single most important thing to check?",
+        a: "Read their most recent commit diff. One repository, three commits, ten minutes. The pattern of changes tells you more than any CV bullet point. Real engineers ship small, focused commits with meaningful messages.",
+      },
+      {
+        q: "Should I run a paid trial project before signing a long contract?",
+        a: "Yes, when the engagement is significant. A 1-2 week paid trial with a defined deliverable lets both sides evaluate fit without the long-tail commitment. The freelancer gets paid; you get to see real work; nobody's stuck if the match doesn't work.",
+      },
+      {
+        q: "How do I evaluate a freelancer's security awareness?",
+        a: "Ask specific questions: how do you rotate a production secret, what does your CI scan for, what's your dependency-update workflow. Real answers cite specific tools (Sentry, Semgrep, Dependabot, Gitleaks). Vague answers mean security isn't part of their working model.",
+      },
+    ],
+  },
+
+  {
+    slug: "freelance-vs-festanstellung-2026-germany",
+    title:
+      "Freelance vs Festanstellung — a 2026 reality check for software engineers in Germany",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 8,
+    description:
+      "The freelance-vs-employee decision in Germany has hidden math nobody writes down honestly. Krankenversicherung, vacation, no-work-no-pay, Scheinselbständigkeit risk, tax structure — the gross-rate gap doesn't survive contact with reality.",
+    keywords: [
+      "freelance vs Festanstellung Germany",
+      "freelance vs employed Germany",
+      "Stundensatz vs Gehalt",
+      "freelance software engineer Germany",
+      "Festanstellung software developer",
+      "Scheinselbständigkeit risk",
+    ],
+    answerBox:
+      "Freelance gross rates in Germany look 2-3x employed gross salary, but the gap narrows fast: private Krankenversicherung adds €400-800/month, no paid vacation removes ~25 days/year, no sick pay, no employer pension contribution, and you carry Scheinselbständigkeit risk. The honest break-even is around 1.5-1.8x gross. Freelance wins on flexibility and ceiling; employment wins on stability and floor.",
+    lede:
+      "The freelance-vs-Festanstellung decision in Germany has hidden math nobody writes down honestly. Recruiters quote you a gross hourly rate and a gross annual salary as if they're directly comparable. They're not. Here's the actual math, plus the qualitative factors that don't show up in spreadsheets.",
+    sections: [
+      {
+        heading: "Why the gross-rate gap is misleading",
+        paragraphs: [
+          "A senior software engineer in Germany might see freelance offers at €100/hour and employed offers at €80,000-€100,000 gross annual. Naive math: 1,800 working hours × €100 = €180,000 freelance vs €100K employed. Looks like a 1.8x advantage.",
+          "Real math: freelancers don't bill 1,800 hours. They bill 1,400-1,500 effective hours after accounting for unpaid admin time, client gaps, sick days, vacation, and the inevitable scope-discussion calls that don't show up on an invoice. Now we're at ~€140K-€150K.",
+          "Then subtract: private Krankenversicherung (€400-800/month = €5K-€10K/year), no paid vacation (lose ~€10K equivalent), no employer pension contribution (€4K-€8K opportunity cost), Scheinselbständigkeit insurance against retroactive social-security claim (~€1K-€2K/year), accountant for the Steuererklärung (~€1K-€2K).",
+          "After all that, the freelance break-even versus an €80-100K Festanstellung is more like 1.5-1.8x gross — meaningful but not the 2-3x mirage the gross rates suggest.",
+        ],
+        table: {
+          caption: "Annual reality check (senior software engineer, Germany)",
+          headers: ["Item", "Festanstellung €90K", "Freelance €100/h"],
+          rows: [
+            ["Gross income (ish)", "€90,000", "€140,000-150,000 (1400-1500 billable hours)"],
+            ["Krankenversicherung", "Employer pays half", "Self-pays €5,000-€10,000"],
+            ["Paid vacation", "~30 days included", "Lose ~€10,000 equivalent"],
+            ["Sick pay", "Employer pays first 6 weeks", "Self-funded"],
+            ["Pension contribution", "Employer matches", "Self-funded"],
+            ["Accountant", "Not needed", "€1,000-€2,000"],
+            ["Net comparable", "€90K equivalent", "~€115K-€130K equivalent"],
+          ],
+        },
+      },
+      {
+        heading: "Where freelance still wins",
+        paragraphs: [
+          "Flexibility. A freelancer who wants to take six weeks off in summer can, no negotiation needed. Festanstellung gives you 30 days and you negotiate the timing.",
+          "Ceiling. A successful freelancer with a strong client book can raise rates 10-20% per year for several years running. Festanstellung gives you 3-5% annual raises and the only way to break out is to switch employers.",
+          "Variety. A freelancer rotates between problems and stacks. Festanstellung typically means one stack for years.",
+          "Tax structure. Freelancers can offset legitimate business expenses (home office, hardware, software, training, business travel) against income before tax. Festanstellung employees have far fewer deductions.",
+        ],
+      },
+      {
+        heading: "Where Festanstellung still wins",
+        paragraphs: [
+          "Stability. Festanstellung gets you Kündigungsschutz after six months — your employer can't fire you without a documented reason. Freelance has zero such protection; clients can end the contract any time per the contract terms.",
+          "Floor. The lowest a Festanstellung salary can drop is to zero (if you're terminated for cause). The lowest a freelance month can drop is to zero (if no client is paying). The difference: Festanstellung's floor is rare; freelance's floor is everyone's reality at least once.",
+          "Pension. Statutory pension via Festanstellung is a built-in retirement product. Freelance requires self-funding (Rürup-Rente or private retirement) and a lot of discipline to actually do it.",
+          "Mental load. Freelance carries the constant background load of pipeline management, invoice chasing, contract review, tax planning. Festanstellung relieves all of that.",
+        ],
+      },
+      {
+        heading: "The Scheinselbständigkeit factor",
+        paragraphs: [
+          "Germany has strict rules about disguised employment. If a freelancer's contract structure looks like employment (single client, on client premises, with client equipment, on client schedule), the Deutsche Rentenversicherung can retroactively classify the relationship as employment — and the client owes back-taxes plus social-security contributions.",
+          "Practical implication: freelance contracts have to be structured as work-for-deliverable (Werkvertrag) or for a service across multiple clients. The freelancer needs to be able to demonstrate multiple income sources or the genuine ability to take other work. A freelancer with one 100%-time client for two years running is the audit profile.",
+        ],
+      },
+      {
+        heading: "Who should pick which?",
+        paragraphs: [
+          "Pick Festanstellung if: you value stability, you don't have an emergency fund, you want statutory pension contributions, your tax situation is simple, you don't enjoy administrative overhead.",
+          "Pick freelance if: you have a financial cushion (6+ months of expenses), you have a clear specialty that commands premium rates, you have at least two potential clients (Scheinselbständigkeit insurance), you're comfortable with variable income, and the autonomy is worth the admin.",
+          "Switch from Festanstellung to freelance: typically works for senior engineers with 5+ years experience and a client network. Hard to make work as a first job out of university.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "Festanstellung's floor is rare; freelance's floor is everyone's reality at least once.",
+      },
+      {
+        quote:
+          "The honest break-even is around 1.5-1.8x gross — meaningful but not the 2-3x mirage the gross rates suggest.",
+      },
+    ],
+    citations: [
+      {
+        label: "Deutsche Rentenversicherung — Scheinselbstständigkeit",
+        url: "https://www.deutsche-rentenversicherung.de/DRV/DE/Experten/Arbeitgeber-und-Steuerberater/summa-summarum/Lexikon/S/scheinselbststaendigkeit.html",
+        relevance: "Official guidance on disguised-employment risk",
+      },
+      {
+        label: "Bundesministerium der Justiz — Kündigungsschutzgesetz",
+        url: "https://www.gesetze-im-internet.de/kschg/",
+        relevance: "Employment-protection law that doesn't apply to freelancers",
+      },
+      {
+        label: "IHK — Stundensatz Berechnung für Freiberufler",
+        url: "https://www.ihk.de/themenfelder/recht-steuern/selbstaendigkeit/stundensatzberechnung",
+        relevance: "Standard guidance on calculating freelance hourly rates",
+      },
+    ],
+    faq: [
+      {
+        q: "What hourly rate should a freelance software engineer charge in Germany?",
+        a: "Wide range by experience and specialty. Senior full-stack with AI focus typically €100-150/hour. Microsoft Business Central specialists €120-180/hour. Niche specializations can go higher. Below ~€80/hour, the math against Festanstellung doesn't work for senior people.",
+      },
+      {
+        q: "Is freelance always more lucrative than employment in Germany?",
+        a: "Not always. At equivalent gross numbers, freelance is more lucrative if you bill 1,400+ hours/year, manage Krankenversicherung well, and have stable client flow. Below that, employment is comparable or better when you account for the full benefit package.",
+      },
+      {
+        q: "How do I transition from Festanstellung to freelance?",
+        a: "Build a six-month financial cushion. Develop a clear specialty with proof of work. Secure at least two potential clients before going solo. Set up Krankenversicherung, accountant, and contract templates before quitting. Don't quit Friday and start freelancing Monday — the transition takes 3-6 months of preparation.",
+      },
+      {
+        q: "Can I do freelance work alongside a Festanstellung job?",
+        a: "Legally yes, with employer notification and sometimes approval. Practically: hard to sustain at quality. Most successful freelance careers start by going full-time freelance after the cushion is built.",
+      },
+    ],
+  },
+
+  // -------------------------------------------------------------------------
+  // Cluster A — KeepItUp technical follow-ups
+  // -------------------------------------------------------------------------
+  {
+    slug: "build-verification-beats-raw-confidence-scores",
+    title:
+      "Build verification beats raw confidence — why test suites outweigh self-reports",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 7,
+    description:
+      "A model that claims 90% confidence on a diff that fails three tests is wrong. A model that claims 70% on a diff that passes 200 tests is right. KeepItUp's confidence-gate relaxation rule formalizes this: a passing test suite is a stronger correctness signal than any model's self-report.",
+    keywords: [
+      "AI agent confidence threshold",
+      "build verification AI",
+      "test suite as ground truth",
+      "AI code agent reliability",
+      "LLM self-confidence",
+      "AI agent gate",
+    ],
+    relatedProject: "keepitup",
+    answerBox:
+      "A test suite is a stronger correctness signal than any LLM's self-confidence. KeepItUp opens a PR at ≥85% confidence by default; if a build-verification step runs the proposed diff through the tests in a sandboxed container and they pass, the threshold drops to ≥70%. A diff that passes 200 tests at 70% beats a diff that fails three tests at 90%, every time.",
+    lede:
+      "AI models will tell you they're confident. They're also wrong roughly 10-30% of the time on code-fix tasks, depending on the model and the difficulty. Asking the model whether it trusts itself is circular. KeepItUp's gate gets around this by treating a passing test suite as a stronger correctness signal than any score the model can produce — and the relaxation rule that comes from it is the cheapest reliability win in the agent.",
+    sections: [
+      {
+        heading: "Why model confidence alone fails",
+        paragraphs: [
+          "The Generator pass in KeepItUp emits a proposed diff and a self-rated confidence score. The Reviewer pass scores the same diff cold. Both passes can be confidently wrong on the same problem if they share a blind spot — and they share a blind spot more often than you'd hope.",
+          "Concrete failure mode I've seen: a syntactically clean diff that compiles, passes the model's own reasoning check, and would have been opened as a PR — but breaks a behavior the test suite covers explicitly. Without the build verification, that PR would have made it to my review queue. With it, the model's confidence flips below threshold and the agent doesn't act.",
+        ],
+      },
+      {
+        heading: "What does build verification actually do?",
+        paragraphs: [
+          "When the Generator produces a candidate diff, the agent applies it to a sandboxed clone of the repository and runs the test suite. Pass/fail signal goes back to the gate.",
+          "The sandbox is a Docker container with the project's standard test command (`pnpm test`, `cargo test`, `pytest`, whatever the repo uses). The container is throwaway — no state survives — so a broken test environment never persists into the next run.",
+          "Resource-wise it costs a one-time per-fix overhead of the test-suite runtime. For a project with a 90-second test suite, that's 90 extra seconds before a PR opens. For a project with 30 minutes of tests, it's 30 extra minutes. The agent runs verification in parallel with the Reviewer pass to soak some of that cost.",
+        ],
+        table: {
+          caption: "Threshold matrix",
+          headers: ["Verification result", "Generator + Reviewer threshold", "Action"],
+          rows: [
+            ["Tests pass (or no tests)", "≥85% / ≥70% with tests", "Open PR"],
+            ["Tests fail", "Effectively 100% (won't trigger)", "Refuse — diff is empirically wrong"],
+            ["No test suite runs (config error)", "≥85% (default)", "Open PR conservatively"],
+          ],
+        },
+      },
+      {
+        heading: "Why ≥70% with verification and ≥85% without",
+        paragraphs: [
+          "The thresholds are tuned, not random. I ran the agent in dry-run mode for a few weeks against a backlog of historical CI failures and tuned the numbers against actual fix-correctness on a held-out sample.",
+          "Below 70% with verification, the false-positive rate jumps fast — even with passing tests, low-confidence diffs tend to be subtly wrong in ways tests don't catch (changing the spirit of a function while preserving the letter).",
+          "Above 85% without verification, the false-positive rate is acceptable for unattended PR creation, but barely. Without a test signal, I want the agent to be conservative — better to refuse a fix than open ten PRs for one that lands.",
+        ],
+      },
+      {
+        heading: "What if the repo doesn't have tests?",
+        paragraphs: [
+          "Most production repos have at least lint and type-check. Those count as weak verification — they catch syntactic errors but not semantic ones. The threshold stays at 85% in that case; lint passing doesn't earn the relaxation.",
+          "If the repo has zero verification — no tests, no lint, no type-check — the agent stays conservative at 85%, and most diffs sit below threshold. This isn't great for the no-test repo, but it correctly fails closed: the agent does less work, no spurious PRs land. The right fix is to add tests, not to lower the agent's threshold.",
+        ],
+      },
+      {
+        heading: "Where this pattern generalizes",
+        paragraphs: [
+          "Any AI agent that takes an action with cost or risk benefits from verifying its proposal against ground truth before acting. Code agents have tests; data agents have schemas; content agents have format validators; deployment agents have smoke tests.",
+          "The general rule: the model's self-confidence is one signal among many. A grounded check against external reality is a stronger signal, and the threshold should reflect which signals are available. When ground-truth verification exists and passes, you can act on lower model confidence. When it doesn't, you need higher confidence to compensate.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "A diff that passes 200 tests at 70% confidence beats a diff that fails three tests at 90% confidence, every time.",
+      },
+      {
+        quote:
+          "The model's self-confidence is one signal among many. A grounded check against external reality is a stronger signal, and the threshold should reflect which signals are available.",
+      },
+    ],
+    citations: [
+      {
+        label: "Anthropic Messages API documentation",
+        url: "https://docs.anthropic.com/en/api/messages",
+        relevance: "Source of Generator/Reviewer confidence scores",
+      },
+      {
+        label: "Docker — official documentation",
+        url: "https://docs.docker.com/",
+        relevance: "Container-based sandboxing for build verification",
+      },
+      {
+        label: "GitHub Actions — running tests on demand",
+        url: "https://docs.github.com/en/actions/using-jobs/running-jobs-in-a-container",
+        relevance: "Pattern for triggering test runs in sandboxed environments",
+      },
+    ],
+    faq: [
+      {
+        q: "Why use confidence thresholds at all if you have tests?",
+        a: "Because tests aren't complete. They cover the behaviors the team chose to test. A diff can pass all tests and still be semantically wrong on behaviors no test covers. Model confidence catches some of those cases; tests catch the rest. Using both is strictly better than using either alone.",
+      },
+      {
+        q: "What if running tests in a sandbox takes too long?",
+        a: "Run verification in parallel with the Reviewer pass; the agent waits for both before deciding. For projects with very long test suites (30+ minutes), use a partial-suite mode: run the tests likely to be affected by the diff, not the full suite. Tree-sitter slicing helps identify which test files are likely relevant.",
+      },
+      {
+        q: "Should the agent ever bypass the gate?",
+        a: "No. Bypass paths defeat the purpose. If you trust the agent enough to auto-merge certain classes of fixes, build a separate higher-trust gate for that class — don't lower the universal gate.",
+      },
+      {
+        q: "What if the test suite is flaky?",
+        a: "Re-run on failure once or twice before believing the result. Flakes are common in any non-trivial suite. A persistent failure across re-runs is a real signal; a one-time failure is noise.",
+      },
+    ],
+  },
+
+  {
+    slug: "multi-provider-routing-anthropic-openai-gemini",
+    title:
+      "Multi-provider routing — running Anthropic, OpenAI, and Gemini behind one client",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 7,
+    description:
+      "Different LLM providers have different blind spots. A single internal client that routes between Anthropic Claude, OpenAI GPT-4-class, and Google Gemini — with budget gates and per-call cost telemetry — is the practical answer to provider-specific failure modes.",
+    keywords: [
+      "multi-provider LLM router",
+      "Anthropic OpenAI Gemini",
+      "LLM router pattern",
+      "AI provider abstraction",
+      "LLM budget gates",
+      "LLM cost telemetry",
+    ],
+    relatedProject: "keepitup",
+    answerBox:
+      "KeepItUp routes between Anthropic Claude, OpenAI GPT-4-class, and Google Gemini behind one internal client. The client owns provider selection (per stage), budget tracking (per repo per month), and per-call cost telemetry. Routing isn't load-balancing — it's pairing different models on the Generator/Reviewer split so they don't share blind spots.",
+    lede:
+      "Single-provider LLM stacks are fragile. The provider has an outage and your agent dies. The provider changes pricing and your costs spike. The provider has a blind spot that your task happens to fall in, and your agent ships wrong outputs. The fix is a router — but a thoughtful one, not just a load-balancer with three URLs.",
+    sections: [
+      {
+        heading: "Why multi-provider routing isn't load-balancing",
+        paragraphs: [
+          "Load balancing splits identical work across identical workers to spread cost or capacity. LLM providers are not identical workers. Anthropic Claude is strong on code reasoning and honest about uncertainty. OpenAI GPT-4-class is strong on structured extraction and broad world knowledge. Google Gemini is cheaper per token for many tasks and has its own strengths on long-context reasoning.",
+          "Pairing them on the Generator/Reviewer split in KeepItUp is the specific reason: if both passes use the same provider, they share blind spots. A hallucination one model finds plausible is the kind of thing the other one would flag. Running the same prompt through two instances of Claude is closer to one-and-a-half passes than to two.",
+          "The router's job isn't to spread load. The router's job is to pick the right model for the stage.",
+        ],
+      },
+      {
+        heading: "What does the client API look like?",
+        paragraphs: [
+          "Internal interface: `llmClient.complete({ stage, prompt, schema, budget })`. Stage is one of `generate`, `review`, `extract`, `summarize`. The client maps stage to provider, applies the stage's prompt template, enforces the response schema, and returns the result plus cost.",
+          "Callers don't know which provider answered. The stage is the routing key; everything else is hidden. This means swapping providers at the stage level is a config change — no caller code touches the swap.",
+          "Schema enforcement matters: every call has a Zod (or equivalent) schema for the expected output. The client retries with backoff if the response doesn't validate, and reports an error if retries exhaust. This way an upstream caller never gets malformed data and never has to handle provider-specific quirks.",
+        ],
+        table: {
+          caption: "Stage-to-provider routing",
+          headers: ["Stage", "Default provider", "Why"],
+          rows: [
+            ["generate (code-fix diff)", "Anthropic Claude Sonnet", "Strong code reasoning + uncertainty calibration"],
+            ["review (score a diff cold)", "OpenAI GPT-4-class", "Different blind spots than the Generator"],
+            ["extract (structured data from text)", "OpenAI", "Best function-calling / structured-output API"],
+            ["summarize (long text)", "Anthropic", "Best long-context summarization"],
+            ["budget-overflow fallback", "Google Gemini", "Cheaper per token; acceptable quality for fallback"],
+          ],
+        },
+      },
+      {
+        heading: "How do budget gates work?",
+        paragraphs: [
+          "Every call increments a counter. The counter is keyed by (tenant, time-bucket, stage) — for KeepItUp that's (repo, month, stage). Once the budget is hit, subsequent calls in that bucket are refused.",
+          "Refused doesn't mean the agent crashes. It means the agent stops proposing fixes for that repo for the rest of the month. The agent keeps watching (read-only API calls are cheap or free) — it just doesn't write. A user-visible banner in the dashboard shows \"budget exhausted; resumes next month or raise the limit.\"",
+          "Budget gates protect against runaway agents. A CI loop that oscillates can otherwise trigger the agent every few minutes and burn through credits in hours. The counter is the speed bump.",
+        ],
+      },
+      {
+        heading: "What does cost telemetry actually capture?",
+        paragraphs: [
+          "Per call: provider, model, stage, input tokens, output tokens, latency, cost in USD (or whatever your billing currency is), trace ID. Logged to a time-series store; queryable.",
+          "Per repo per day: total spend, top stages by spend, cost-per-fix-attempt, cost-per-successful-PR. These metrics make the cost story visible without per-call drill-down.",
+          "Anomaly detection: a daily spend that's 3+ standard deviations above the trailing 30-day average emails me. Not perfect, catches the obvious runaway cases.",
+        ],
+      },
+      {
+        heading: "What about provider outages?",
+        paragraphs: [
+          "Every stage has a fallback provider. If the primary returns 5xx or times out, the client retries against the fallback after a short backoff. The fallback isn't load-balanced into normal traffic — it's a circuit-breaker behavior.",
+          "Outage telemetry: if the primary is flaking, the client logs the events and emits a Slack alert. Not because I can fix Anthropic's API, but because if the fallback is significantly more expensive, I want to know the bill is going up today.",
+        ],
+      },
+      {
+        heading: "Where this pattern generalizes",
+        paragraphs: [
+          "Any production AI feature that calls more than one LLM ought to do this. Hard-coding `OpenAI.chat.completions.create(...)` throughout the codebase is the pattern that makes you eat the next migration cost whole.",
+          "The router-plus-budget pattern is the LLM equivalent of an internal HTTP client with retries and circuit breakers — boring infrastructure that pays back the day a provider has an outage or changes pricing or drifts on quality.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "Running the same prompt through two instances of Claude is closer to one-and-a-half passes than to two.",
+      },
+      {
+        quote:
+          "Hard-coding OpenAI.chat.completions.create(...) throughout the codebase is the pattern that makes you eat the next migration cost whole.",
+      },
+    ],
+    citations: [
+      {
+        label: "Anthropic Claude SDK documentation",
+        url: "https://docs.anthropic.com/en/api/messages",
+        relevance: "Primary provider for code-reasoning stages",
+      },
+      {
+        label: "OpenAI Node.js SDK",
+        url: "https://github.com/openai/openai-node",
+        relevance: "Primary provider for review and extraction stages",
+      },
+      {
+        label: "Google Gemini API",
+        url: "https://ai.google.dev/gemini-api/docs",
+        relevance: "Cost-optimized fallback for budget overflow",
+      },
+      {
+        label: "Zod — runtime schema validation",
+        url: "https://zod.dev/",
+        relevance: "Schema enforcement on every LLM response",
+      },
+    ],
+    faq: [
+      {
+        q: "Why not just use OpenAI for everything?",
+        a: "Single-provider lock-in is fragile. Provider outages happen, pricing changes, models get deprecated, and different providers have different strengths. Multi-provider routing isn't about cost optimization — it's about not being one provider's hostage.",
+      },
+      {
+        q: "How do you handle response-format differences between providers?",
+        a: "Schema enforcement at the client layer. Every call has a Zod schema for the expected output; the client validates and retries with backoff if validation fails. Callers see a uniform type; provider quirks stay inside the client.",
+      },
+      {
+        q: "Isn't a router just abstraction for abstraction's sake?",
+        a: "It's a yes if your app only calls one LLM in one place; it's clearly a no by the time you're calling LLMs across five different stages in three different services. The crossover is fast — most production AI features hit it within the first few months of real use.",
+      },
+      {
+        q: "How do you decide which stage uses which provider?",
+        a: "Empirically. Pick a candidate routing, measure quality on a held-out task set, iterate. Stage-to-provider mappings aren't set by vibes; they're set by the model that does the best job on that specific task at the cost you're willing to pay.",
+      },
+    ],
+  },
+
+  {
+    slug: "cost-telemetry-per-llm-call-what-to-measure",
+    title:
+      "Cost telemetry per LLM call — what to actually measure",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 6,
+    description:
+      "A production AI feature that doesn't track cost per call is a runaway-bill incident waiting to happen. Here's the minimum telemetry that lets you defend a $30,000 OpenAI bill and the metrics that make cost visible without drowning in events.",
+    keywords: [
+      "LLM cost tracking",
+      "AI cost telemetry",
+      "OpenAI cost monitoring",
+      "LLM observability",
+      "AI budget gates",
+      "Anthropic spend tracking",
+    ],
+    relatedProject: "keepitup",
+    answerBox:
+      "Capture provider, model, stage, input + output tokens, latency, cost in USD, trace ID — per call, logged to a time-series store. Aggregate to per-tenant-per-day spend, top stages by cost, cost per successful action. Add anomaly detection that emails when daily spend exceeds 3σ of the trailing 30-day average. That's the floor.",
+    lede:
+      "An AI feature without cost telemetry is a feature you can't defend. The first time someone's CI loop oscillates and the agent burns through $30,000 in a weekend, you'll want the per-call records that show exactly what happened. Set the telemetry up before that weekend, not after.",
+    sections: [
+      {
+        heading: "What to capture per call",
+        paragraphs: [
+          "Provider (Anthropic / OpenAI / Gemini). Model identifier (claude-sonnet-4, gpt-4o, gemini-pro). Stage name (generate, review, extract, summarize). Input tokens. Output tokens. Latency in milliseconds. Cost in USD computed from the provider's pricing. Trace ID linking the call to the parent operation. Timestamp.",
+          "That's roughly eight fields per call. At 100K calls/month, you're looking at a few hundred MB of telemetry data — trivial to store, queryable in any time-series database (TimescaleDB, ClickHouse, even Postgres with a B-tree index).",
+        ],
+        table: {
+          caption: "Minimum per-call telemetry fields",
+          headers: ["Field", "Why it matters"],
+          rows: [
+            ["provider", "Filter spend by vendor; spot outages"],
+            ["model", "Track model upgrades / deprecation cost shifts"],
+            ["stage", "Per-stage cost analysis"],
+            ["input tokens / output tokens", "Distinguish input-heavy vs output-heavy stages"],
+            ["latency", "Spot model performance regressions"],
+            ["cost USD", "The number that matters at month-end"],
+            ["trace ID", "Link calls to user actions / repo events"],
+            ["timestamp", "Time-series aggregation"],
+          ],
+        },
+      },
+      {
+        heading: "Aggregations that matter",
+        paragraphs: [
+          "Daily spend per tenant (repo, user, or whatever your tenant boundary is). Daily spend per stage. Cost per successful action — e.g., cost per PR opened, cost per match generated, cost per story rendered. Cost per failed attempt vs successful one (failures are usually more expensive because they retry).",
+          "Monthly trend: are we drifting upward week-over-week even at constant volume? That's a sign of a model change or a prompt regression eating extra tokens.",
+        ],
+      },
+      {
+        heading: "Anomaly detection that catches real problems",
+        paragraphs: [
+          "Daily spend that exceeds three standard deviations above the trailing 30-day average emails me. Not perfect, catches the obvious runaway cases.",
+          "Single-call cost over a threshold (say, $1 USD) also emits an event. A single LLM call shouldn't usually cost a dollar; if one does, it's probably an unexpectedly long context or a generation that ran past expected length.",
+          "Tenant-level: any tenant exceeding their monthly budget by 50% triggers a hard-stop on that tenant's calls (the budget gate). Triggers a less alarmist alert at 80%.",
+        ],
+      },
+      {
+        heading: "What this lets you do",
+        paragraphs: [
+          "Defend a bill. \"The $30,000 in OpenAI charges came from this specific repo's CI loop oscillating; here's the per-call log; here's the budget gate that fired but should have fired sooner.\"",
+          "Make pricing decisions. \"Stage X costs $0.08 per call on Claude, $0.04 on Gemini, with comparable quality. Switching the fallback path to Gemini saves $400/month at current volume.\"",
+          "Catch regressions. \"Average tokens per call doubled this week; the prompt change last Tuesday must be inflating input context. Roll back and investigate.\"",
+        ],
+      },
+      {
+        heading: "What not to do",
+        paragraphs: [
+          "Don't store the full prompt and response in your telemetry by default. They're expensive to store and often contain sensitive data. Capture a hash of the prompt for dedup analysis, capture key metadata, but leave the bodies out unless a debugging mode is on.",
+          "Don't aggregate too aggressively before storing. \"Total spend per day per provider\" is cheap to compute from raw events; \"raw events thrown away in favor of pre-aggregated rollups\" is expensive to recover from when you need to investigate a specific incident.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "An AI feature without cost telemetry is a feature you can't defend.",
+      },
+      {
+        quote:
+          "A single LLM call shouldn't usually cost a dollar; if one does, it's probably an unexpectedly long context or a generation that ran past expected length.",
+      },
+    ],
+    citations: [
+      {
+        label: "OpenAI pricing documentation",
+        url: "https://openai.com/pricing",
+        relevance: "Source of cost-per-token figures used in telemetry",
+      },
+      {
+        label: "Anthropic pricing",
+        url: "https://docs.anthropic.com/en/docs/about-claude/pricing",
+        relevance: "Source of cost-per-token for Claude calls",
+      },
+      {
+        label: "TimescaleDB — time-series Postgres",
+        url: "https://docs.timescale.com/",
+        relevance: "One option for storing per-call telemetry events",
+      },
+    ],
+    faq: [
+      {
+        q: "How granular should LLM cost telemetry be?",
+        a: "Per call. Aggregating later from raw events is cheap; trying to recover detail from pre-aggregated rollups is impossible. Store every call's tokens + cost + metadata; aggregate at query time.",
+      },
+      {
+        q: "What's a reasonable monthly LLM spend for a production AI feature?",
+        a: "Highly variable. A small feature with light volume: $50-500/month. A moderately-trafficked feature with smart caching: $1,000-$10,000/month. A high-volume feature without caching or budget gates: $50,000+/month, and probably wasteful. The freelancer's first job is to keep your bill predictable.",
+      },
+      {
+        q: "Should LLM telemetry be a separate system or part of general application logging?",
+        a: "Part of general logging is fine; just make sure the per-call cost fields are queryable independently. A grep across application logs to compute monthly LLM spend is too painful. A time-series table or a dedicated index is worth the setup time.",
+      },
+      {
+        q: "How do you alert on cost without being noisy?",
+        a: "Three signals: daily spend > 3σ above 30-day trailing average; single-call cost > threshold; tenant spend > 80% of monthly budget. The first catches anomalies; the second catches outliers; the third catches budget-eating tenants. Together they're enough without being noisy.",
+      },
+    ],
+  },
+
+  {
+    slug: "semgrep-trivy-gitleaks-pre-pr-docker",
+    title:
+      "Why an AI agent should run Semgrep, Trivy, and Gitleaks before opening a PR",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 6,
+    description:
+      "An AI agent that fixes broken builds will eventually propose a diff that introduces a secret leak or a vulnerable dependency. Running Semgrep + Trivy + Gitleaks in a Docker container before opening the PR catches those cases without requiring human review for security.",
+    keywords: [
+      "AI agent security scanning",
+      "Semgrep AI code review",
+      "Trivy vulnerability scan",
+      "Gitleaks secret detection",
+      "pre-PR security checks",
+      "AI code-fix safety",
+    ],
+    relatedProject: "keepitup",
+    answerBox:
+      "Before opening a PR, KeepItUp runs three security scans against the proposed diff in a Docker container: Semgrep for static analysis, Trivy for dependency vulnerabilities, Gitleaks for accidentally committed secrets. Any flag adds a comment to the PR but doesn't block opening. Catches the specific failure mode of an LLM regenerating code that originally had an API key inlined.",
+    lede:
+      "Anyone who's run an LLM at scale has seen a model regenerate code that originally had an API key inlined. Or pull in a vulnerable dependency version from training data. Or write a SQL string that's vulnerable to injection. These failure modes are real, not hypothetical. The security-scan layer in front of the PR catches them.",
+    sections: [
+      {
+        heading: "Why scan diffs at all if you're a small team?",
+        paragraphs: [
+          "Because the LLM doesn't know about your private secret formats, your internal dependency policy, or your security review history. The Generator pass treats the input file as a self-contained problem; if the file originally had a secret in a comment that the model reformatted, the secret might come back in a different shape.",
+          "Solo dev or small team: you're the security review. You won't catch every leak in a code review unless you specifically look. A scanner catches them deterministically.",
+        ],
+      },
+      {
+        heading: "What does each scanner do?",
+        paragraphs: [
+          "Semgrep is a static-analysis tool that runs rule-based pattern matching against the source code. It catches things like SQL injection in raw string concatenation, hardcoded credentials, unsafe deserialization, and language-specific anti-patterns. Default rule sets ship with each language pack.",
+          "Trivy is a vulnerability scanner that checks dependencies (package.json, Cargo.toml, requirements.txt, etc.) against CVE databases. It flags known-vulnerable versions of libraries. Trivy also scans container images and infrastructure-as-code, but for KeepItUp's use case it's the dependency-vuln check.",
+          "Gitleaks is a secret scanner — regex patterns and entropy heuristics that catch API keys, JWT secrets, AWS access keys, and the like. Runs across the diff to catch anything that looks like a credential.",
+        ],
+        table: {
+          caption: "What each scanner catches",
+          headers: ["Scanner", "What it catches", "False-positive risk"],
+          rows: [
+            ["Semgrep", "Anti-patterns (SQL injection, unsafe deserialization, hardcoded creds)", "Low-moderate"],
+            ["Trivy", "Vulnerable dependency versions", "Low"],
+            ["Gitleaks", "Accidentally-committed secrets (API keys, tokens)", "Moderate (entropy heuristics)"],
+          ],
+        },
+      },
+      {
+        heading: "How does the pre-PR pipeline run?",
+        paragraphs: [
+          "Sandboxed Docker container with the diff applied and the three scanners installed. The pipeline runs all three in parallel; output is collected and surfaced as a structured report.",
+          "If any scanner flags something, the agent still opens the PR — but with a comment that calls out the findings, links to remediation, and labels the PR `security-review-required`. The human (me) sees both the proposed fix and the scanner output in one place.",
+          "If no scanner flags anything, the PR opens with a brief comment saying \"security scans passed\" and the appropriate label. This isn't a guarantee; it's a baseline.",
+        ],
+      },
+      {
+        heading: "Why open the PR even if scanners flag?",
+        paragraphs: [
+          "Two reasons. First, false positives are real. Semgrep flags patterns that look unsafe but might be intentional in context. Gitleaks flags high-entropy strings that might be test fixtures, not real credentials. A human needs to decide.",
+          "Second, the agent's value is reducing the amount of work I do, not eliminating my review. Flagging without blocking respects the boundary: the agent does the scan and the writeup; I do the judgment call. Auto-rejecting flagged PRs would lose information I'd want to see.",
+        ],
+      },
+      {
+        heading: "What this pattern generalizes to",
+        paragraphs: [
+          "Any AI agent that proposes changes that will run in production benefits from a deterministic checking layer before the proposal lands. Security scans are the obvious case; type checks and lint are the same shape. The agent proposes; the checks gate; the human reviews what's left.",
+          "The pattern works because the scanners are fast, the false-positive rate is acceptable, and the cost of a false negative is high. Any time those three conditions hold, a pre-PR scanner layer is the right call.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "Anyone who's run an LLM at scale has seen a model regenerate code that originally had an API key inlined.",
+      },
+      {
+        quote:
+          "Flagging without blocking respects the boundary: the agent does the scan and the writeup; I do the judgment call.",
+      },
+    ],
+    citations: [
+      {
+        label: "Semgrep — official documentation",
+        url: "https://semgrep.dev/docs/",
+        relevance: "Static analysis ruleset used in the pre-PR pipeline",
+      },
+      {
+        label: "Trivy — Aqua Security",
+        url: "https://aquasecurity.github.io/trivy/",
+        relevance: "Dependency vulnerability scanner",
+      },
+      {
+        label: "Gitleaks — secret detection",
+        url: "https://github.com/gitleaks/gitleaks",
+        relevance: "Catches API keys and tokens in proposed diffs",
+      },
+      {
+        label: "Docker — official documentation",
+        url: "https://docs.docker.com/",
+        relevance: "Sandboxing for the scanner pipeline",
+      },
+    ],
+    faq: [
+      {
+        q: "Do I need three different security scanners?",
+        a: "They catch different things. Semgrep covers anti-patterns and language-specific issues; Trivy covers vulnerable dependencies; Gitleaks covers secret leaks. Each has a narrow specialty. Running all three is cheap (parallel in Docker) and the coverage is meaningfully better than any one alone.",
+      },
+      {
+        q: "Are these scanners slow?",
+        a: "Not for diff-scoped scanning. Semgrep on a typical diff: seconds. Trivy on a dependency file: under a minute. Gitleaks: seconds. Running in parallel in Docker, the whole pipeline adds well under a minute to PR-open latency.",
+      },
+      {
+        q: "How do you handle false positives?",
+        a: "Tune the rule sets to your project. Semgrep lets you ignore specific rules per repository. Gitleaks lets you allowlist patterns. The first month of running the pipeline is mostly tuning; after that, the false-positive rate stabilizes.",
+      },
+      {
+        q: "Should the AI agent ever auto-fix security findings?",
+        a: "Not in KeepItUp. Security findings are exactly the case where I want a human judgment call. Auto-fixing a flagged secret could mean rotating a live credential without coordination; that's worse than the original leak.",
+      },
+    ],
+  },
+
+  {
+    slug: "polling-six-deploy-platforms-without-rate-limit-hell",
+    title:
+      "Polling six deploy platforms 24/7 — API patterns that don't get rate-limited",
+    date: "2026-05-14",
+    dateModified: "2026-05-14",
+    readingMinutes: 7,
+    description:
+      "KeepItUp watches Vercel, Render, Fly, Railway, GitHub Actions, and similar deploy platforms continuously. None of them love being polled aggressively. Here's the patterns — exponential backoff, smart caching, webhook-first where possible — that keep the agent's monitoring layer well-behaved.",
+    keywords: [
+      "API polling rate limits",
+      "exponential backoff",
+      "deploy platform monitoring",
+      "Vercel API rate limit",
+      "GitHub Actions API",
+      "AI agent infrastructure",
+    ],
+    relatedProject: "keepitup",
+    answerBox:
+      "KeepItUp watches six deploy platforms 24/7 without hitting rate limits by: defaulting to webhooks where the platform supports them; polling on exponential backoff when it must; caching deploy status with TTLs tuned per platform; sharing a global token bucket across all polling workers. Failed polls are logged, not retried in a tight loop. The agent works around rate limits, doesn't try to fight them.",
+    lede:
+      "Watching six deploy platforms 24/7 sounds simple until you realize each platform has its own rate-limit story, its own webhook story, and its own opinion about what counts as polite traffic. The monitoring layer in KeepItUp got most of its complexity from learning what each platform tolerates without complaining.",
+    sections: [
+      {
+        heading: "Webhooks first, polling second",
+        paragraphs: [
+          "Where a platform supports webhooks, use them. GitHub Actions emits webhooks on workflow run completion. Vercel has deploy event webhooks. Most production CI/CD platforms do too. A webhook is one event per change — zero polling tax.",
+          "The agent's webhook endpoint is a thin Next.js route handler that drops the event into a queue; downstream workers pick it up and start the analysis pipeline. The handler itself returns 200 in under 50ms so the source platform doesn't time out and retry.",
+        ],
+      },
+      {
+        heading: "What about platforms without webhooks?",
+        paragraphs: [
+          "Some smaller deploy platforms don't have a webhook system, or theirs is incomplete. For those, polling is the fallback. The polling worker uses adaptive intervals: 60 seconds when there's been activity in the last hour, 5 minutes when there hasn't, 30 minutes overnight if the project is single-developer and unlikely to deploy at 3am.",
+          "Adaptive intervals matter because they cut the request volume by 80%+ vs naive constant polling. A platform that complains about \"too many requests\" at 5-second intervals is fine at 60-second intervals with backoff.",
+        ],
+        table: {
+          caption: "Polling cadence per signal",
+          headers: ["Signal", "Poll interval", "Why"],
+          rows: [
+            ["Recent activity (last hour)", "60 seconds", "Iterating, expect rapid changes"],
+            ["No recent activity, business hours", "5 minutes", "Possible activity, but not urgent"],
+            ["No recent activity, off-hours", "30 minutes", "Save quota; agent isn't time-critical"],
+            ["Rate limit signaled (429)", "exponential backoff", "Respect the platform's signal"],
+            ["Platform returns 5xx", "exponential backoff + circuit breaker", "Don't pile on during their outage"],
+          ],
+        },
+      },
+      {
+        heading: "Exponential backoff on rate limits and errors",
+        paragraphs: [
+          "When a platform returns 429 (rate-limited) or 5xx (server error), the polling worker waits longer before the next request — typically doubling the interval up to a cap. After the backoff, a single probe; if it succeeds, return to the normal interval. If it fails again, double again.",
+          "This is the standard retry-with-backoff pattern. The point isn't novelty; it's that you actually implement it. The number of \"AI agent\" projects I've seen that retry on a 1-second loop until success is too many. That's how you get IP-banned by a deploy platform.",
+        ],
+      },
+      {
+        heading: "Caching deploy status with tuned TTLs",
+        paragraphs: [
+          "Many polling calls just want \"is this deploy still in progress?\" If the answer was \"yes\" thirty seconds ago and nothing's happened, the answer is still \"yes.\" Cache the response with a short TTL (15-60 seconds depending on platform).",
+          "TTL tuning is per-platform because each platform's typical deploy duration is different. Vercel finishes in 1-3 minutes; a Render rebuild can take 5-15 minutes; a Fly machine restart is sub-minute. Caching for 30 seconds on Vercel makes sense; caching for 30 seconds on Render is leaving 90% of the cache window on the table.",
+        ],
+      },
+      {
+        heading: "Sharing one token bucket across workers",
+        paragraphs: [
+          "If your monitoring layer scales to multiple worker processes (PM2 cluster, multiple Vercel function instances, etc.), they need to share a global rate-limit budget. Otherwise each worker thinks it has the full quota and you spend it 4x faster.",
+          "Implementation: Redis-backed token bucket. Each request consumes a token; tokens regenerate at a fixed rate. Workers check the bucket before making a call and back off if it's empty. The bucket size and refill rate are tuned to stay below the platform's documented rate limit.",
+          "This is one place where Redis pays for itself. The same Redis instance can serve as the pub/sub bus for the webhook handler queue, the cache for deploy-status responses, and the token bucket for outbound rate-limiting.",
+        ],
+      },
+      {
+        heading: "What if a platform rate-limits you anyway?",
+        paragraphs: [
+          "Log the event, back off, and surface a metric. Don't retry in a tight loop. Don't auto-switch to a different IP (most platforms rate-limit by API key, not by IP, so this doesn't help — and it makes you look adversarial).",
+          "The right response to persistent rate-limiting is: poll less. Tune intervals down. Lean on webhooks more. If the platform genuinely doesn't support your traffic pattern, the workaround is architectural, not tactical. The agent works around rate limits, doesn't try to fight them.",
+        ],
+      },
+    ],
+    pullQuotes: [
+      {
+        quote:
+          "The number of \"AI agent\" projects I've seen that retry on a 1-second loop until success is too many. That's how you get IP-banned by a deploy platform.",
+      },
+      {
+        quote:
+          "The right response to persistent rate-limiting is: poll less. The agent works around rate limits, doesn't try to fight them.",
+      },
+    ],
+    citations: [
+      {
+        label: "Vercel API rate limits",
+        url: "https://vercel.com/docs/limits/usage",
+        relevance: "One of the platforms the agent polls",
+      },
+      {
+        label: "GitHub REST API rate limits",
+        url: "https://docs.github.com/en/rest/overview/resources-in-the-rest-api#rate-limiting",
+        relevance: "Authoritative documentation on GitHub's rate-limiting behavior",
+      },
+      {
+        label: "Token bucket algorithm — Wikipedia",
+        url: "https://en.wikipedia.org/wiki/Token_bucket",
+        relevance: "Algorithm underlying the shared rate-limit budget",
+      },
+      {
+        label: "Exponential backoff — RFC reference",
+        url: "https://en.wikipedia.org/wiki/Exponential_backoff",
+        relevance: "Standard backoff pattern for retrying rate-limited requests",
+      },
+    ],
+    faq: [
+      {
+        q: "How do I avoid rate limits when polling APIs?",
+        a: "Webhooks where possible; adaptive polling intervals where not; exponential backoff on 429 and 5xx; shared rate-limit budget across workers; cached responses with tuned TTLs. Each technique is small; together they cut request volume by an order of magnitude vs naive constant polling.",
+      },
+      {
+        q: "Should I use webhooks or polling for deploy monitoring?",
+        a: "Both, in order of preference. Use the platform's webhooks if they exist. Fall back to polling for platforms without webhooks or for status checks that webhooks don't cover. Most production monitoring layers are a hybrid.",
+      },
+      {
+        q: "What's a safe polling interval for most APIs?",
+        a: "60 seconds during active periods, 5-30 minutes during quiet periods. Some platforms tolerate faster (10-15s); others want slower (5+ min). Tune per platform based on their documented rate limits and your observed 429 frequency.",
+      },
+      {
+        q: "How do you handle a platform-wide outage in a monitoring agent?",
+        a: "Circuit breaker. After N consecutive failures, stop trying for a defined period (10 minutes, 30 minutes). Surface the outage as a metric so you know the platform is down, not that your agent is broken. Resume probing after the timeout.",
+      },
+    ],
+  },
 ];
 
 export function getNote(slug: string): Note | undefined {

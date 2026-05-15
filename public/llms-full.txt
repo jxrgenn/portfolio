@@ -277,3 +277,137 @@ Transaction ledger underneath: free credits from ads, RevenueCat subscription cr
 Failure recovery: each stage has up to three retries with slightly modified prompts before the pipeline gives up. Failures aren't logged as user-facing problems until retries exhaust. Result: roughly 99% of attempts succeed; the 1% that don't are auto-refunded and surface as ops alerts, not customer-support tickets.
 
 Pattern generalizes to any multi-model AI feature: orchestrate stages, validate every output, refuse to commit unless all pass, refund automatically on failure. Pipeline owns the transaction; models don't have to know about each other.
+
+### Hiring a freelance React Native developer in Germany — a scope template
+
+URL: https://jurgenhalili.dev/notes/hiring-freelance-react-native-developer-germany
+Date: 2026-05-14. 8 min read.
+
+React Native projects fail on scope, not skill. Before hiring, define: target platforms (iOS, Android, web?), Expo managed vs bare workflow, native modules required, deploy strategy (EAS / App Store Connect / Google Play), offline-first requirements. These five answers change the estimate by an order of magnitude.
+
+Platform choice — iOS-only is cheapest to develop, most expensive to maintain. Android-only has broader reach but more device fragmentation. Both means double the testing matrix. React Native Web adds another testing dimension; most apps don't need it. Workflow — Expo managed is the right call for ~80% of projects (EAS Build + EAS Submit, no local Xcode/Android Studio for normal feature work). Bare is for projects with native modules Expo doesn't support, slower development experience. Native modules — 0-2 fits tight scope; 3-5 doubles estimate; 6+ is native-team territory. Deploy — confirm the freelancer owns EAS + App Store Connect + Google Play end-to-end, including TestFlight beta cycle. Offline-first — yes/no changes architecture; offline requires MMKV/SQLite + conflict resolution + queue-and-replay, adds 4-6 weeks.
+
+Dabei (Kiel social-pulse app on jurgenhalili.dev, in progress) is the worked example: Expo Router 5 on RN 0.83, Supabase + Realtime, react-native-maps, MMKV for hot-path caching, OTP auth, deep-link invite flow, three-services data layer for clean RLS reasoning.
+
+### Hiring a freelance Microsoft Dynamics 365 Business Central contractor in Germany — what to evaluate
+
+URL: https://jurgenhalili.dev/notes/freelance-business-central-d365-germany-contractor
+Date: 2026-05-14. 8 min read.
+
+Business Central freelancers split into three tiers — config-only (UI navigation, basic reports, €60-90/hour), AL-extension developers (custom tables/pages/codeunits/reports, €90-130/hour), full-stack (AL + REST/OAuth2 integrations + NAV→BC migrations, €120-180/hour). Most German SMBs migrating off NAV need tier three; most freelance profiles claim tier three; ratio of claim-to-reality is ~4:1.
+
+Tell which tier you're talking to: ask for an AL extension code sample (tier-1 deflects, tier-2 shows a small extension, tier-3 walks through event subscriptions + upgrade compatibility patterns); ask about OAuth2 token refresh flow ("OAuth2 is a frontend thing" is disqualifying); ask about one real NAV→BC migration with specifics (data volume, custom tables carried, what went wrong, duration). German-market overlays: DATEV export for tax-advisor handoff, GoBD compliance for audit trails, ELSTER tax interface, Datenschutz / data-minimization configuration. Tier-3 contractors working in Germany know these by name.
+
+Where to find tier-3 contractors: Microsoft Partner Center directory (skews toward agencies), Microsoft Tech Community + BCTechDays presenters, GitHub (search for AL extensions on real profiles), personal portfolios that show actual projects. Microsoft Business Central is on the skills track at jurgenhalili.dev — AL extensions and REST/OAuth2 integrations for SMBs migrating from NAV.
+
+### Freelance vs agency for a software MVP — a 2026 comparison
+
+URL: https://jurgenhalili.dev/notes/freelance-vs-agency-software-mvp-2026
+Date: 2026-05-14. 7 min read.
+
+Solo experienced freelance engineer wins when scope is clear, one decision-maker exists, project fits one person's working memory (≤4 months), stack the freelancer has shipped before, no regulatory complexity. Solo wins on speed-of-iteration — no internal coordination tax, deployed change by lunch on morning feedback. Agency wins when work splits into parallel streams (custom design + backend + mobile simultaneously), timeline 6+ months, formal compliance overhead, continuity guarantees needed.
+
+Cost comparison — senior full-stack freelancer at €100-150/hour on a 3-month MVP delivers €60K-€100K project cost; equivalent agency engagement lands €120K-€250K because you're paying for PM + designer + backend + frontend + QA + overhead. Agency premium pays for parallelism + process; whether worth it depends on whether you need those. Hybrid models: solo freelancer + part-time designer (20% time); solo freelancer + part-time QA pass; agency for discovery/architecture phase + solo for execution. Most MVPs don't need agency premium.
+
+Before signing — solo: walk me through three projects you've shipped solo end-to-end (requirements, deploy, monitoring, support); agency: tell me who'll actually do the work (names, GitHub, hourly availability) because many agencies pitch with seniors and deliver with juniors.
+
+### Solo developer vs team of three — when each ships faster
+
+URL: https://jurgenhalili.dev/notes/solo-developer-vs-team-of-three-when-each-ships-faster
+Date: 2026-05-14. 7 min read.
+
+Coordination overhead grows non-linearly with team size — Brooks's Law applies even at small scale. Two people coordinate over coffee; three need a standup; four need a Slack channel and weekly sync; five need a project manager. Three engineers add ~2.2x execution but ~3x coordination (standups + PR reviews + design syncs + conflict resolution).
+
+Solo wins on projects that fit one person's working memory (~4 months), one decision-maker, tightly-integrated full-stack work. Three wins on parallel streams (native iOS + native Android + backend), long projects (6+ months with continuity risk), formal compliance overhead, 24/7 oncall coverage. Hidden cost of team-of-three for MVPs — more code than one person produces, but more code isn't more value; codebases grow complexity to accommodate parallel work (more abstractions, more interfaces, more configuration), visible "design by committee" patterns six months in.
+
+Concrete hiring test: if a candidate engineer can sketch your project's full architecture on a whiteboard in 20 minutes, the project fits one person. If it takes 90 minutes and three diagrams, you probably need a team.
+
+### Where to find freelance software developers in Germany — 2026 guide
+
+URL: https://jurgenhalili.dev/notes/where-to-find-freelance-software-developers-germany-2026
+Date: 2026-05-14. 8 min read.
+
+Six channels ranked by signal quality:
+
+(1) Personal portfolios with public case studies — best signal, hardest to find. Google specific stack + "freelance" + Germany; the pages with real case studies (not just contact forms) are the start. No platform tax; do screening yourself. (2) GitHub profile-driven outreach — high signal, low platform tax. Browse repos in your stack with recent commits + clear docs; look for Germany-based devs; reach out directly. Most maintainers of real public repos are open to freelance even if they don't advertise. (3) Toptal / Malt — pre-vetted, ~15-25% margin. Toptal is broader/international; Malt is Europe-focused with strong Germany presence. Trade screening time for margin. (4) freelance.de / Freelancermap — German-market dominance, mixed quality. Strong for SAP / BC / NAV / ABAP enterprise contractors; weaker for modern web stacks. (5) LinkedIn direct outreach — mixed signal. Use Boolean searches for niche specialties; cold response rates 5-15%; tailor every message. (6) Upwork / Fiverr — cheapest, lowest signal. Quality candidates exist but require significant screening effort; not recommended for ongoing trust.
+
+For senior full-stack: start with personal portfolios, expand to GitHub outreach, then Malt if no match in two weeks. For specialty work (BC/SAP/NAV): freelance.de + Microsoft Partner Center. Avoid mass-blasting Upwork postings.
+
+### The freelance developer due-diligence checklist — code, tests, deploys, security
+
+URL: https://jurgenhalili.dev/notes/freelance-developer-due-diligence-checklist
+Date: 2026-05-14. 7 min read.
+
+20-minute technical pass that catches the bottom 80% of bad freelance hires. Four categories:
+
+(1) Code — open most recent commit diff. Looking for focused changes (~10-100 lines, not 2000+), clear messages, code that does one thing well. Filter out generated boilerplate, "Update README.md" with no content, monolithic commits. Read 3-4 recent commits to see how this person works day-to-day.
+
+(2) Tests — CI badges (GitHub Actions / Codecov), specific test counts in project descriptions ("594 tests across Vitest + Playwright"). Run their `pnpm test` if open. Watch for test theater (one trivial test to pass the badge check).
+
+(3) Deploys — which platform (Vercel/Render/Fly/AWS/VPS), env-var management, deploy-failure recovery, error notification. Concrete signals: live deploys you can access, named monitoring tools (Sentry, Vercel Analytics), rollback story. Red flag: "I hand off the code and the client handles deployment."
+
+(4) Security — CSP in deployed app, pre-commit secret-scanning hooks, dependency-update workflow (Dependabot/Renovate). Ask: how do you rotate a production secret if it leaks? What does your CI scan for? Tier-3 freelancers run Semgrep + CodeQL + Trivy + Gitleaks; tier-1 run nothing.
+
+Across the 10 projects on jurgenhalili.dev: every one has documented deploys, tests in CI (or clear architectural reason not), and sensitive-data projects (CleanSlate, advance.al) have RLS policies + audit trails as architectural primitives.
+
+### Freelance vs Festanstellung — a 2026 reality check for software engineers in Germany
+
+URL: https://jurgenhalili.dev/notes/freelance-vs-festanstellung-2026-germany
+Date: 2026-05-14. 8 min read.
+
+Gross numbers mislead. A senior software engineer in Germany sees freelance at €100/hour and employed at €80-100K/year — naive math says 1.8x advantage. Real math: freelancers bill 1,400-1,500 effective hours (after admin time, client gaps, sick days, vacation, scope calls), landing at €140-150K. Subtract: private Krankenversicherung €5-10K/year, no paid vacation (~€10K equivalent loss), no employer pension contribution, no sick pay, Scheinselbständigkeit insurance, accountant. After all that, freelance break-even vs €80-100K Festanstellung is ~1.5-1.8x gross — meaningful but not the 2-3x mirage.
+
+Freelance wins on flexibility (six-week summer break no negotiation), ceiling (10-20% annual rate growth possible), variety (rotate problems/stacks), tax structure (legitimate business expense deductions). Festanstellung wins on stability (Kündigungsschutz after six months), floor (statutory minimum protections), pension (statutory contributions built in), mental load (no pipeline / invoice / contract / tax overhead).
+
+Scheinselbständigkeit (disguised employment) — Deutsche Rentenversicherung can retroactively classify a freelance relationship as employment if structure looks like employment (single client, on premises, with equipment, on schedule). Practical mitigations: Werkvertrag (deliverable contracts), multiple clients, demonstrated ability to take other work.
+
+### Build verification beats raw confidence — why test suites outweigh self-reports
+
+URL: https://jurgenhalili.dev/notes/build-verification-beats-raw-confidence-scores
+Date: 2026-05-14. 7 min read.
+
+A test suite is a stronger correctness signal than any LLM's self-confidence. KeepItUp's gate opens a PR at ≥85% Generator + Reviewer confidence by default. With build verification (run the proposed diff through the test suite in a sandboxed Docker container) and a green result, the threshold drops to ≥70%. A diff that passes 200 tests at 70% confidence beats a diff that fails three tests at 90% confidence, every time.
+
+Why model confidence alone fails — both Generator and Reviewer passes can share blind spots; a syntactically clean diff that compiles + passes the model's reasoning check can break behavior the test suite covers explicitly. Without verification, that PR makes the review queue; with it, confidence flips below threshold and the agent doesn't act. Thresholds are tuned empirically against historical CI failures + held-out fix-correctness sample. Below 70% with verification: false positives jump (low-confidence diffs subtly wrong in ways tests don't catch). Above 85% without verification: acceptable for unattended PR creation but conservative.
+
+What if the repo has no tests — lint + type-check count as weak verification (catches syntactic, not semantic), threshold stays at 85%, no relaxation earned. Right fix is adding tests, not lowering threshold. Pattern generalizes — any AI agent taking action with cost benefits from verifying proposal against ground truth before acting; threshold reflects which signals are available.
+
+### Multi-provider routing — running Anthropic, OpenAI, and Gemini behind one client
+
+URL: https://jurgenhalili.dev/notes/multi-provider-routing-anthropic-openai-gemini
+Date: 2026-05-14. 7 min read.
+
+Single-provider LLM stacks are fragile. KeepItUp routes between Anthropic Claude (Generator: code reasoning + uncertainty calibration), OpenAI GPT-4-class (Reviewer: different blind spots; structured extraction), and Google Gemini (fallback: cheaper per token) behind one internal client. Routing isn't load-balancing — it's pairing different models on stages so they don't share blind spots. Same prompt through two Claude instances is closer to 1.5 passes than 2.
+
+Client API: `llmClient.complete({ stage, prompt, schema, budget })`. Stage is the routing key; everything else hidden. Schema enforcement via Zod on every response with backoff retry on validation failure. Budget gates per (tenant, time-bucket, stage) — once exhausted, calls refused, agent stops proposing fixes (keeps watching). Cost telemetry per call: provider, model, stage, tokens, latency, USD cost, trace ID. Outage handling: fallback provider with short backoff; outage telemetry logs events + emits Slack alert.
+
+Pattern generalizes — any production AI feature calling more than one LLM ought to do this. Hard-coding `OpenAI.chat.completions.create(...)` throughout the codebase is the pattern that makes you eat the next migration whole.
+
+### Cost telemetry per LLM call — what to actually measure
+
+URL: https://jurgenhalili.dev/notes/cost-telemetry-per-llm-call-what-to-measure
+Date: 2026-05-14. 6 min read.
+
+Per call: provider, model, stage, input + output tokens, latency, cost USD, trace ID, timestamp. Eight fields. At 100K calls/month, hundreds of MB — trivial to store, queryable in any time-series database. Aggregations: daily spend per tenant, daily spend per stage, cost per successful action (PR opened, match generated, story rendered), cost per failed vs successful attempt (failures usually cost more — retries). Monthly trend at constant volume catches prompt regressions inflating input.
+
+Anomaly detection: daily spend > 3σ above trailing 30-day average emails me. Single-call cost > $1 USD emits event (LLM call rarely should cost a dollar; usually means unexpected context or runaway generation). Tenant exceeding 50% over monthly budget triggers hard-stop; 80% triggers less alarmist alert. What not to do: don't store full prompts and responses by default (expensive + often sensitive — capture hash for dedup analysis, leave bodies out unless debug mode); don't aggregate too aggressively before storing (raw events cheap to roll up; pre-aggregated rollups impossible to drill down from).
+
+### Why an AI agent should run Semgrep, Trivy, and Gitleaks before opening a PR
+
+URL: https://jurgenhalili.dev/notes/semgrep-trivy-gitleaks-pre-pr-docker
+Date: 2026-05-14. 6 min read.
+
+Anyone who's run an LLM at scale has seen a model regenerate code that originally had an API key inlined. Three security scans run in a sandboxed Docker container against every proposed diff: Semgrep (static analysis — SQL injection, hardcoded credentials, unsafe deserialization, language-specific anti-patterns); Trivy (dependency vulnerability scanner against CVE databases); Gitleaks (secret detection — regex + entropy heuristics for API keys, JWT secrets, AWS keys).
+
+Any scanner flag adds a comment to the PR + `security-review-required` label, but doesn't block opening. Two reasons: false positives are real (Semgrep flags patterns that might be intentional in context; Gitleaks flags high-entropy strings that might be test fixtures); the agent's value is reducing my review work, not eliminating it (flagging without blocking respects the boundary — agent does the scan + writeup, I make the judgment call). Pattern generalizes to any AI agent proposing changes that will run in production — agent proposes, deterministic checks gate, human reviews what's left.
+
+### Polling six deploy platforms 24/7 — API patterns that don't get rate-limited
+
+URL: https://jurgenhalili.dev/notes/polling-six-deploy-platforms-without-rate-limit-hell
+Date: 2026-05-14. 7 min read.
+
+Webhooks first (GitHub Actions, Vercel, most production CI/CD platforms). Thin Next.js webhook handler drops events into a queue; downstream workers pick them up. Adaptive polling for platforms without webhooks: 60s during recent activity, 5min during business-hours quiet, 30min off-hours. Adaptive cuts request volume by 80%+ vs naive constant polling.
+
+Exponential backoff on 429 and 5xx — double interval up to cap, single probe after backoff, double again if still failing. Cache deploy-status responses with platform-tuned TTLs (Vercel 30s, Render 1-3min). Share a global token bucket across worker processes via Redis-backed counter (single Redis instance serves bucket + cache + pub/sub queue). If a platform rate-limits anyway, the right response is poll less, not switch IPs — the agent works around rate limits, doesn't fight them.
+
+The number of AI agent projects retrying on 1-second loops until success is too many. Tight retry loops are how you get IP-banned by a deploy platform.
