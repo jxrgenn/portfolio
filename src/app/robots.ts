@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://jurgenhalili.dev";
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://jurgenhalili.dev").replace(/\/$/, "");
 
 // Explicitly named bots are listed for GEO discoverability — AI search engines
 // (ChatGPT, Perplexity, Claude, Gemini SGE, Copilot, Apple Intelligence) treat

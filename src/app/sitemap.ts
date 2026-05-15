@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { getAllSlugs } from "@/lib/projects";
 import { getAllNoteSlugs } from "@/lib/notes";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://jurgenhalili.dev";
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://jurgenhalili.dev").replace(/\/$/, "");
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();

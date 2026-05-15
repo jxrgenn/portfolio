@@ -8,7 +8,7 @@ import { SectionMast } from "@/components/editorial/SectionMast";
 import { getImageMeta } from "@/lib/imageMeta";
 import { getAllSlugs, getProject, projects, type ProjectShot } from "@/lib/projects";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://jurgenhalili.dev";
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://jurgenhalili.dev").replace(/\/$/, "");
 
 function shotsFromGallery(
   srcs: readonly string[],

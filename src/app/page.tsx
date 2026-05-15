@@ -7,7 +7,7 @@ import { Contact } from "@/components/sections/Contact";
 import { ProgressNav } from "@/components/scene/ProgressNav";
 import { projects } from "@/lib/projects";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://jurgenhalili.dev";
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://jurgenhalili.dev").replace(/\/$/, "");
 const NOW_ISO = new Date().toISOString();
 
 const websiteJsonLd = {

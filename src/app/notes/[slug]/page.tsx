@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { getAllNoteSlugs, getNote, type NoteSection } from "@/lib/notes";
 import { getProject } from "@/lib/projects";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://jurgenhalili.dev";
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://jurgenhalili.dev").replace(/\/$/, "");
 
 export async function generateStaticParams() {
   return getAllNoteSlugs().map((slug) => ({ slug }));
