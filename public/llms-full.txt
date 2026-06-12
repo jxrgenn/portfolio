@@ -12,6 +12,17 @@ Contact: jurgenhalili1142@gmail.com. LinkedIn: jurgen-halili-b227a6255.
 
 ## Projects
 
+### Counting a Protest
+
+URL: https://portfolio-seven-opal-35.vercel.app/projects/counting-a-protest
+Year: 2026. Status: shipped. Stack: P2PNet + VisDrone/COCO, OpenCV + FFmpeg, 4K night drone.
+
+Independent crowd count of the 10 June Tirana march — ≈22,000 from one night drone.
+
+Independent measurement of the 10 June 2026 protest in Tirana: ≈22,000 protesters [19,000–25,000] from 29 minutes of stationary 4K night drone footage. Full-width counting strips paced by the crowd's measured turnover, hand-measured detection factors per era of the footage, and five independent instruments converging on the same corridor.
+
+Counting a Protest is the one project here whose deliverable is a single number: ≈22,000 people [19,000–25,000] walked down Bulevardi Dëshmorët e Kombit in Tirana on 10 June 2026, measured from 29 minutes of stationary 4K night drone footage. In Albania crowd numbers are a genre of fiction — organizers and government routinely disagree by 5× — so I built a measurement where every component has a photograph behind it. The architecture is 11 full-width turnover freezes spaced by the crowd's hand-measured 3.6-minute turnover, counted by a VisDrone+COCO detector union plus P2PNet perspective-strip dot fields, with hand-measured per-era detection factors (S3 ×3.75, S4 ×10.3, S5 ×5.27) paying the detection tax — each factor derived by marking entire strips head by head. The decomposition: 20,202 counted inside the 11 freezes, 611 between-freeze continuity, 993 start bookend, 150 end bookend. Five independent instruments — band engine 16.9k floor, census conservation 18.9–22k, gate tracker, wide turnover 22–23.6k, geometric anchor 18–27k — converge on the same corridor, and the headline sits where the precise ones overlap. The end bookend is the line I'm proudest of: the engine said 1,813, my own screenshot audit said most of those people were already inside the last freeze, and I cut it to 150. A counting project where the owner never cuts his own number isn't a measurement, it's marketing.
+
 ### KeepItUp
 
 URL: https://portfolio-seven-opal-35.vercel.app/projects/keepitup

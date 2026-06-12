@@ -60,6 +60,30 @@ export type ProjectLink = {
   href: string;
 };
 
+export type ProjectVideo = {
+  /** Site-relative MP4 path under public/. */
+  src: string;
+  poster?: string;
+  caption?: string;
+};
+
+export type ProjectStoryTable = {
+  caption?: string;
+  headers: readonly string[];
+  rows: readonly (readonly string[])[];
+};
+
+export type ProjectStorySection = {
+  heading?: string;
+  paragraphs: readonly string[];
+  table?: ProjectStoryTable;
+};
+
+export type ProjectStory = {
+  title: string;
+  sections: readonly ProjectStorySection[];
+};
+
 export type Project = {
   slug: string;
   order: number;
@@ -113,15 +137,281 @@ export type Project = {
   liftQuote: string;
   /** Any URLs from brief; if no public code, use the private placeholder. */
   links: readonly ProjectLink[];
+  /** Optional self-hosted film (HTML5 <video>) rendered after the hero. */
+  video?: ProjectVideo;
+  /** Optional long-form field-notes write-up rendered on the case page. */
+  story?: ProjectStory;
 };
 
 export const projects = [
   // ---------------------------------------------------------------------------
-  // 1. KeepItUp
+  // 1. Counting a Protest
+  // ---------------------------------------------------------------------------
+  {
+    slug: "counting-a-protest",
+    order: 1,
+    title: "Counting a Protest",
+    tagline:
+      "Independent crowd count of the 10 June Tirana march — ≈22,000 from one night drone.",
+    year: 2026,
+    status: "shipped",
+    hero: "/projects/counting-a-protest/hero.jpg",
+    heroAlt:
+      "Turnover freeze over Bulevardi Dëshmorët e Kombit — full-width counting strip with P2PNet dots, running total 13,415",
+    stack: ["P2PNet + VisDrone/COCO", "OpenCV + FFmpeg", "4K night drone"],
+    pitch:
+      "Independent measurement of the 10 June 2026 protest in Tirana: ≈22,000 protesters [19,000–25,000] from 29 minutes of stationary 4K night drone footage. Full-width counting strips paced by the crowd's measured turnover, hand-measured detection factors per era of the footage, and five independent instruments converging on the same corridor.",
+    essay:
+      "Counting a Protest is the one project here whose deliverable is a single number: ≈22,000 people [19,000–25,000] walked down Bulevardi Dëshmorët e Kombit in Tirana on 10 June 2026, measured from 29 minutes of stationary 4K night drone footage. In Albania crowd numbers are a genre of fiction — organizers and government routinely disagree by 5× — so I built a measurement where every component has a photograph behind it. The architecture is 11 full-width turnover freezes spaced by the crowd's hand-measured 3.6-minute turnover, counted by a VisDrone+COCO detector union plus P2PNet perspective-strip dot fields, with hand-measured per-era detection factors (S3 ×3.75, S4 ×10.3, S5 ×5.27) paying the detection tax — each factor derived by marking entire strips head by head. Five independent instruments — band engine, census conservation, gate tracker, wide turnover, geometric anchor — converge on the same corridor, and the headline sits where the precise ones overlap. The line I'm proudest of is the end bookend: the engine said 1,813, my own screenshot audit said most of those people were already inside the last freeze, and I cut it to 150. A counting project where the owner never cuts his own number isn't a measurement, it's marketing.",
+    shots: [
+      {
+        src: "/projects/counting-a-protest/counter-ui.jpg",
+        alt: "Deliverable film UI — running counter over the corridor with a live counting strip",
+        device: "mobile",
+        caption:
+          "The deliverable film — a running counter over the corridor. Every red dot on screen is a person actually counted; no decorative overlays.",
+      },
+      {
+        src: "/projects/counting-a-protest/freeze-0305.jpg",
+        alt: "Early turnover freeze — counting strip at the wide rows, running total 5,711",
+        device: "mobile",
+        caption:
+          "An early turnover freeze — full-width counting strip at the wide reference rows; running total 5,711.",
+      },
+      {
+        src: "/projects/counting-a-protest/freeze-0880.jpg",
+        alt: "Mid-march turnover freeze — +2,431 from 755 detector dots, running total 13,415",
+        device: "mobile",
+        caption:
+          "Mid-march freeze — +2,431 from one strip (755 detector dots × the hand-measured era factor); running total 13,415.",
+      },
+      {
+        src: "/projects/counting-a-protest/p2p-strip-demo.jpg",
+        alt: "P2PNet perspective strip — 758 dot-field points where the detector union finds 246",
+        device: "desktop",
+        caption:
+          "P2PNet perspective strip — 758 points where the VisDrone+COCO union finds 246. The ~3× far-row recovery, visualised.",
+      },
+      {
+        src: "/projects/counting-a-protest/edge-anchor-proof.jpg",
+        alt: "Edge-anchoring proof — strip edges pinned to identical pixels across freezes",
+        device: "mobile",
+        caption:
+          "Edge-anchoring proof — strip edges pinned to identical pixels across freezes, so no row is ever counted twice.",
+      },
+      {
+        src: "/projects/counting-a-protest/freeze-1520.jpg",
+        alt: "Final turnover freeze — running total 20,865",
+        device: "mobile",
+        caption:
+          "The last freeze — running total 20,865 before the continuity and bookend terms close the count at ≈22,000.",
+      },
+    ],
+    problem: [
+      "After every protest in Albania, the organizers announce one number, the government announces a different one, and the gap is usually 5×. Nobody shows their work — nobody can, because nobody measured anything. On 10 June 2026 a march moved down Bulevardi Dëshmorët e Kombit in Tirana, Piramida to Universiteti, roughly 19:57 to 20:27.",
+      "I wanted one number from that night that nobody could argue with. Not \"an AI counted it\", which convinces no one and shouldn't, but a measurement: a number where every component has a photograph behind it that a stranger can check.",
+    ],
+    approach: [
+      "Off-the-shelf crowd counting fails immediately on this footage: you can't sum frames (the same people appear over and over), you can't track individuals (thousands of near-identical heads at night), and density models trained on daytime stadium photos hallucinate on dark asphalt. The reframe that carried the project: a march through a corridor is a flux problem — what you want is how many people pass, not how many are visible.",
+      "I measured the constraints first. Detection collapses below 15–16 px heads at any light; recall in contact-packed crowd falls to 0.16; the crowd moves at 3–25 px/s in stop-go compression waves; and anchored-object transits showed the wide reference rows turn over completely in about 3.6 minutes. Those measurements forced the architecture: 11 full-width turnover freezes spaced by the measured turnover, strips counted by a VisDrone+COCO detector union plus P2PNet perspective-strip dot fields, and hand-measured per-era detection factors — S3 ×3.75, S4 ×10.3, S5 ×5.27 — each derived by marking entire strips head by head.",
+      "Then I attacked the output. A frame-by-frame audit added 2 freezes and 3 strip extensions for mass the grid missed, relocated the final band, and cut the end bookend from 1,813 to 150 when the screenshots disagreed with the engine. Five independent instruments measured against the same zone bracket the result, and the decomposition — 20,202 in freezes + 611 continuity + 993 start + 150 end — locks at ≈22,000 [19,000–25,000].",
+    ],
+    techStack: {
+      AI: [
+        "P2PNet (perspective-strip dot fields)",
+        "VisDrone-trained + COCO-trained detector union (60% → ~90% recall in lit bands)",
+        "Fourteen-agent hand census (mass-conservation bound)",
+      ],
+      Data: [
+        "29-min stationary 4K night drone footage",
+        "11 turnover freezes + 2 audit freezes + 3 strip extensions",
+        "Hand-marked ground-truth strips (per-era detection factors)",
+      ],
+      Other: ["Python", "OpenCV", "FFmpeg", "~50 experiments with a full docs/ audit trail"],
+    },
+    underHood: [
+      {
+        path: "Turnover freeze architecture",
+        title: "the corridor as an instrument",
+        body: "Full-width counting strips at the wide reference rows, spaced by the hand-measured 3.6-minute crowd turnover so no person is counted twice across freezes. The \"truth tax\" is a law: width multiplier near, detection multiplier far — you only get to choose the cheapest verifiable side.",
+      },
+      {
+        path: "S3 ×3.75 · S4 ×10.3 · S5 ×5.27",
+        title: "hand-measured detection factors",
+        body: "Every multiplier comes from marking a full strip head by head and comparing against the detector — per era of the footage, not one global fudge. If a factor can't be defended with an image a stranger can inspect, it's a guess wearing a lab coat.",
+      },
+      {
+        path: "Five-instrument ladder",
+        title: "independent convergence",
+        body: "Band engine 16.9k floor, census conservation 18.9–22k, gate tracker, wide turnover 22–23.6k, geometric anchor 18–27k. The headline sits where the precise instruments overlap — and the census found no upstream surplus anywhere, which excludes the 30k-class claims outright.",
+      },
+    ],
+    metrics: [
+      { value: "≈22,000", label: "final count, bounded [19,000–25,000]" },
+      {
+        value: "20,202",
+        label: "counted inside 11 turnover freezes (+611 continuity, +993 start, +150 end)",
+      },
+      { value: "3.6 min", label: "measured crowd turnover at the wide reference rows" },
+      { value: "×10.3", label: "largest hand-measured detection factor (era S4)" },
+      { value: "5", label: "independent instruments converging on the same corridor" },
+      { value: "~50", label: "experiments in three days — every multiplier hand-verified" },
+    ],
+    timeline:
+      "Three days and ~50 experiments, from a naive detector sum (12,353) to the locked number (≈22,000) — every revision forced by a measurement, the final one by cutting my own end bookend from 1,813 to 150. Shipped: a three-minute deliverable film with counted dot fields, a 39-page report, and the complete docs/ audit trail.",
+    role: "Solo — pipeline, hand-marked ground truth, frame-by-frame audit, report.",
+    liftQuote:
+      "\"Every multiplier must have a photograph behind it — if a factor can't be defended with an image a stranger can inspect, it's a guess wearing a lab coat.\"",
+    links: [
+      {
+        label: "Raporti i plotë / Full report (PDF)",
+        href: "/projects/counting-a-protest/raporti-final.pdf",
+      },
+      { label: "Code + audit trail", href: "private — available on request" },
+    ],
+    video: {
+      src: "/projects/counting-a-protest/final-shpejt-web.mp4",
+      poster: "/projects/counting-a-protest/counter-ui.jpg",
+      caption:
+        "FINAL_SHPEJT — the whole march, time-compressed to 3:03. Every dot is a person actually counted; the running counter ends on the freeze sum.",
+    },
+    story: {
+      title: "Counting a protest — the write-up",
+      sections: [
+        {
+          heading: "Why count a crowd at all",
+          paragraphs: [
+            "In Albania, crowd numbers are a genre of fiction. After every protest, the organizers announce one number, the government announces a different one, and the gap between them is usually 5×. Nobody shows their work. Nobody can, because nobody measured anything.",
+            "On 10 June 2026, a march moved down Bulevardi Dëshmorët e Kombit in Tirana — Piramida to Universiteti, roughly 19:57 to 20:27. I decided I wanted one number from that night that nobody could argue with. Not \"an AI counted it\", which convinces no one and shouldn't, but a measurement: a number where every component has a photograph behind it that you can check yourself.",
+            "This is the story of how I got to ≈22,000 protesters [19,000–25,000], and why I trust it.",
+          ],
+        },
+        {
+          heading: "The naive start, and the first wall",
+          paragraphs: [
+            "My first attempt was the obvious one: run an off-the-shelf crowd-counting network over drone footage and sum the outputs. It failed immediately, and it failed in an instructive way. A moving drone over a marching crowd breaks every standard method at once — you can't sum frames (the same people appear over and over), you can't track individuals (thousands of near-identical heads at night), and density-map models trained on daytime stadium photos hallucinate freely on dark asphalt.",
+            "That first wall taught me the framing that carried the whole project: this isn't a detection problem, it's a flux problem. A march through a corridor is a flow. What you want is how many people pass, not how many are visible.",
+          ],
+        },
+        {
+          heading: "Real footage, real problems",
+          paragraphs: [
+            "I got what the problem actually needed: about 29 minutes of stationary 4K night drone footage covering the boulevard. Stationary is the key word — a fixed frame turns the corridor into an instrument. Then the engineering war started, and almost all of it was fighting the sensor, not writing code.",
+            "Detection collapses below 15–16 px heads, at any light. I measured this directly: below that head size, no detector — fine-tuned, enhanced, ensembled — recovers people reliably. Image enhancement actively hurt the detectors. A union of VisDrone- and COCO-trained models pushed recall from 60% to about 90% in the lit bands, and P2PNet with perspective-sized strips recovered roughly 3× what the union found in far rows — but under the size cliff, nothing works. The far field of the frame is simply not countable by machine.",
+            "Packing is a kill-switch. In contact-packed crowd, measured recall fell to 0.16. The densest part of the march — the part that matters most — is exactly where detectors die.",
+            "The crowd doesn't move like a fluid. I calibrated march speed by circling individual humans across frames and timing them by hand: 3–25 px/s, with stop-go compression waves. Anchored-object transits gave me the number the whole architecture rests on: at the wide reference rows, the crowd turns over completely in about 3.6 minutes.",
+            "Those measurements forced a law I started calling the truth tax. The corridor is only fully visible at its widest rows, which sit close to the camera — but near rows see only a slice of the crowd's depth, so you pay a width/turnover multiplier. Far rows see more of the corridor at once but sit under the detection cliff, so you pay a detection multiplier. Every architecture pays the tax somewhere; the only choice is where. The near rows won, because their multipliers are the smallest and — critically — verifiable by eye. My early instinct that \"closer people are 100% more honest\" turned out to be the literal design principle.",
+          ],
+        },
+        {
+          heading: "The final architecture",
+          paragraphs: [
+            "The locked pipeline works like this. 11 turnover freezes at full-width wide rows, spaced by the measured 3.6-minute crowd turnover, so no person is counted twice across freezes.",
+            "Strips sized to measured turnover, with P2PNet perspective-strip dot fields so that every dot displayed in the deliverable videos corresponds to a person actually counted — no decorative overlays.",
+            "Hand-measured detection factors per era of the footage: S3 ×3.75, S4 ×10.3, S5 ×5.27 — each factor derived by hand-marking full strips head by head and comparing against the detector. S1/S2 use a conservative ×1.5 estimate.",
+            "2 extra freezes and 3 strip extensions added after I audited the video frame by frame and found mass the freeze grid missed. And the final band relocated based on my own screenshot audit — more on that below, because it cost me 1,663 people.",
+          ],
+        },
+        {
+          heading: "The decomposition",
+          paragraphs: [
+            "The end bookend is the line I'm proudest of, because it's where the pipeline and I disagreed and the picture won. The relocated final freeze had silently absorbed the upstream mass that the end term was supposed to cover. The engine said 1,813; the screenshots said most of those people were already inside the last freeze. I cut my own number to 150. A counting project where the owner never cuts his own number isn't a measurement, it's marketing.",
+          ],
+          table: {
+            caption: "The decomposition",
+            headers: ["Component", "Count"],
+            rows: [
+              ["11 turnover freezes", "20,202"],
+              ["Between-freeze continuity", "611"],
+              ["Start bookend", "993"],
+              ["End bookend", "150"],
+              ["Total", "≈22,000"],
+            ],
+          },
+        },
+        {
+          heading: "Five instruments, one corridor",
+          paragraphs: [
+            "A single method converging on a number proves the method ran. Five independent methods converging proves something about the crowd. The instrument ladder, all measured against the same zone:",
+            "The headline 22,000 sits where the precise instruments overlap, the floor instruments sit below it, and the geometric bracket contains it. That's what convergence is supposed to look like. Crucially, the census found no upstream surplus anywhere at any censused instant — which is what excludes the 30k-class claims outright. The people simply were not there.",
+          ],
+          table: {
+            caption: "The instrument ladder — five independent methods, one corridor",
+            headers: ["Instrument", "Reading", "Role"],
+            rows: [
+              [
+                "Band-row engine",
+                "16.9k",
+                "The hard floor — it carries the smallest multipliers in the whole project",
+              ],
+              [
+                "Census conservation",
+                "18.9k best · 22.0k ceiling",
+                "Fourteen agents hand-censused the corridor at three instants; mass conservation bounds what could have passed",
+              ],
+              [
+                "Gate tracking engine",
+                "12.6k / 14.6k raw",
+                "An independent vote from a completely different mechanism — tracking through a virtual gate, corrected to the same zone",
+              ],
+              ["Wide turnover engine", "22–23.6k", "The architecture the final count rests on"],
+              ["Geometric anchor", "18–27k", "Crude, but it brackets everything else"],
+            ],
+          },
+        },
+        {
+          heading: "The history of the number",
+          paragraphs: [
+            "Every move on this ladder was driven by a measurement I forced on myself by challenging the previous number. Not one came from tuning a parameter until the output felt right.",
+          ],
+          table: {
+            caption: "Estimate history",
+            headers: ["Estimate", "What forced the change"],
+            rows: [
+              ["12,353", "First honest pipeline output"],
+              [
+                "16,912",
+                "Dense-strip nets + edge shares — recovering the people detectors missed",
+              ],
+              [
+                "20,300",
+                "Departure-pass end term + pacing calibration via hand-circled humans",
+              ],
+              ["23,619", "Wide-row turnover architecture at full corridor width"],
+              [
+                "22,000 (locked)",
+                "Duplication catch via transit truth + hand-marked full strips + the end-bookend cut",
+              ],
+            ],
+          },
+        },
+        {
+          heading: "What 22,000 does and doesn't claim",
+          paragraphs: [
+            "It claims: about 22,000 people, bounded [19,000–25,000], passed down the boulevard corridor during the march window. It does not claim total attendance. The corridor instrument is blind to side-street arrivals — people who joined past the gate or watched from parallel streets are invisible to it. Full attendance was higher; by how much, this method honestly cannot say. I'd rather publish a bounded corridor count than an unbounded guess.",
+            "The full evidence is public: the deliverable film above (the whole march, time-compressed, with counted dot fields), the 39-page report linked below, a real-time ~29:30 cut, a gate-video companion, and the complete docs/ audit trail — every experiment, every hand-marked strip, every decision with the screenshot that forced it.",
+          ],
+        },
+        {
+          heading: "What I learned",
+          paragraphs: [
+            "Three things, in increasing order of importance.",
+            "The truth tax is a law, not an inconvenience. Width multiplier near, detection multiplier far — you cannot engineer it away, only choose the cheapest verifiable side of it.",
+            "Every multiplier must have a photograph behind it. The number 10.3 for era S4 isn't a hyperparameter; it's a full strip of footage with every head marked by hand. If a factor in your pipeline can't be defended with an image a stranger can inspect, it's a guess wearing a lab coat.",
+            "The most valuable instrument was refusing to believe my own pipeline. Every jump in the estimate history — and the final cut downward — came from attacking my own output like a hostile reviewer. The pipeline produced numbers; the disbelief produced the measurement.",
+            "Somewhere around 20:10 on 10 June, twenty-two thousand people were on that boulevard. Now there's a number behind the number.",
+          ],
+        },
+      ],
+    },
+  },
+
+  // ---------------------------------------------------------------------------
+  // 2. KeepItUp
   // ---------------------------------------------------------------------------
   {
     slug: "keepitup",
-    order: 1,
+    order: 2,
     title: "KeepItUp",
     tagline: "Self-hosted AI agent that auto-fixes broken deployments.",
     year: 2026,
@@ -220,11 +510,11 @@ export const projects = [
   },
 
   // ---------------------------------------------------------------------------
-  // 2. Ëndërrat e Mia
+  // 3. Ëndërrat e Mia
   // ---------------------------------------------------------------------------
   {
     slug: "enderrat-e-mia",
-    order: 2,
+    order: 3,
     title: "Ëndërrat e Mia",
     tagline: "AI bedtime stories in Albanian, illustrated and read aloud.",
     year: 2026,
@@ -342,11 +632,11 @@ export const projects = [
   },
 
   // ---------------------------------------------------------------------------
-  // 3. GymApp
+  // 4. GymApp
   // ---------------------------------------------------------------------------
   {
     slug: "gym-app",
-    order: 3,
+    order: 4,
     title: "GymApp",
     tagline: "White-label gym OS — NFC entry, member app, multi-tenant admin.",
     year: 2026,
@@ -450,11 +740,11 @@ export const projects = [
   },
 
   // ---------------------------------------------------------------------------
-  // 4. Pilates Studio
+  // 5. Pilates Studio
   // ---------------------------------------------------------------------------
   {
     slug: "pilates-studio",
-    order: 4,
+    order: 5,
     title: "Pilates Studio",
     tagline: "Boutique studio platform — admin web, mobile app, API, 594 tests.",
     year: 2026,
@@ -566,11 +856,11 @@ export const projects = [
   },
 
   // ---------------------------------------------------------------------------
-  // 5. CleanSlate
+  // 6. CleanSlate
   // ---------------------------------------------------------------------------
   {
     slug: "cleanslate",
-    order: 5,
+    order: 6,
     title: "CleanSlate",
     tagline: "$20/month operating system for cleaning businesses.",
     year: 2026,
@@ -677,11 +967,11 @@ export const projects = [
   },
 
   // ---------------------------------------------------------------------------
-  // 6. Social Command Center
+  // 7. Social Command Center
   // ---------------------------------------------------------------------------
   {
     slug: "social-command-center",
-    order: 6,
+    order: 7,
     title: "Social Command Center",
     tagline: "Industrial Instagram content for any brand — autonomous, multi-tenant.",
     year: 2026,
@@ -774,11 +1064,11 @@ export const projects = [
   },
 
   // ---------------------------------------------------------------------------
-  // 7. Reel Farmer
+  // 8. Reel Farmer
   // ---------------------------------------------------------------------------
   {
     slug: "reel-farmer",
-    order: 7,
+    order: 8,
     title: "Reel Farmer",
     tagline: "Self-hosted YouTube → TikTok pipeline. One command, multi-account.",
     year: 2026,
@@ -872,11 +1162,11 @@ export const projects = [
   },
 
   // ---------------------------------------------------------------------------
-  // 8. Dabei
+  // 9. Dabei
   // ---------------------------------------------------------------------------
   {
     slug: "dabei",
-    order: 8,
+    order: 9,
     title: "Dabei",
     tagline: "Kiel's social pulse — find or start hangouts on a live map.",
     year: 2026,
@@ -1007,11 +1297,11 @@ export const projects = [
   },
 
   // ---------------------------------------------------------------------------
-  // 9. Websites — three small brand sites
+  // 10. Websites — three small brand sites
   // ---------------------------------------------------------------------------
   {
     slug: "websites",
-    order: 9,
+    order: 10,
     title: "Websites",
     tagline: "Three brand sites — Three.js hero, MongoDB CRM, fitness coaching.",
     year: 2026,
@@ -1105,11 +1395,11 @@ export const projects = [
     ],
   },
   // ---------------------------------------------------------------------------
-  // 10. advance.al
+  // 11. advance.al
   // ---------------------------------------------------------------------------
   {
     slug: "advance-al",
-    order: 10,
+    order: 11,
     title: "advance.al",
     tagline:
       "Albania's job marketplace — AI CV generation, AI profile-fill, embedding-ranked matching, auto-notify on match.",

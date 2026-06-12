@@ -8,8 +8,9 @@
 - LinkedIn: https://www.linkedin.com/in/jurgen-halili-b227a6255
 - GitHub: https://github.com/jxrgenn
 
-## Projects (10 production projects)
+## Projects (11 projects)
 
+- [Counting a Protest](https://portfolio-seven-opal-35.vercel.app/projects/counting-a-protest) — Independent crowd count of the 10 June 2026 Tirana march — ≈22,000 [19,000–25,000] from 29 minutes of stationary 4K night drone footage. Stack: P2PNet + VisDrone/COCO, OpenCV + FFmpeg, 4K night drone. Status: shipped.
 - [KeepItUp](https://portfolio-seven-opal-35.vercel.app/projects/keepitup) — Self-hosted AI agent that auto-fixes broken deployments. Stack: React 19, Anthropic + OpenAI + Gemini, Tree-sitter. Status: shipped.
 - [Ëndërrat e Mia](https://portfolio-seven-opal-35.vercel.app/projects/enderrat-e-mia) — AI bedtime stories in Albanian, illustrated and read aloud. Stack: Expo + RN, Claude Haiku + Flux, RevenueCat. Status: in-progress.
 - [GymApp](https://portfolio-seven-opal-35.vercel.app/projects/gym-app) — White-label gym OS — NFC entry, member app, multi-tenant admin. Stack: Express + Postgres, Socket.io + Redis, Expo + MUI. Status: shipped.

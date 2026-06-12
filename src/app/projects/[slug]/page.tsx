@@ -6,7 +6,13 @@ import { ProjectGallery } from "@/components/ProjectGallery";
 import { Stamp } from "@/components/editorial/Stamp";
 import { SectionMast } from "@/components/editorial/SectionMast";
 import { getImageMeta } from "@/lib/imageMeta";
-import { getAllSlugs, getProject, projects, type ProjectShot } from "@/lib/projects";
+import {
+  getAllSlugs,
+  getProject,
+  projects,
+  type ProjectShot,
+  type ProjectStoryTable,
+} from "@/lib/projects";
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://jurgenhalili.dev").replace(/\/$/, "");
 
@@ -47,6 +53,68 @@ export async function generateMetadata({
 
 function isHttpUrl(href: string): boolean {
   return /^https?:\/\//i.test(href);
+}
+
+/** http(s) URLs and site-relative paths (e.g. a PDF under /public) are linkable. */
+function isLinkableHref(href: string): boolean {
+  return isHttpUrl(href) || href.startsWith("/");
+}
+
+function StoryTable({ table }: { table: ProjectStoryTable }) {
+  return (
+    <figure className="mt-8 overflow-x-auto">
+      {table.caption ? (
+        <figcaption
+          className="mb-3 font-serif italic"
+          style={{ color: "var(--color-fg-muted)", fontSize: 13 }}
+        >
+          {table.caption}
+        </figcaption>
+      ) : null}
+      <table
+        className="w-full border-collapse border text-sm"
+        style={{ borderColor: "var(--color-border)" }}
+      >
+        <thead>
+          <tr style={{ background: "var(--color-bg-elevated)" }}>
+            {table.headers.map((h) => (
+              <th
+                key={h}
+                className="border px-3 py-2 text-left font-mono text-[10px] uppercase tracking-[0.18em]"
+                style={{
+                  borderColor: "var(--color-border)",
+                  color: "var(--color-fg-subtle)",
+                }}
+              >
+                {h}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {table.rows.map((row, i) => (
+            <tr key={i}>
+              {row.map((cell, j) => (
+                <td
+                  key={j}
+                  className="border px-3 py-2 align-top font-serif"
+                  style={{
+                    borderColor: "var(--color-border)",
+                    color:
+                      j === 0 ? "var(--color-fg)" : "var(--color-fg-muted)",
+                    fontSize: "0.95rem",
+                    lineHeight: 1.5,
+                  }}
+                >
+                  {cell}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </figure>
+  );
 }
 
 export default async function ProjectPage({
@@ -203,6 +271,37 @@ export default async function ProjectPage({
           </p>
         </div>
       </section>
+
+      {/* === FILM === */}
+      {project.video ? (
+        <section className="px-6 pb-20 md:px-10 lg:px-16">
+          <div className="mx-auto max-w-sm md:max-w-md">
+            <video
+              controls
+              playsInline
+              preload="metadata"
+              poster={project.video.poster}
+              className="w-full"
+              style={{
+                display: "block",
+                border: "1px solid var(--color-border)",
+                background: "#000",
+              }}
+            >
+              <source src={project.video.src} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+            {project.video.caption ? (
+              <p
+                className="mt-3 font-serif italic"
+                style={{ color: "var(--color-fg-muted)", fontSize: 13 }}
+              >
+                film — {project.video.caption}
+              </p>
+            ) : null}
+          </div>
+        </section>
+      ) : null}
 
       {/* === ESSAY === */}
       <section
@@ -438,6 +537,63 @@ export default async function ProjectPage({
         );
       })()}
 
+      {/* === STORY (long-form write-up) === */}
+      {project.story ? (
+        <section className="px-6 py-20 md:px-10 md:py-24 lg:px-16">
+          <div
+            className="flex items-baseline justify-between border-b pb-3"
+            style={{ borderColor: "var(--color-fg)", borderBottomWidth: 2 }}
+          >
+            <h2
+              className="font-serif"
+              style={{ color: "var(--color-fg)", fontSize: 22, fontWeight: 500 }}
+            >
+              <span style={{ fontStyle: "italic" }}>{project.story.title}</span>
+            </h2>
+            <p
+              className="font-serif italic"
+              style={{ color: "var(--color-fg-muted)", fontSize: 13 }}
+            >
+              field notes
+            </p>
+          </div>
+          <div className="mx-auto mt-12 max-w-3xl">
+            {project.story.sections.map((section, i) => (
+              <div key={section.heading ?? i} className={i === 0 ? "" : "mt-14"}>
+                {section.heading ? (
+                  <h3
+                    className="font-serif"
+                    style={{
+                      color: "var(--color-fg)",
+                      fontSize: "clamp(1.4rem, 2vw, 1.8rem)",
+                      lineHeight: 1.15,
+                      letterSpacing: "-0.015em",
+                      fontWeight: 500,
+                    }}
+                  >
+                    {section.heading}
+                  </h3>
+                ) : null}
+                {section.paragraphs.map((p, j) => (
+                  <p
+                    key={j}
+                    className="mt-5 font-serif"
+                    style={{
+                      color: "var(--color-fg-muted)",
+                      fontSize: 17,
+                      lineHeight: 1.65,
+                    }}
+                  >
+                    {p}
+                  </p>
+                ))}
+                {section.table ? <StoryTable table={section.table} /> : null}
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
       {/* === LIFT QUOTE === */}
       <section className="px-6 py-24 md:px-10 md:py-32 lg:px-16">
         <div className="mx-auto max-w-4xl">
@@ -497,11 +653,11 @@ export default async function ProjectPage({
                   {link.label}
                 </span>
                 <span style={{ color: "var(--color-border)" }}>—</span>
-                {isHttpUrl(link.href) ? (
+                {isLinkableHref(link.href) ? (
                   <a
                     href={link.href}
                     target="_blank"
-                    rel="noopener noreferrer"
+                    rel={isHttpUrl(link.href) ? "noopener noreferrer" : undefined}
                     style={{
                       color: "var(--color-accent)",
                       textDecoration: "underline",

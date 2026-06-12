@@ -1,0 +1,102 @@
+---
+title: "Counting a Protest: 22,000 People, One Drone, Five Instruments"
+date: 2026-06-12
+description: "How I measured the 10 June 2026 march in Tirana from a single stationary night drone — and why the final number is ≈22,000 [19,000–25,000], with a photograph behind every multiplier."
+tags:
+  - computer-vision
+  - crowd-counting
+  - drone
+  - p2pnet
+  - measurement
+  - tirana
+---
+
+## Why count a crowd at all
+
+In Albania, crowd numbers are a genre of fiction. After every protest, the organizers announce one number, the government announces a different one, and the gap between them is usually 5x. Nobody shows their work. Nobody can, because nobody measured anything.
+
+On 10 June 2026, a march moved down Bulevardi Dëshmorët e Kombit in Tirana — Piramida to Universiteti, roughly 19:57 to 20:27. I decided I wanted one number from that night that nobody could argue with. Not "an AI counted it", which convinces no one and shouldn't, but a measurement: a number where every component has a photograph behind it that you can check yourself.
+
+This is the story of how I got to **≈22,000 protesters [19,000–25,000]**, and why I trust it.
+
+## The naive start, and the first wall
+
+My first attempt was the obvious one: run an off-the-shelf crowd-counting network over drone footage and sum the outputs. It failed immediately, and it failed in an instructive way. A moving drone over a marching crowd breaks every standard method at once — you can't sum frames (the same people appear over and over), you can't track individuals (thousands of near-identical heads at night), and density-map models trained on daytime stadium photos hallucinate freely on dark asphalt.
+
+That first wall taught me the framing that carried the whole project: this isn't a detection problem, it's a **flux** problem. A march through a corridor is a flow. What you want is how many people *pass*, not how many are *visible*.
+
+## Real footage, real problems
+
+I got what the problem actually needed: about 29 minutes of stationary 4K night drone footage covering the boulevard. Stationary is the key word — a fixed frame turns the corridor into an instrument. Then the engineering war started, and almost all of it was fighting the sensor, not writing code.
+
+**Detection collapses below 15–16px heads, at any light.** I measured this directly: below that head size, no detector — fine-tuned, enhanced, ensembled — recovers people reliably. Image enhancement actively *hurt* the detectors. A union of VisDrone- and COCO-trained models pushed recall from 60% to about 90% in the lit bands, and P2PNet with perspective-sized strips recovered roughly 3x what the union found in far rows — but under the size cliff, nothing works. The far field of the frame is simply not countable by machine.
+
+**Packing is a kill-switch.** In contact-packed crowd, measured recall fell to 0.16. The densest part of the march — the part that matters most — is exactly where detectors die.
+
+**The crowd doesn't move like a fluid.** I calibrated march speed by circling individual humans across frames and timing them by hand: 3–25 px/s, with stop-go compression waves. Anchored-object transits gave me the number the whole architecture rests on: at the wide reference rows, the crowd turns over completely in about **3.6 minutes**.
+
+Those measurements forced a law I started calling the **truth tax**. The corridor is only fully visible at its widest rows, which sit close to the camera — but near rows see only a slice of the crowd's depth, so you pay a *width/turnover* multiplier. Far rows see more of the corridor at once but sit under the detection cliff, so you pay a *detection* multiplier. Every architecture pays the tax somewhere; the only choice is where. The near rows won, because their multipliers are the smallest and — critically — *verifiable by eye*. My early instinct that "closer people are 100% more honest" turned out to be the literal design principle.
+
+## The final architecture
+
+The locked pipeline works like this:
+
+- **11 turnover freezes** at full-width wide rows, spaced by the measured 3.6-minute crowd turnover, so no person is counted twice across freezes.
+- **Strips sized to measured turnover**, with **P2PNet perspective-strip dot fields** so that every dot displayed in the deliverable videos corresponds to a person actually counted — no decorative overlays.
+- **Hand-measured detection factors per era** of the footage: S3 ×3.75, S4 ×10.3, S5 ×5.27 — each factor derived by hand-marking full strips head by head and comparing against the detector. S1/S2 use a conservative ×1.5 estimate.
+- **2 extra freezes and 3 strip extensions** added after I audited the video frame by frame and found mass the freeze grid missed.
+- The **final band relocated** based on my own screenshot audit — more on that below, because it cost me 1,663 people.
+
+## The decomposition
+
+| Component | Count |
+|---|---|
+| 11 turnover freezes | 20,202 |
+| Between-freeze continuity | 611 |
+| Start bookend | 993 |
+| End bookend | 150 |
+| **Total** | **≈22,000** |
+
+The end bookend is the line I'm proudest of, because it's where the pipeline and I disagreed and the picture won. The relocated final freeze had silently absorbed the upstream mass that the end term was supposed to cover. The engine said 1,813; the screenshots said most of those people were already inside the last freeze. I cut my own number to 150. A counting project where the owner never cuts his own number isn't a measurement, it's marketing.
+
+## Five instruments, one corridor
+
+A single method converging on a number proves the method ran. Five *independent* methods converging proves something about the crowd. The instrument ladder, all measured against the same zone:
+
+- **Band-row engine: 16.9k** — the hard floor. It carries the smallest multipliers in the whole project, so whatever the true count is, it is not below this.
+- **Census conservation: 18.9k best, 22.0k ceiling.** Fourteen agents hand-censused the corridor at three instants; mass conservation then bounds what could have passed. Crucially, there was **no upstream surplus anywhere** at any censused instant — which is what excludes the 30k-class claims outright. The people simply were not there.
+- **Gate tracking engine: 12.6k/14.6k raw** — a third independent vote from a completely different mechanism (tracking through a virtual gate), corrected to the same zone.
+- **Wide turnover engine: 22–23.6k.**
+- **Geometric anchor: 18–27k** — crude, but it brackets everything else.
+
+The headline 22,000 sits where the precise instruments overlap, the floor instruments sit below it, and the geometric bracket contains it. That's what convergence is supposed to look like.
+
+## The history of the number
+
+| Estimate | What forced the change |
+|---|---|
+| 12,353 | First honest pipeline output |
+| 16,912 | Dense-strip nets + edge shares — recovering the people detectors missed |
+| 20,300 | Departure-pass end term + pacing calibration via hand-circled humans |
+| 23,619 | Wide-row turnover architecture at full corridor width |
+| **22,000 (locked)** | Duplication catch via transit truth + hand-marked full strips + the end-bookend cut |
+
+Every move on that ladder was driven by a measurement I forced on myself by challenging the previous number. Not one came from tuning a parameter until the output felt right.
+
+## What 22,000 does and doesn't claim
+
+It claims: about 22,000 people, bounded [19,000–25,000], passed down the boulevard corridor during the march window. It does **not** claim total attendance. The corridor instrument is blind to side-street arrivals — people who joined past the gate or watched from parallel streets are invisible to it. Full attendance was higher; by how much, this method honestly cannot say. I'd rather publish a bounded corridor count than an unbounded guess.
+
+The full evidence is public: **FINAL_SHPEJT.mp4** (3:03, time-compressed, the whole march with counted dot fields), **FINAL_FULL.mp4** (~29:30, real time), **RAPORTI_FINAL.pdf** (the 39-page report), a gate-video companion, and the complete `docs/` audit trail — every experiment, every hand-marked strip, every decision with the screenshot that forced it.
+
+## What I learned
+
+Three things, in increasing order of importance.
+
+**The truth tax is a law, not an inconvenience.** Width multiplier near, detection multiplier far — you cannot engineer it away, only choose the cheapest verifiable side of it.
+
+**Every multiplier must have a photograph behind it.** The number 10.3 for era S4 isn't a hyperparameter; it's a full strip of footage with every head marked by hand. If a factor in your pipeline can't be defended with an image a stranger can inspect, it's a guess wearing a lab coat.
+
+**The most valuable instrument was refusing to believe my own pipeline.** Every jump in the estimate history — and the final cut downward — came from attacking my own output like a hostile reviewer. The pipeline produced numbers; the disbelief produced the measurement.
+
+Somewhere around 20:10 on 10 June, twenty-two thousand people were on that boulevard. Now there's a number behind the number.
